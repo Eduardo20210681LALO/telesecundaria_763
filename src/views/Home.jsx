@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import seis from '../images/seis.jpg';
 import siete from '../images/siete.jpg';
 import uno from '../images/uno.png';
+import Imagen8 from '../images/Imagen8.jpg'
 import BreadCrumb from "./BreadCrumbView";
 
 function Home() {
@@ -32,65 +33,85 @@ function Home() {
           </div>
         </section>
 
-        <section className="about section" id="misión">{/* MISION */}
-          <h2 className="section-title">Misión</h2>
-
-          <div className="about__container bd-grid">
-            <div className="about__img">
-              <img src={seis} alt="" />
-            </div>
-
-            <div>
-              <h2 className="about__subtitle">Misión</h2>
-              <p className="about__text">Somos una escuela que logra un trabajo colaborativo entre dirección, docentes, personal de apoyo, alumnos(as) y padres de familia, para obtener aprendizajes significativos y lograr los objetivos de la nueva escuela mexicana.</p>
-            </div>
-          </div>
-        </section>
-
-        <section className="about section" id="visión">{/* VISIÓN */}
-          <h2 className="section-title">Visión</h2>
-
-          <div className="about__container bd-grid">
-            <div className="about__img">
-              <img src={siete} alt="" />
-            </div>
-
-            <div>
-              <h2 className="about__subtitle">Aqui ira la vision</h2>
-              <p className="about__text">Ser una institución reconocida por su desempeño académico y formativo, capaz de proveer a nuestros alumnos(as) conocimientos, habilidades, destrezas y aptitudes que les permita ser competentes y participar activamente en la sociedad cambiante a la que pertenecen.</p>
+        <section className="about section" id="misión">
+          <div className="container">
+            <h2 className="section-title" style={{ color: '#7d0430' }}>Misión</h2>
+            <div className="row align-items-center">
+              <div className="col-lg-6">
+                <img src={seis} alt="" className="img-fluid rounded mx-auto d-block" style={{ maxWidth: '100%', height: 'auto' }} />
+              </div>
+              <div className="col-lg-6">
+                <p className="about__text" style={{ color: '#333', fontWeight: 'bold' }}>Somos una escuela que logra un trabajo colaborativo entre dirección, docentes, personal de apoyo, alumnos(as) y padres de familia, para obtener aprendizajes significativos y lograr los objetivos de la nueva escuela mexicana.</p>
+              </div>
             </div>
           </div>
         </section>
 
-        <section className="work section" id="valores">{/* Valores */}
-          <h2 className="section-title">Valores</h2>
-    
-          <div className="about__container bd-grid">
-            <div className="about__img">
-              <img src={siete} alt="" />
+        <section className="about section" id="visión">
+          <div className="container">
+            <h2 className="section-title" style={{ color: '#7d0430' }}>Visión</h2>
+            <div className="row align-items-center">
+              <div className="col-lg-6 order-lg-last">
+                <img src={siete} alt="" className="img-fluid rounded mx-auto d-block" style={{ maxWidth: '100%', height: 'auto' }} />
+              </div>
+              <div className="col-lg-6 order-lg-first">
+                <p className="about__text" style={{ color: '#333', fontWeight: 'bold' }}>Ser una institución reconocida por su desempeño académico y formativo, capaz de proveer a nuestros alumnos(as) conocimientos, habilidades, destrezas y aptitudes que les permita ser competentes y participar activamente en la sociedad cambiante a la que pertenecen.</p>
+              </div>
             </div>
+          </div>
+        </section>
 
-            <div>
-              <h2 className="about__subtitle">Aqui ira la vision</h2>
-              <p className="about__text">Puntualidad, Responsabilidad, Compromiso, Respeto, Disciplina, Empatía, Actitud de Servicio, Liderazgo, Igualdad, Resiliencia.</p>
+        <section className="work section" id="valores">
+          <div className="container">
+            <h2 className="section-title" style={{ color: '#7d0430' }}>Valores</h2>
+            <div className="row align-items-center">
+              <div className="col-lg-6">
+                <img src={Imagen8} alt="" className="img-fluid rounded mx-auto d-block" style={{ maxWidth: '100%', height: 'auto' }} />
+              </div>
+              <div className="col-lg-6">
+                <p className="about__text" style={{ color: '#333', fontWeight: 'bold' }}>Puntualidad, Responsabilidad, Compromiso, Respeto, Disciplina, Empatía, Actitud de Servicio, Liderazgo, Igualdad, Resiliencia.</p>
+              </div>
             </div>
           </div>
         </section>
 
-        <section className="contact section" id="quienessomos">{/* QUIENES SOMOS */}
-          <h2 className="section-title">Quienes Somos</h2>
-
-          <div className="about__container bd-grid">
-            <div className="about__img">
-              <img src={siete} alt="" />
-            </div>
-
-            <div>
-              <h2 className="about__subtitle">Aqui ira la vision</h2>
-              <p className="about__text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptate cum expedita quo culpa tempora, assumenda, quis fugiat ut voluptates soluta, aut earum nemo recusandae cumque perferendis! Recusandae alias accusamus atque.</p>
+        <section className="contact section" id="quienessomos">
+          <div className="container">
+            <h2 className="section-title" style={{ color: '#7d0430', textAlign: 'center' }}>Quienes Somos</h2>
+            <div className="row justify-content-center">
+              <div className="col-lg-8">
+                <p style={{ color: '#333', fontWeight: 'bold', textAlign: 'center' }}>
+                  La Telesecundaria 763 inició actividades en el año 1996 con la visión de ofrecer educación de calidad a los estudiantes de la comunidad. Se encuentra ubicada en Carretera Nacional Huejutla-Orizatlan Kilometro 4 Tepexititla, Huejutla De Reyes, Hidalgo CP. 43005.
+                </p>
+                <p style={{ color: '#333', fontWeight: 'bold', textAlign: 'center' }}>
+                  A lo largo de estos años, la Telesecundaria 763 ha destacado por contar con personal docente altamente calificado que busca fomentar no solo la formación académica de los alumnos, sino también sus valores, capacidades artísticas y deportivas.
+                </p>
+                <p style={{ color: '#333', fontWeight: 'bold', textAlign: 'center' }}>
+                  Actualmente, la Telesecundaria 763 atiende a una población estudiantil de 233 alumnos distribuidos en grupos desde primer hasta tercer grado. Asimismo, cuenta con una plantilla de 11 profesores entusiastas y una dirección escolar comprometida.
+                </p>
+                <p style={{ color: '#333', fontWeight: 'bold', textAlign: 'center' }}>
+                  La infraestructura de la escuela permite el desarrollo de actividades formativas variadas que van desde aulas equipadas, biblioteca, áreas verdes, canchas deportivas, entre otros espacios. Todo para garantizar un aprendizaje dinámico.
+                </p>
+                <p style={{ color: '#333', fontWeight: 'bold', textAlign: 'center' }}>
+                  Entre los logros más destacados de la Telesecundaria 763 se encuentran:
+                </p>
+                <ul>
+                  <li style={{ color: '#333', fontWeight: 'bold', textAlign: 'center' }}>Porcentajes de aprobación superiores al 95% en los últimos 5 años.</li>
+                  <li style={{ color: '#333', fontWeight: 'bold', textAlign: 'center' }}>Selección de alumnos en competencias de conocimiento regionales.</li>
+                  <li style={{ color: '#333', fontWeight: 'bold', textAlign: 'center' }}>Actividades extracurriculares premiadas a nivel estatal, como la banda de guerra.</li>
+                  <li style={{ color: '#333', fontWeight: 'bold', textAlign: 'center' }}>Graduación consistente de alumnos que ingresan a nivel medio superior.</li>
+                </ul>
+                <p style={{ color: '#333', fontWeight: 'bold', textAlign: 'center' }}>
+                  Como se puede apreciar, en sus más de 30 años la Telesecundaria 763 se ha consolidado por su excelencia académica y formación integral, convirtiéndose en una institución educativa de gran prestigio en la región.
+                </p>
+              </div>
             </div>
           </div>
         </section>
+
+
+
+
 
         <script src="https://unpkg.com/scrollreveal"></script>{/* SCROLL REVEAL */}
 

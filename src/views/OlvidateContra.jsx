@@ -47,7 +47,7 @@ function OlvidateContra() {
     };
     
     return (
-        <div className="container-olvContra">
+        <div className="container-olvContra" style={{ backgroundColor: '#f7f7f7', minHeight: '110vh' }}>
             <div className="container-Olvi">
                 <img src={logo} alt="Logo de la Empresa" className="company-logo-olvi" />
                 <h1>TeleSecundaria 763</h1>
