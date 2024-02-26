@@ -69,7 +69,7 @@ function RestablecerContra({ correo }) {
             contrasenia: contrasenia
         };
         try {
-            const response = await fetch(`${BASE_URL}/actualizaContraUsuario.php`, {
+            const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/actualizaContraUsuario.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
