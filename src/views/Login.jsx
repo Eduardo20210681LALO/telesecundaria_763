@@ -5,7 +5,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import Nav2 from '../components/Nav2';
 import BreadCrumb from './BreadCrumbView';
-import { BASE_URL } from '../components/url.js';
 import { message } from 'antd';
 
 function Login() {
@@ -18,6 +17,7 @@ function Login() {
   const [mostrarContrasenia, setMostrarContrasenia] = useState(false);
   const [errorText, setErrorText] = useState('');
   const [isButtonEnabled, setIsButtonEnabled] = useState(true);
+  const [telefonoError, setTelefonoError] = useState('');
 
   useEffect(() => {
     if (isLoginBlocked) {
@@ -120,7 +120,7 @@ function Login() {
         }
       } else {
         setContadorIntentos(contadorIntentos + 1);
-        message.error('Datos incorrectos');
+        setTelefonoError('Datos Incorrectos'); setTimeout(() => setTelefonoError(null), 3000);
 
         if (contadorIntentos >= 3) {
           setIsLoginBlocked(true);
@@ -147,10 +147,13 @@ function Login() {
       <div className="container-fluid" style={{ backgroundColor: '#f7f7f7', minHeight: '100vh' }}>
         <div className="row justify-content-center align-items-center" style={{ minHeight: '110vh' }}>
           <div className="col-md-4">
+
             <form className="bg-light p-4 rounded shadow" onSubmit={handleLogin}>
               <h2 className="mb-11 text-center text-magenta">¡Bienvenido! Inicia sesión</h2>
               <p className="mb-3 text-center">Ingresa tus datos para iniciar sesión.</p>
               {errorText && <p className="text-danger text-center">{errorText}</p>}
+
+              {telefonoError && <p style={{ color: 'red' }}>{telefonoError}</p>}
 
               <div className="mb-3">
                 <label htmlFor="usuario" className="form-label">Tipo de usuario:</label>
@@ -166,20 +169,27 @@ function Login() {
                 <input type="email" id="inputEmail" className="form-control" placeholder="Ingresa tu correo electrónico" required autoFocus onChange={(e) => setEmail(e.target.value)} />
               </div>
 
-
               <div className="mb-3 position-relative">
                 <label htmlFor="inputPassword" className="form-label">Contraseña:</label>
                 <div className="input-group">
                   <input type={mostrarContrasenia ? 'text' : 'password'} id="inputPassword" className="form-control" placeholder="Ingresa tu contraseña" required onChange={(e) => setPassword(e.target.value)} />
                   
                   <button type="button" onClick={toggleMostrarContrasenia} 
-                    style={{ position: 'absolute', right: '5px', top: '50%', transform: 'translateY(-50%)', backgroundColor: 'transparent', border: 'none', cursor: 'pointer' }} >
-                    {mostrarContrasenia ? <FontAwesomeIcon icon={faEyeSlash} /> : <FontAwesomeIcon icon={faEye} />}
+                    style={{ position: 'absolute', right: '5px', top: '50%', transform: 'translateY(-50%)',
+                             backgroundColor: 'transparent', border: 'none', cursor: 'pointer' }} >
+                  {mostrarContrasenia ? <FontAwesomeIcon icon={faEyeSlash} /> : <FontAwesomeIcon icon={faEye} />}
                   </button>
+
                 </div>
               </div>
 
-              <button type="submit" className="btn btn-lg btn-primary btn-block" style={{ backgroundColor: 'var(--first-color)', borderColor: '#004b9b', color: '#fff', padding: '10px 20px', borderRadius: '4px', fontSize: '16px', fontWeight: 'bold' }} disabled={isLoginBlocked}>Iniciar sesión</button>
+              <button type="submit" className="btn btn-lg btn-primary btn-block" 
+                  style={{ backgroundColor: 'var(--first-color)', borderColor: '#004b9b', color: '#fff', padding: '10px 20px', borderRadius: '4px', fontSize: '16px', fontWeight: 'bold' }} disabled={isLoginBlocked}
+                  onMouseOver={(event) => { event.target.style.backgroundColor = 'black';}}
+                  onMouseOut={(event) => { event.target.style.backgroundColor = 'var(--first-color)';}}
+                > Iniciar sesión
+              </button>
+
               <p className="mt-4 text-center">¿No tienes una cuenta? <Link to="/Registro"  style={{ color: '#7d0430', textDecoration: 'none' }}>Regístrate</Link></p>
               <p className="mt-2 text-center">¿Se te olvidó la contraseña? <Link to="/ActualizarContraseña"  style={{ color: '#7d0430', textDecoration: 'none' }}>Recupérala</Link></p>
               <BreadCrumb />

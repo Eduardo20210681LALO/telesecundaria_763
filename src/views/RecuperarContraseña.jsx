@@ -47,7 +47,6 @@ function RecuperarContraseña() {
                         <button type="submit" className="primary">Continuar</button>
                     </div>
                 </form>
-
             </div>
         </div>
     );

@@ -5,7 +5,6 @@ import Cookies from 'js-cookie';
 import BreadCrumb from './BreadCrumbView';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import { BASE_URL } from '../components/url';
 import { Form } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { message } from 'antd';
@@ -21,7 +20,7 @@ const Captcha = ({ onCaptchaVerify }) => {
             <div className="max-w-md p-6 bg-white rounded-md shadow-md">
                 <h6 className="text-1xl font-bold mb-4 text-black">¡Completa el Captcha como verificación!</h6>
                 <ReCAPTCHA
-                    sitekey={'6Lc1ZHUpAAAAAJ7n4rCpSyhLD2NpMmbo4Q_qPNuh'}
+                    sitekey={'6Lcwm4MpAAAAAKzr5eOL6GpLhqX8vDHpicvNmuIU'}
                     onChange={handleCaptchaChange}
                     className="mb-4"
                 />
@@ -258,7 +257,6 @@ function Registro() {
         );
     }
     
-
     const onSubmit = handleSubmit(async (value, e) =>{
         const errorPass = Validaciones_Contras(value.pass)
         if (errorPass) {
@@ -317,7 +315,7 @@ function Registro() {
                             <div className="col-md-6 mb-4">
                                 <h4 className="titulo">Usuario</h4>
                                 <input type="text" className="form-control" placeholder="Ingrese un nombre de usuario"
-                                    {...register('usuario', { 
+                                    {...register('usuario', {
                                         required: 'El nombre de usuario es requerido.',
                                         minLength: { value: 8, message: 'El Nombre de usuario debe ser mayor a 8 caracteres.' },
                                         pattern: { value: /^[a-zA-Z0-9]+$/, message: 'Ingresa solo letras y números.' },
@@ -394,7 +392,9 @@ function Registro() {
 
                             <div className="col-12 text-center mb-4">
                                 <input type="submit" value="Crear cuenta" className="btn btn-primary"
-                                    style={{ backgroundColor: 'var(--first-color)', borderColor: '#004b9b', padding: '15px 25px', borderRadius: '4px', fontSize: '16px', fontWeight: 'bold' }}
+                                style={{ backgroundColor: 'var(--first-color)', borderColor: '#004b9b', padding: '15px 25px', borderRadius: '4px', fontSize: '16px', fontWeight: 'bold' }}
+                                onMouseOver={(event) => { event.target.style.backgroundColor = 'black'; }}
+                                onMouseOut={(event) => { event.target.style.backgroundColor = 'var(--first-color)';}}
                                 />
                             </div>
     

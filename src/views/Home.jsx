@@ -1,18 +1,37 @@
-import React from "react"
+import React from "react";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import { Link } from 'react-router-dom';
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import uno from '../images/uno.png';
+
 import seis from '../images/seis.jpg';
 import siete from '../images/siete.jpg';
-import uno from '../images/uno.png';
 import Imagen8 from '../images/Imagen8.jpg'
+
+import work1 from '../images/work1.jpg';
+import work2 from '../images/work2.jpg';
+import work3 from '../images/work3.jpg';
+
 import BreadCrumb from "./BreadCrumbView";
 
 function Home() {
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 2000,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 4000,
+  };
+
   return (
     <div>
       <Nav/>
-        <main className="l-main">
+      <main className="l-main">
         <section className="home bd-grid" id="home">{/* HOME */}
           <div className="home__data">
             <h1 className="home__title" style={{ fontFamily: 'Roboto', fontWeight: 'bold', fontSize: '3.5rem' }}>
@@ -38,7 +57,17 @@ function Home() {
             <h2 className="section-title" style={{ color: '#7d0430' }}>Misión</h2>
             <div className="row align-items-center">
               <div className="col-lg-6">
-                <img src={seis} alt="" className="img-fluid rounded mx-auto d-block" style={{ maxWidth: '100%', height: 'auto' }} />
+                <Slider autoplay={true} autoplaySpeed={3000}>
+                  <div>
+                    <img src={seis} alt="" className="img-fluid rounded mx-auto d-block" style={{ maxWidth: '100%', height: 'auto' }} />
+                  </div>
+                  <div>
+                    <img src={Imagen8} alt="" className="img-fluid rounded mx-auto d-block" style={{ maxWidth: '100%', height: 'auto' }} />
+                  </div>
+                  <div>
+                    <img src={siete} alt="" className="img-fluid rounded mx-auto d-block" style={{ maxWidth: '100%', height: 'auto' }} />
+                  </div>
+                </Slider>
               </div>
               <div className="col-lg-6">
                 <p className="about__text" style={{ color: '#333', fontWeight: 'bold' }}>Somos una escuela que logra un trabajo colaborativo entre dirección, docentes, personal de apoyo, alumnos(as) y padres de familia, para obtener aprendizajes significativos y lograr los objetivos de la nueva escuela mexicana.</p>
@@ -52,7 +81,17 @@ function Home() {
             <h2 className="section-title" style={{ color: '#7d0430' }}>Visión</h2>
             <div className="row align-items-center">
               <div className="col-lg-6 order-lg-last">
-                <img src={siete} alt="" className="img-fluid rounded mx-auto d-block" style={{ maxWidth: '100%', height: 'auto' }} />
+                <Slider autoplay={true} autoplaySpeed={3000}>
+                  <div>
+                    <img src={work1} alt="" className="img-fluid rounded mx-auto d-block" style={{ maxWidth: '70%', height: 'auto' }} />
+                  </div>
+                  <div>
+                    <img src={work2} alt="" className="img-fluid rounded mx-auto d-block" style={{ maxWidth: '70%', height: 'auto' }} />
+                  </div>
+                  <div>
+                    <img src={work3} alt="" className="img-fluid rounded mx-auto d-block" style={{ maxWidth: '70%', height: 'auto' }} />
+                  </div>
+                </Slider>
               </div>
               <div className="col-lg-6 order-lg-first">
                 <p className="about__text" style={{ color: '#333', fontWeight: 'bold' }}>Ser una institución reconocida por su desempeño académico y formativo, capaz de proveer a nuestros alumnos(as) conocimientos, habilidades, destrezas y aptitudes que les permita ser competentes y participar activamente en la sociedad cambiante a la que pertenecen.</p>
@@ -61,19 +100,6 @@ function Home() {
           </div>
         </section>
 
-        <section className="work section" id="valores">
-          <div className="container">
-            <h2 className="section-title" style={{ color: '#7d0430' }}>Valores</h2>
-            <div className="row align-items-center">
-              <div className="col-lg-6">
-                <img src={Imagen8} alt="" className="img-fluid rounded mx-auto d-block" style={{ maxWidth: '100%', height: 'auto' }} />
-              </div>
-              <div className="col-lg-6">
-                <p className="about__text" style={{ color: '#333', fontWeight: 'bold' }}>Puntualidad, Responsabilidad, Compromiso, Respeto, Disciplina, Empatía, Actitud de Servicio, Liderazgo, Igualdad, Resiliencia.</p>
-              </div>
-            </div>
-          </div>
-        </section>
 
         <section className="contact section" id="quienessomos">
           <div className="container">
@@ -109,20 +135,12 @@ function Home() {
           </div>
         </section>
 
-
-
-
-
-        <script src="https://unpkg.com/scrollreveal"></script>{/* SCROLL REVEAL */}
-
-        {/* MAIN JS 
-        <script src="ScriptHome.js"></script>*/}
-
       </main>
       <BreadCrumb/>
       <Footer/>
+     
     </div>
   )
 }
 
-export default Home
+export default Home;
