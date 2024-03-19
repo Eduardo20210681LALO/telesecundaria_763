@@ -8,8 +8,9 @@ import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { Form } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { message } from 'antd';
-import logo from '../images/logo.png';
+import logotelesecundaria763 from '../images/logotelesecundaria763.png';
 import ReCAPTCHA from 'react-google-recaptcha';
+import Nav2 from '../components/Nav2';
 
 const Captcha = ({ onCaptchaVerify }) => {
     const handleCaptchaChange = () => {
@@ -19,10 +20,8 @@ const Captcha = ({ onCaptchaVerify }) => {
         <div className="d-flex justify-content-center align-items-center vh-10">
             <div className="max-w-md p-6 bg-white rounded-md shadow-md">
                 <h6 className="text-1xl font-bold mb-4 text-black">¡Completa el Captcha como verificación!</h6>
-                <ReCAPTCHA
-                    sitekey={'6Lcwm4MpAAAAAKzr5eOL6GpLhqX8vDHpicvNmuIU'}
+                <ReCAPTCHA className="mb-4" sitekey={'6LdxpZ0pAAAAAAVeLXDbfFo6iAa4GajnPRYMQPG9'}
                     onChange={handleCaptchaChange}
-                    className="mb-4"
                 />
             </div>
         </div>
@@ -96,7 +95,7 @@ function Registro() {
         }
 
         try {
-            const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/registro.php', {
+            const response = await fetch('http://192.168.1.95/TeleSecundaria763/registro.php', {//https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/registro.php
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -104,15 +103,12 @@ function Registro() {
                 body: JSON.stringify(datos),
             });
             const responseData = await response.json();
-        
             if (response.ok) {
                 const { success, message } = responseData;
                 if (success) {
                     Cookies.set('token', responseData.token, { expires: 7 });
-                    
                     setRegistroExitoso2(true);
                     setRegistroExitoso(true);
-
                     setTimeout(() => {
                         navigate('/Login');
                     }, 5000);
@@ -124,16 +120,16 @@ function Registro() {
             }
         } catch (error) {
             console.error('Error al intentar registrar:', error);
-            alert('Error del servidor');
+            navigate('/NotServe');
         }
     };
 
     const VerificarTelefonoExistente = async (e) => {
-        const datos = { 
+        const datos = {
             telefono: telefono
         };
         try {
-            const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/telefonoExistente.php', {
+            const response = await fetch('http://192.168.1.95/TeleSecundaria763/telefonoExistente.php', {//https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/telefonoExistente.php
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -152,7 +148,8 @@ function Registro() {
                 setTelefonoError('Error al intentar verificar si el telefono esta en uso:'); setTimeout(() => setTelefonoError(null), 3000);
             }
         } catch (error) {
-            setTelefonoError('Error al intentar verificar el telefono:'); setTimeout(() => setTelefonoError(null), 3000);
+            console.log('Error del servidor');
+            navigate('/NotServe');
         }
     };
 
@@ -161,7 +158,7 @@ function Registro() {
             email: email
         };
         try {
-            const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/correoExistente.php', {
+            const response = await fetch('http://192.168.1.95/TeleSecundaria763/correoExistente.php', {//https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/correoExistente.php
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -181,7 +178,8 @@ function Registro() {
                 setCorreoError('Datos incorrectos'); setTimeout(() => setCorreoError(null), 3000);
             }
         } catch (error) {
-            setCorreoError('Error al intentar verificar el correo:'); setTimeout(() => setCorreoError(null), 3000);
+            console.log('Error del servidor')
+            navigate('/NotServe');
         }
     };
 
@@ -204,7 +202,8 @@ function Registro() {
             const data = await response.json();
             validCorreo(data.deliverability);
         } catch (error) {
-            console.error('Error al consultar el servicio de validación de correo:', error);
+            console.error('Error al consultar el servicio de validación de correo:', error);    
+
         }
     };
 
@@ -243,19 +242,19 @@ function Registro() {
                             label={
                                 <>
                                     Acepto los{' '}
-                                    <Link to="/TerminosCondiciones">términos y condiciones</Link>
+                                    <Link to="/TerminosCondiciones" style={{ color: 'blue' }}>términos y condiciones</Link>
                                     {' '}y la{' '}
-                                    <Link to="/TerminosCookies">política de cookies</Link>
+                                    <Link to="/TerminosCookies" style={{ color: 'blue' }}>política de cookies</Link>
                                 </>
                             }
-                            onChange={handleCheckboxChange}
-                            checked={aceptaTodo}
+                            onChange={handleCheckboxChange} checked={aceptaTodo}
                         />
                     </div>
                 </Form.Group>
             </div>
         );
     }
+    
     
     const onSubmit = handleSubmit(async (value, e) =>{
         const errorPass = Validaciones_Contras(value.pass)
@@ -264,24 +263,22 @@ function Registro() {
           return
         }
         consultarCorreoApi(value.email);
-    
     });
 
     return (
-        <div className="login-container d-flex justify-content-center align-items-center" style={{ backgroundColor: '#f7f7f7', height: '155vh', flexDirection: 'column' }}>
-        <div className="login-card p-4" style={{ width: '100%', maxWidth: '50%', borderRadius: '10px', boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)', backgroundColor: '#fff', marginBottom: '20px' }}>
-        <img src={logo} alt="Logo de la Empresa" className="company-logo-olvi" style={{ backgroundColor: '#f7f7f7', height: '10vh', width:'12vh', marginBottom: '-70px' }} />
-
-
-          <form onSubmit={onSubmit} className="form" style={{ marginTop: '10px' }}>
+        <div className="login-container d-flex justify-content-center align-items-center" style={{ backgroundColor: '#f7f7f7', height: '145vh', flexDirection: 'column' }}>
+            <Nav2 />
+            <div className="login-card p-4" style={{ width: '100%', maxWidth: '50%', borderRadius: '10px', boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)', backgroundColor: '#fff', marginBottom: '20px' }}>
+            <img src={logotelesecundaria763} alt="Logo de la Empresa" className="company-logo-olvi" style={{ backgroundColor: '#f7f7f7', height: '10vh', width:'12vh', marginBottom: '-70px' }} />
+                <form onSubmit={onSubmit} className="form" style={{ marginTop: '10px' }}>
                     <div className="datosReg container">
-                        <h1 className="form-signin-heading mb-3 text-center" style={{ color: '#333', fontWeight: 'bold' }}>Bienvenido a Registro</h1>
-                        <h3 className="form-signin-heading mb-4 text-center" style={{ color: '#333', fontWeight: 'bold' }}>Ingrese los datos correspondientes</h3>
+                        <h1 className="mb-11 text-center text-magenta">Bienvenido a Registro</h1>
+                        <h5 className="mb-11 text-center text-magenta">Ingrese los datos correspondientes</h5>
 
                         <div className="row">
                             <div className="col-md-6 mb-4">
-                                <h4 className="titulo">Nombre(s)</h4>
-                                <input type="text" className="form-control" placeholder="Ingrese nombre de usuario"
+                                <label htmlFor="usuario" className="form-label"><b>Nombre(s):</b></label>
+                                <input type="text" className="form-control rounded-md" placeholder="Ingrese su nombre completo"
                                     {...register('nombre', { required: 'El nombre es requerido.',
                                     minLength: { value: 3, message: 'El Nombre debe ser mayor a 3 caracteres.', }, 
                                     maxLength: { value: 20, message: 'El Nombre debe ser menor a 20 caracteres.', },})}
@@ -290,8 +287,8 @@ function Registro() {
                             </div>
 
                             <div className="col-md-6 mb-4">
-                                <h4 className="titulo">Apellido Paterno</h4>
-                                <input type="text" className="form-control" placeholder="Ingrese el apellido Paterno"
+                                <label htmlFor="usuario" className="form-label"><b>Apellido Paterno:</b></label>
+                                <input type="text" className="form-control rounded-md" placeholder="Ingrese su apellido Paterno"
                                     {...register('app', { required: 'El Apellido Paterno es requerido.',
                                         minLength: { value: 3, message: 'El Apellido Paterno debe ser mayor a 3 caracteres.', },
                                         maxLength: { value: 20, message: 'El Apellido Paterno debe ser menor a 20 caracteres.', },
@@ -301,8 +298,8 @@ function Registro() {
                             </div>
 
                             <div className="col-md-6 mb-4">
-                                <h4 className="titulo">Apellido Materno</h4>
-                                <input type="text" className="form-control" placeholder="Ingrese el apellido Materno"
+                                <label htmlFor="usuario" className="form-label"><b>Apellido Materno:</b></label>
+                                <input type="text" className="form-control rounded-md" placeholder="Ingrese su apellido Materno"
                                     {...register('apm', {
                                         required: 'El Apellido Materno es requerido.',
                                         minLength: { value: 3, message: 'El Apellido Materno debe ser mayor a 3 caracteres.', },
@@ -313,8 +310,8 @@ function Registro() {
                             </div>
 
                             <div className="col-md-6 mb-4">
-                                <h4 className="titulo">Usuario</h4>
-                                <input type="text" className="form-control" placeholder="Ingrese un nombre de usuario"
+                                <label htmlFor="usuario" className="form-label"><b>Usuario:</b></label>
+                                <input type="text" className="form-control rounded-md" placeholder="Ingrese un nombre de usuario"
                                     {...register('usuario', {
                                         required: 'El nombre de usuario es requerido.',
                                         minLength: { value: 8, message: 'El Nombre de usuario debe ser mayor a 8 caracteres.' },
@@ -327,9 +324,9 @@ function Registro() {
 
 
                             <div className="col-md-6 mb-4">
-                                <h4 className="titulo">Correo Electronico</h4>
+                                <label htmlFor="usuario" className="form-label"><b>Correo Electronico:</b></label>
                                 {correoError && <p style={{ color: 'red' }}>{correoError}</p>}
-                                <input type="email" className="form-control" placeholder="Correo Electrónico"
+                                <input type="email" className="form-control rounded-md" placeholder="Ingrese un Correo Electrónico"
                                     {...register('email', {
                                         required: 'El Correo Electrónico es requerido.',
                                         minLength: { value: 3, message: 'El Correo Electrónico debe ser mayor a 3 caracteres.', },
@@ -341,8 +338,8 @@ function Registro() {
 
                             <div className="col-md-6 mb-4">
                                 {telefonoError && <p style={{ color: 'red' }}>{telefonoError}</p>}
-                                <h4 className="titulo">Telefono</h4>
-                                <input type="tel" id='phone' className="form-control" placeholder="Ingrese numero de Telefono"
+                                <label htmlFor="usuario" className="form-label"><b>Telefono:</b></label>
+                                <input type="tel" id='phone' className="form-control rounded-md" placeholder="Ingrese un numero de Telefono"
                                     {...register('telefono', {
                                         required: 'El teléfono es requerido.',
                                         minLength: { value: 3, message: 'El teléfono debe ser mayor a 3 caracteres.', },
@@ -354,9 +351,9 @@ function Registro() {
                             </div>
 
                             <div className="col-md-6 mb-4" style={{ position: 'relative' }}>
-                                <h4 className="titulo">Contraseña</h4>
+                                <label htmlFor="usuario" className="form-label"><b>Contraseña:</b></label>
                                 <div style={{ position: 'relative' }}>
-                                    <input type={mostrarContrasenia ? 'text' : 'password'} className="form-control" placeholder="Contraseña"
+                                    <input type={mostrarContrasenia ? 'text' : 'password'} className="form-control rounded-md" placeholder="Ingrese una contraseña"
                                         {...register('pass', {
                                             required: 'La contraseña es requerida.',
                                             minLength: { value: 8, message: 'La contraseña debe ser mayor a 7 caracteres.', },
@@ -373,9 +370,9 @@ function Registro() {
                             </div>
 
                             <div className="col-md-6 mb-4" style={{ position: 'relative' }}>
-                                <h4 className="titulo">Confirmar contraseña</h4>
+                                <label htmlFor="usuario" className="form-label"><b>Confirmar Contraseña:</b></label>
                                 <div style={{ position: 'relative' }}>
-                                    <input type={mostrarContrasenia2 ? 'text' : 'password'} className="form-control" placeholder="Confirmar contraseña"
+                                    <input type={mostrarContrasenia2 ? 'text' : 'password'} className="form-control rounded-md" placeholder="Confirma la contraseña"
                                         {...register('passConf', { required: 'La confirmación de contraseña es requerida.', validate: (value) => value === password || 'La contraseña no coincide',})}
                                         onChange={(e) => { const err = e.target.value === password ? '' : 'La contraseña no coincide'; setError('passConf', { type: 'manual', message: err, });}}
                                     />
@@ -392,21 +389,21 @@ function Registro() {
 
                             <div className="col-12 text-center mb-4">
                                 <input type="submit" value="Crear cuenta" className="btn btn-primary"
-                                style={{ backgroundColor: 'var(--first-color)', borderColor: '#004b9b', padding: '15px 25px', borderRadius: '4px', fontSize: '16px', fontWeight: 'bold' }}
+                                style={{ backgroundColor: 'var(--first-color)', borderColor: '#004b9b', padding: '15px 25px', borderRadius: '4px', fontSize: '16px', fontWeight: 'bold',  borderColor: 'transparent' }}
                                 onMouseOver={(event) => { event.target.style.backgroundColor = 'black'; }}
                                 onMouseOut={(event) => { event.target.style.backgroundColor = 'var(--first-color)';}}
                                 />
                             </div>
     
                             <div className="col-12 text-center">
-                                <p className="mt-1">¿Ya tienes una cuenta? <Link to="/Login" style={{ color: '#7d0430', textDecoration: 'none' }}>Ir a login</Link></p>
+                                <p className="mt-1">¿Ya tienes una cuenta? <Link to="/Login" style={{ color: '#7d0430', textDecoration: 'none' }}><b>Login</b></Link></p>
                             </div>
                         </div>
                     </div>
                 </form>
                 <BreadCrumb />
-                </div>
             </div>
+        </div>
     )
 }
 

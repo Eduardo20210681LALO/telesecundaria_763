@@ -8,19 +8,6 @@
     border-bottom: 2px solid var(--border-color); /* Added border at the bottom of the nav */
 }
 
-@media screen and (max-width: 767px) {
-    .nav__menu {
-        position: fixed;
-        top: var(--header-height);
-        right: -100%;
-        width: 80%;
-        height: 100%;
-        padding: 2rem;
-        background-color: var(--second-color);
-        transition: .5s;
-    }
-}
-
 .nav__item {
     margin-bottom: var(--mb-4);
 }
@@ -52,6 +39,7 @@
     color: var(--second-color);
     font-size: 1.5rem;
     cursor: pointer;
+    display: none; /* Ocultar el icono del menú de hamburguesa por defecto */
 }
 
 /*Active menu*/
@@ -68,4 +56,39 @@
 /*=== Show menu =========================================================================*/
 .show {
     right: 0;
+}
+
+/*=== Responsive =========================================================================*/
+@media screen and (max-width: 768px) {
+    .nav__menu {
+        position: fixed;
+        top: var(--header-height);
+        right: -100%; /* Ocultar el menú por defecto en pantallas pequeñas */
+        width: 100%;
+        height: calc(100vh - var(--header-height));
+        background-color: #000; /* Color de fondo del menú de hamburguesa */
+        transition: 0.3s ease; /* Agregar transición suave */
+    }
+
+    .nav__toggle {
+        display: block; /* Mostrar el icono del menú de hamburguesa en pantallas pequeñas */
+    }
+
+    .show {
+        right: 0; /* Mostrar el menú de hamburguesa cuando está activo */
+    }
+
+    .nav__list {
+        flex-direction: column; /* Mostrar los elementos del menú en una columna */
+        text-align: center; /* Centrar el texto en pantallas pequeñas */
+        padding: 2rem 0; /* Añadir espacio alrededor de los elementos del menú */
+    }
+
+    .nav__item {
+        margin-bottom: 1.5rem; /* Espacio entre elementos del menú */
+    }
+
+    .nav__link {
+        color: #fff;
+    }
 }

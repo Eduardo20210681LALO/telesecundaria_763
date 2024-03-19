@@ -1,7 +1,6 @@
 import React from 'react'
 import error404 from '../images/error404.png';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../styles/NotFound.css'
 
 function NotFound() {
   return (

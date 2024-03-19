@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import '../styles/Footer.css';
 
 function Footer() {
@@ -14,13 +14,13 @@ function Footer() {
       <br />
 
       <div className="footer__social">
-        <a href="#" className="footer__icon"><i className='bx bxl-facebook' ></i></a>
-        <a href="#" className="footer__icon"><i className='bx bxl-instagram' ></i></a>
-        <a href="#" className="footer__icon"><i className='bx bxl-twitter' ></i></a>
+        <a href="#" className="footer__icon"><i className='bx bxl-facebook'></i></a>
+        <a href="#" className="footer__icon"><i className='bx bxl-instagram'></i></a>
+        <a href="#" className="footer__icon"><i className='bx bxl-twitter'></i></a>
       </div>
       <p className="footer__copy">&#169; Grupo de Interacción Digital 763</p>
     </footer>
   )
 }
 
-export default Footer
+export default Footer;

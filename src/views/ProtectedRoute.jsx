@@ -14,6 +14,7 @@ const ProtectedRoute = () => {
   let token = Cookies.get('token');
 
   if (!token) {
+    console.log('Generado')
     token = generateRandomToken(32);
     const expirationDays = 7;
     const expirationDate = new Date();
@@ -21,7 +22,7 @@ const ProtectedRoute = () => {
     Cookies.set('token', token, { expires: expirationDate });
   }
   
-  return token ? <Outlet /> : <Navigate to="/Login" replace />;
+  return token ? <Outlet /> : <Navigate to="/Home" replace />;
 }
 
 export default ProtectedRoute;
