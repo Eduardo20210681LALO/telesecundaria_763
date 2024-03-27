@@ -20,6 +20,8 @@ import HomeAdministrativos from "../views/Inicio/HomeAdministrativos";
 import HomeDirectivos from "../views/Inicio/HomeDirectivos";
 import EnviarCorreoTelefono from "../views/RecuperacionContraseñas/EnviarCorreoTelefono";
 import NotServe from "../views/NotServe";
+import NavDocentes from "../components/NavDocentes";
+import PrototipoMatematicas from "../views/PrototipoMatematicas";
 
 export const router = createBrowserRouter ([
   {
@@ -77,6 +79,14 @@ export const router = createBrowserRouter ([
       element: <NotServe/>
     },
     {
+      path:'/ActualizaciónDeContraseña',
+      element: <ActualizaciónDeContraseña/>
+    },
+    {
+      path:'/PrototipoMatematicas',
+      element: <PrototipoMatematicas/>
+    },
+    {
       path: "/",
       element: <ProtectedRoute />,
       children:[
@@ -89,16 +99,16 @@ export const router = createBrowserRouter ([
           element: <HomeDirectivos/>
         },
         {
+          path:'/NavDocentes',
+          element: <NavDocentes/>
+        },
+        {
           path:'/HomeAdministrativos',
           element: <HomeAdministrativos/>
         },
         {
           path:'/HomeDocentes',
           element: <HomeDocentes/>
-        },
-        {
-          path:'/ActualizaciónDeContraseña',
-          element: <ActualizaciónDeContraseña/>
         },
       ]
     }

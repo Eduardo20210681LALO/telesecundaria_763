@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation, Link } from "react-router-dom";
-import { Breadcrumb } from "antd";
+import { Breadcrumb } from "antd";//MIGAJAS DE PAN
 
 const BreadCrumb = () => {
   const location = useLocation();

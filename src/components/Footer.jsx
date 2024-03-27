@@ -11,8 +11,7 @@ function Footer() {
       </p>
       <p>Teléfono: 123-456-7890</p>
       <p>Correo Electrónico: info@telesecundaria763.edu.mx</p>
-      <br />
-
+      <br/>
       <div className="footer__social">
         <a href="#" className="footer__icon"><i className='bx bxl-facebook'></i></a>
         <a href="#" className="footer__icon"><i className='bx bxl-instagram'></i></a>

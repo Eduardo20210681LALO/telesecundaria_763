@@ -51,7 +51,7 @@ export const EnviarMensaje = () => {
                 navigate('/ActualizaciónDeContraseña');
             } catch (error) {
                 message.error('Error al verificar el código');
-            }2
+            }
         }
     }
   
@@ -62,17 +62,14 @@ export const EnviarMensaje = () => {
                 <div className="row justify-content-center align-items-center" style={{ minHeight: '110vh' }}>
                     <div  className="col-md-4">
                         <div className="card p-4 shadow text-center">
-
                         <div style={{ minHeight: '100px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
                             <img src={logotelesecundaria763} alt="Logo de la Empresa" className="company-logo-olvi" style={{ maxWidth: '100%', maxHeight: '100%' }} />
                         </div>
-
                         <h2 className="mb-1 text-magenta">Recuperación de Contraseña</h2>
                         <p className="text-muted mb-4">Introduce tu correo electrónico y revisa tu bandeja de entrada el token de verificación que te enviaremos.</p>
                             <div className="d-flex align-items-center justify-content-center h-100">
                                 <div id="recaptcha"></div>
                                 <form>
-
                                     <div className="form-group mb-3">
                                         <label htmlFor="phone" className="form-label"><b>Número de teléfono:</b></label>
                                         <input type="tel" id="phone" className="form-control rounded-md" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Ingrese su número de Teléfono" style={{ width: '350px' }} />
@@ -92,12 +89,10 @@ export const EnviarMensaje = () => {
                                         </div>
                                         </>
                                     )}
-
                                     <div className="form-group mb-3">
                                         <Link to="/Login" className="btn btn-secondary btn-block" style={{ width: '350px', backgroundColor: '#A9A9A9', borderColor: 'transparent', borderRadius: '4px', fontSize: '16px', fontWeight: 'bold' }}>Atrás</Link>
                                     </div>
                                 </form>
-
                             </div>
                         </div>
                     </div>

@@ -54,12 +54,12 @@ function Registro() {
       
     useEffect(() => {
         if (registroExitoso2) {
-          message.success('¡Éxito! Cuenta creada');
+            message.success('¡Éxito! Cuenta creada');
         }
         if (registroExitoso) {
-          message.success('Su cuenta ha sido registrada. Espere a que el administrador le asigne un rol.');
+            message.success('Su cuenta ha sido registrada. Espere a que el administrador le asigne un rol.');
         }
-    }, [registroExitoso, registroExitoso2]);
+    },  [registroExitoso, registroExitoso2]);
 
     const {register, handleSubmit, formState: {errors}, setValue, setError, watch } = useForm()
     const password = watch ('pass', '')
@@ -83,19 +83,16 @@ function Registro() {
             telefono: telefono,
             contrasenia: contrasenia
         };
-
         if (!aceptaTodo) {
             message.warning('Por favor, Acepta los Términos Y Condiciones antes de registrarte.');
             return;
         }
-
         if (!isCaptchaVerified) {
             message.warning('Por favor, completa el CAPTCHA antes de logearse.');
             return;
         }
-
         try {
-            const response = await fetch('http://192.168.1.95/TeleSecundaria763/registro.php', {//https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/registro.php
+            const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/registro.php', {//http://192.168.7.116/TeleSecundaria763/registro.php
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -129,7 +126,7 @@ function Registro() {
             telefono: telefono
         };
         try {
-            const response = await fetch('http://192.168.1.95/TeleSecundaria763/telefonoExistente.php', {//https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/telefonoExistente.php
+            const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/telefonoExistente.php', {// http://192.168.7.116/TeleSecundaria763/telefonoExistente.php
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -158,14 +155,13 @@ function Registro() {
             email: email
         };
         try {
-            const response = await fetch('http://192.168.1.95/TeleSecundaria763/correoExistente.php', {//https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/correoExistente.php
+            const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/correoExistente.php', {//http://192.168.7.116/TeleSecundaria763/correoExistente.php
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(datos),
             });
-
             if (response.ok) {
                 const responseData = await response.json();
                 console.log(responseData)
@@ -186,7 +182,6 @@ function Registro() {
     function validCorreo(validacion) {
         console.log(validacion);
         message.loading('Verificando correo...');
-
         if (validacion === 'DELIVERABLE') {
             message.success('El correo es válido');
             verificarCorreoExistente();
@@ -202,8 +197,7 @@ function Registro() {
             const data = await response.json();
             validCorreo(data.deliverability);
         } catch (error) {
-            console.error('Error al consultar el servicio de validación de correo:', error);    
-
+            console.error('Error al consultar el servicio de validación de correo:', error);
         }
     };
 
@@ -255,18 +249,17 @@ function Registro() {
         );
     }
     
-    
     const onSubmit = handleSubmit(async (value, e) =>{
         const errorPass = Validaciones_Contras(value.pass)
         if (errorPass) {
-          setError('pass', { type: 'manual', message: errorPass});2
-          return
+            setError('pass', { type: 'manual', message: errorPass});
+            return
         }
         consultarCorreoApi(value.email);
     });
 
     return (
-        <div className="login-container d-flex justify-content-center align-items-center" style={{ backgroundColor: '#f7f7f7', height: '145vh', flexDirection: 'column' }}>
+        <div className="login-container d-flex justify-content-center align-items-center" style={{ backgroundColor: '#f7f7f7', height: '160vh', flexDirection: 'column' }}>
             <Nav2 />
             <div className="login-card p-4" style={{ width: '100%', maxWidth: '50%', borderRadius: '10px', boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)', backgroundColor: '#fff', marginBottom: '20px' }}>
             <img src={logotelesecundaria763} alt="Logo de la Empresa" className="company-logo-olvi" style={{ backgroundColor: '#f7f7f7', height: '10vh', width:'12vh', marginBottom: '-70px' }} />
@@ -321,7 +314,6 @@ function Registro() {
                                     onChange={(e) => { ValidarTextos('usuario', e); setUsuario(e.target.value); }}/>
                                 {errors.usuario && <p className="text-danger">{errors.usuario.message}</p>}
                             </div>
-
 
                             <div className="col-md-6 mb-4">
                                 <label htmlFor="usuario" className="form-label"><b>Correo Electronico:</b></label>

@@ -16,40 +16,37 @@ function EnviarCorreo() {
   const enviarCorreo = async (e) => {
     e.preventDefault();
     if (correo === '') {
-        message.warning('Por favor, ingrese algún dato en el campo de correo antes de enviar el código.');
+      message.warning('Por favor, ingrese algún dato en el campo de correo antes de enviar el código.');
     } else {
-        const datos = {
-            correo: correo
-        };
-        try {
-            const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/correoLalo2.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(datos),
-            });
-
-            const responseData = await response.json();
-            if (!responseData) {
-                throw new Error('La respuesta del servidor está vacía');
-            }
-
-            const tokenRecibido = responseData.token;
-            if (responseData.done === true) {
-                message.success('¡Éxito! Correo Enviado Exitosamente.');
-                message.info('Verifica tu bandeja de entrada de tu correo electrónico.');
-                console.log('Token recuperado:', tokenRecibido);
-                setTokenRecibido(tokenRecibido);
-                setMostrarVerificacion(true);
-            } else {
-                message.error('No hay respuesta del servidor');
-            }
-        } catch (error) {
-            message.error('¡Error! No se pudo mandar el Correo, verifica nuevamente.');
-            console.log('Error al mandar los datos', error);
-            navigate('/NotServe');
+      const datos = {
+        correo: correo
+      };
+      try {
+        const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/correoLalo2.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(datos),
+        });
+        const responseData = await response.json();
+        if (!responseData) {
+          console.log('La respuesta del servidor está vacía');
         }
+        const tokenRecibido = responseData.token;
+        if (responseData.done === true) {
+          message.success('¡Éxito! Correo Enviado Exitosamente.');
+          message.info('Verifica tu bandeja de entrada de tu correo electrónico.');
+          console.log('Token recuperado:', tokenRecibido);
+          setTokenRecibido(tokenRecibido);
+          setMostrarVerificacion(true);
+        } else {
+          message.error('No hay respuesta del servidor');
+        }
+      } catch (error) {
+        message.error('¡Error! No se pudo mandar el Correo, verifica nuevamente.');
+        console.log('Error al mandar los datos', error);
+      }
     }
   };
 

@@ -23,12 +23,11 @@ function Login() {
 
   const [mostrarOpciones, setMostrarOpciones] = useState(false);
 
-
   const [datosIncorrectos, setDatosIncorrectos] = useState('');
   const [datosIncorrectos2, setDatosIncorrectos2] = useState('');
 
   const toggleMostrarOpciones = () => {
-      setMostrarOpciones(!mostrarOpciones);
+    setMostrarOpciones(!mostrarOpciones);
   };
   
   useEffect(() => {
@@ -39,23 +38,26 @@ function Login() {
 
   const habilitarCuentaEnBaseDeDatos = async () => {
     try {
-      const response = await fetch('http://192.168.1.95/TeleSecundaria763/ActivarEstadoUsuario.php', {//https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/ActivarEstadoUsuario.php
+      const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/ActivarEstadoUsuario.php', {//http://192.168.7.116/TeleSecundaria763/ActivarEstadoUsuario.php
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          usuario,
           email,
           password
         }),
       });
-      if (!response.ok) {
-        throw new Error('Error al habilitar la cuenta');
+      const { success } = await response.json();
+      if (success === true ) {
+        console.log(success);// ************************************************
+        setIsLoginBlocked(false);
+        setIsButtonEnabled(true);
+        setContadorIntentos(0);
+      } else {
+        console.log('Error al habilitar la cuenta');
       }
-      console.log(response.ok)
-      setIsLoginBlocked(false);
-      setIsButtonEnabled(true);
-      setContadorIntentos(0);
     } catch (error) {
       console.error('Error al habilitar la cuenta:', error);
       navigate('/NotServe');
@@ -63,24 +65,31 @@ function Login() {
   };
 
   const activarBloqueoDesabilitarUsuarios = async () => {
+    console.log(usuario, email, password);
     try {
-      const response = await fetch('http://192.168.1.95/TeleSecundaria763/disableAccount.php', {//https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/disableAccount.php
+      const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/disableAccount.php', {// http://192.168.7.116/TeleSecundaria763/disableAccount.php
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          usuario,
           email,
           password
         }),
       });
-      if (!response.ok) {
-        throw new Error('Error al deshabilitar la cuenta');
+      const { success } = await response.json();
+      if (success === true) {
+        console.log('Usuario Bloqueado');
+      }
+      else {
+        console.log('Error al bloquear la cuenta del usuario');
       }
     } catch (error) {
       console.error('Error al deshabilitar la cuenta:', error);
       navigate('/NotServe');
     }
+
     const timeout = setTimeout(async () => {
       habilitarCuentaEnBaseDeDatos();
       message.success('Boton Habilitado Nuevamente.');
@@ -101,7 +110,7 @@ function Login() {
       return;
     }
     try {
-      const response = await fetch('http://192.168.1.95/TeleSecundaria763/login.php', {//'https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/login.php'
+      const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/login.php', {//http://192.168.7.116/TeleSecundaria763/login.php
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -112,10 +121,9 @@ function Login() {
           usuario
         })
       });
-      const { success, id_usuario, id_password, id_rol, id_estatus, message } = await response.json();
+      const { success, id_usuario, id_rol, id_estatus, message } = await response.json();
      
       const usuario_logueado = id_usuario; console.log(usuario_logueado);
-      const contra_usuario = id_password; console.log(contra_usuario);
       const tipo_rol = id_rol; console.log(tipo_rol);
       const estado_usuario = id_estatus; console.log(estado_usuario, 'el estado de usuario');
 
@@ -138,7 +146,6 @@ function Login() {
           console.log('Tu cuenta esta bloqueada, por favor comunicate con el administrador')
         }
       } else {
-        
         console.log(message)
         setDatosIncorrectos('Datos Incorrectos'); setTimeout(() => setDatosIncorrectos(null), 3000);
         setContadorIntentos(contadorIntentos + 1);
@@ -147,7 +154,6 @@ function Login() {
           setIsLoginBlocked(true);
         }
       }
-
     } catch (error) {
       console.log('error en el catch.');
       navigate('/NotServe');
@@ -168,13 +174,13 @@ function Login() {
   };
 
   const handleUsuarioChange1 = (e) => {
-    const selectedOption = e.target.value;
-    if (selectedOption === '1') {
-        window.location.href = '/EnviarMensaje';
-    } else if (selectedOption === '2') {
-        window.location.href = '/EnviarCorreo';
-    } else if (selectedOption === '3') {
-        window.location.href = '/EnviarCorreoTelefono';
+    const opcion_Rec = e.target.value;
+    if (opcion_Rec === '1') {
+      navigate('/EnviarMensaje');
+    } else if (opcion_Rec === '2') {
+      navigate('/EnviarCorreo');
+    } else if (opcion_Rec === '3') {
+      navigate('/EnviarCorreoTelefono');
     }
   };
   

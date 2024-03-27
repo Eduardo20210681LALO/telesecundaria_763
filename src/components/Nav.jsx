@@ -1,6 +1,5 @@
 import React from 'react';
 import '../styles/Nav.css';
-import logo from '../images/logo.png';
 import logotelesecundaria763 from '../images/logotelesecundaria763.png';
 import { Link } from 'react-router-dom';
 
@@ -12,7 +11,6 @@ const Nav = () => {
           <img src={logotelesecundaria763} alt="Logo TeleSecundaria 763" className="nav__logo-img" style={{ width: '50px', height: '50px', marginRight: '10px' }} />
           <a href="#" className="nav__logo" style={{ textDecoration: 'none' }}>TeleSecundaria 763</a>
         </div>
-
         <div className="nav__menu" id="nav-menu">
           <ul className="nav__list">
             <li className="nav__item"><a href="#inicio" className="nav__link" style={{ textDecoration: 'none' }}>Inicio</a></li>
@@ -22,7 +20,6 @@ const Nav = () => {
             <li className="nav__item"><Link to="/QuienesSomos" className="nav__link" style={{ textDecoration: 'none' }}>Quiénes Somos</Link></li>
           </ul>
         </div>
-
         <div className="nav__toggle" id="nav-toggle">
           <i className='bx bx-menu'></i>
         </div>

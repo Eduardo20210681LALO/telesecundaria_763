@@ -6,7 +6,7 @@ function NotFound() {
   return (
     <div className="error-body">
       <div className="error-container text-center">
-        <h1>Uops!</h1>
+        <h1><b>¡Uupsss!</b></h1>
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <img src={error404} alt="Error 404" className="error-image" />
         </div>

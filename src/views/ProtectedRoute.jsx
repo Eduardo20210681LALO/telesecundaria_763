@@ -14,15 +14,14 @@ const ProtectedRoute = () => {
   let token = Cookies.get('token');
 
   if (!token) {
-    console.log('Generado')
-    token = generateRandomToken(32);
-    const expirationDays = 7;
-    const expirationDate = new Date();
-    expirationDate.setDate(expirationDate.getDate() + expirationDays);
-    Cookies.set('token', token, { expires: expirationDate });
+     console.log('Generado')
+     token = generateRandomToken(32);
+     const expirationDays = 7;
+     const expirationDate = new Date();
+     expirationDate.setDate(expirationDate.getDate() + expirationDays);
+     Cookies.set('token', token, { expires: expirationDate });
   }
-  
-  return token ? <Outlet /> : <Navigate to="/Home" replace />;
+  return token ? <Outlet /> : <Navigate to="/NotFound" replace />;
 }
 
 export default ProtectedRoute;

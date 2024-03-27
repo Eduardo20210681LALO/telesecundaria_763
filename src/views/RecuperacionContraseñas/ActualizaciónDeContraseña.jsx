@@ -74,7 +74,7 @@ function ActualizaciónDeContraseña() {
         };
         try {
             console.log(datos);
-            const response = await fetch('http://192.168.1.95/TeleSecundaria763/actualizaContraUsuario.php', {//'https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/actualizaContraUsuario.php'
+            const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/actualizaContraUsuario.php', {//http://192.168.7.116/TeleSecundaria763/actualizaContraUsuario.php
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
