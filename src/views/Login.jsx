@@ -51,7 +51,7 @@ function Login() {
       });
       const { success } = await response.json();
       if (success === true ) {
-        console.log(success);// ************************************************
+        console.log(success);
         setIsLoginBlocked(false);
         setIsButtonEnabled(true);
         setContadorIntentos(0);
