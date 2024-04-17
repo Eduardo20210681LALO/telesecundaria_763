@@ -4,7 +4,7 @@ import logotelesecundaria763 from '../images/logotelesecundaria763.png';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
-function NavDocentes() {
+function NavAdministrativos() {
     const navigate = useNavigate();
 
     const [datosUsuario, setDatosUsuario] = useState(null);
@@ -19,7 +19,7 @@ function NavDocentes() {
         const data = {
             idUsuario: idUsuario
         };
-        const url = 'https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/datosUsuario.php';   //                  http://localhost/TeleSecundaria763/datosUsuario.php
+        const url = 'https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/datosUsuario.php';  //                   http://localhost/TeleSecundaria763/datosUsuario.php
         const options = {
             method: 'POST',
             headers: {
@@ -81,13 +81,13 @@ function NavDocentes() {
                 <NavbarCollapse>
                     <NavbarLink href="#" active >Home</NavbarLink>
                     <NavbarLink href="#">Inicio</NavbarLink>
-                    <NavbarLink href="#">Docentes</NavbarLink>
-                    <NavbarLink href="#">Alumnos</NavbarLink>
-                    <NavbarLink href="#">Contactos</NavbarLink>
+                    <NavbarLink href="#">Roles X Privilegios</NavbarLink>
+                    <NavbarLink href="#">Historial Academico</NavbarLink>
+                    <NavbarLink href="#">Genenar Reportes</NavbarLink>
                 </NavbarCollapse>
             </Navbar>
         </div>
-    );    
+    );
 }
 
-export default NavDocentes
+export default NavAdministrativos

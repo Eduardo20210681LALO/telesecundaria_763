@@ -9,6 +9,7 @@ import BreadCrumb from './BreadCrumbView';
 import { message } from 'antd';
 //import { toast } from 'react-hot-toast';
 
+
 function Login() {
   const navigate = useNavigate();
   const [usuario, setUsuario] = useState('');
@@ -38,7 +39,7 @@ function Login() {
 
   const habilitarCuentaEnBaseDeDatos = async () => {
     try {
-      const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/ActivarEstadoUsuario.php', {//http://192.168.7.116/TeleSecundaria763/ActivarEstadoUsuario.php
+      const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/ActivarEstadoUsuario.php', {//              http://localhost/TeleSecundaria763/ActivarEstadoUsuario.php
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -66,7 +67,7 @@ function Login() {
   const activarBloqueoDesabilitarUsuarios = async () => {
     console.log(usuario, email, password);
     try {
-      const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/disableAccount.php', {// http://192.168.7.116/TeleSecundaria763/disableAccount.php
+      const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/disableAccount.php', {//             http://localhost/TeleSecundaria763/disableAccount.php
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -109,7 +110,7 @@ function Login() {
       return;
     }
     try {
-      const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/login.php', {//http://192.168.7.116/TeleSecundaria763/login.php
+      const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/login.php', {//           http://localhost/TeleSecundaria763/login.php
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -121,7 +122,7 @@ function Login() {
         })
       });
       const { success, id_usuario, id_rol, id_estatus, message } = await response.json();
-     
+
       const usuario_logueado = id_usuario; console.log(usuario_logueado);
       const tipo_rol = id_rol; console.log(tipo_rol);
       const estado_usuario = id_estatus; console.log(estado_usuario, 'el estado de usuario');
@@ -129,6 +130,10 @@ function Login() {
       if (success === true) {
         const token = generateToken();
         Cookies.set('token', token, { expires: 7 });
+
+        //se guardara el id del usuario el el localStorage
+        localStorage.setItem('idUsuario', usuario_logueado);
+
         if (estado_usuario === '1') {
           if (tipo_rol === '1') {//verifica que tipo de rol tiene en la bd
             navigate('/HomeDirectivos');

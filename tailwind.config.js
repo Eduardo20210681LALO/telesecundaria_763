@@ -9,4 +9,9 @@ export default {
     extend: {},
   },
   plugins: [require('flowbite/plugin')],
+  variants: {
+    extend: {
+      display: ["focus-group"]
+    }
+  }
 }

@@ -13,14 +13,15 @@ const generateRandomToken = (length) => {
 const ProtectedRoute = () => {
   let token = Cookies.get('token');
 
-  if (!token) {
-     console.log('Generado')
-     token = generateRandomToken(32);
-     const expirationDays = 7;
-     const expirationDate = new Date();
-     expirationDate.setDate(expirationDate.getDate() + expirationDays);
-     Cookies.set('token', token, { expires: expirationDate });
-  }
+  //!No descomentar
+  // if (!token) {
+  //    console.log('Generado')
+  //    token = generateRandomToken(32);
+  //    const expirationDays = 7;
+  //    const expirationDate = new Date();
+  //    expirationDate.setDate(expirationDate.getDate() + expirationDays);
+  //    Cookies.set('token', token, { expires: expirationDate });
+  // }
   return token ? <Outlet /> : <Navigate to="/NotFound" replace />;
 }
 

@@ -1,9 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
+import NavAdministrativos from '../../components/NavAdministrativos'
+import DashboardAdministrativos from '../../components/DashboardAdministrativos'
 
 function HomeAdministrativos() {
   
   return (
-    <div>HomeAdministrativos</div>
+    <div>
+      <NavAdministrativos />
+      <DashboardAdministrativos />
+    </div>
   )
 }
 
