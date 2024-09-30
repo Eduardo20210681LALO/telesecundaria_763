@@ -11,16 +11,18 @@ Currently, two official plugins are available:
 
 [Proyecto_Telesecundaria763_Web_Progresiva]
 
-1.- Planeación del Desarrollo Orientado a la PWA e Integradora
-1.1	 Definición de los Objetivos y alcance del proyecto
-El objetivo principal del proyecto es desarrollar una PWA para la Telesecundaria 763 que optimice la interacción entre el personal administrativo, docentes y directivos, proporcionando acceso a información de alumnos y estadísticas para realizar procesos esenciales.
-Objetivos específicos:
-•	Crear una interfaz intuitiva y accesible desde dispositivos móviles y de escritorio.
-•	Ofrecer acceso en tiempo real a información escolar actualizada.
-•	Desarrollar una solución flexible para futuras funcionalidades sin afectar el rendimiento.
-•	Mejorar la comunicación interna entre los distintos actores educativos.
-•	Optimizar el rendimiento con características como acceso sin conexión y notificaciones push.
-Alcance del proyecto: Incluye el diseño de una interfaz fácil de usar, desarrollo de funcionalidades como gestión de usuarios y visualización de calificaciones, además de pruebas rigurosas para garantizar calidad. El enfoque estará en la escalabilidad y adaptabilidad para futuras necesidades.
+1.1 Definición de los Objetivos y Alcance del Proyecto
+
+El objetivo principal es desarrollar una aplicación móvil que permita a los usuarios acceder a funcionalidades clave como la visualización de calificaciones, estadísticas mediante gráficos, y el uso de una pasarela de pagos. El sistema ofrecerá un periodo de prueba gratuito durante el cual se podrá utilizar la aplicación sin restricciones. Al finalizar este periodo, ciertas acciones, como la carga de calificaciones y la visualización de estadísticas, serán deshabilitadas para algunos usuarios, específicamente los docentes, a menos que realicen un pago. La pasarela de pagos ofrecerá diversas opciones para que los usuarios puedan suscribirse y restaurar el acceso completo a todas las funcionalidades.
+
+Alcance del Proyecto: El desarrollo incluirá las siguientes áreas:
+
+Desarrollo de la interfaz de usuario (UI): Diseño de una experiencia amigable y responsiva para dispositivos móviles.
+Gestión de calificaciones y estadísticas: Implementación de funcionalidades para la consulta de calificaciones y visualización de datos mediante gráficos.
+Integración de la pasarela de pagos: Configuración de diversas opciones de pago y gestión de suscripciones.
+Manejo de un periodo de prueba: Desarrollo de la lógica para el periodo gratuito con restricciones progresivas al finalizar dicho periodo.
+Pruebas y lanzamiento: Realización de pruebas funcionales y de usabilidad, seguido del despliegue de la app en las principales plataformas móviles (iOS y Android).
+
 
 1.2	Identificación del equipo de trabajo y sus roles
 El equipo de trabajo está compuesto por dos programadores, quienes asumen conjuntamente múltiples responsabilidades en el desarrollo del proyecto. Ambos se encargan del diseño, desarrollo y prueba de la PWA, lo que incluye la implementación de la interfaz de usuario, la integración con el Backend y la optimización del rendimiento.
