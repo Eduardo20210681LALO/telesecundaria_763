@@ -11,34 +11,6 @@ Currently, two official plugins are available:
 
 [Proyecto_Telesecundaria763_Web_Progresiva]
 
-1.- Planeación del Desarrollo Orientado a la PWA e Integradora 1.1 Definición de los Objetivos y alcance del proyecto El objetivo principal del proyecto es desarrollar una PWA para la Telesecundaria 763 que optimice la interacción entre el personal administrativo, docentes y directivos, proporcionando acceso a información de alumnos y estadísticas para realizar procesos esenciales. Objetivos específicos: • Crear una interfaz intuitiva y accesible desde dispositivos móviles y de escritorio. • Ofrecer acceso en tiempo real a información escolar actualizada. • Desarrollar una solución flexible para futuras funcionalidades sin afectar el rendimiento. • Mejorar la comunicación interna entre los distintos actores educativos. • Optimizar el rendimiento con características como acceso sin conexión y notificaciones push. Alcance del proyecto: Incluye el diseño de una interfaz fácil de usar, desarrollo de funcionalidades como gestión de usuarios y visualización de calificaciones, además de pruebas rigurosas para garantizar calidad. El enfoque estará en la escalabilidad y adaptabilidad para futuras necesidades.
-
-
-1.2	Identificación del equipo de trabajo y sus roles
-El equipo de trabajo está compuesto por dos programadores, quienes asumen conjuntamente múltiples responsabilidades en el desarrollo del proyecto. Ambos se encargan del diseño, desarrollo y prueba de la PWA, lo que incluye la implementación de la interfaz de usuario, la integración con el Backend y la optimización del rendimiento.
-
-1.3	Establecimiento de los plazos y entregas del proyecto
-Los plazos y entregas del proyecto se gestionan a través de la herramienta TRELLO. Cada sprint tiene una duración definida, y en esta herramienta se establece la fecha exacta de finalización para cada entrega. Esta planificación permite llevar un control detallado y organizado de los procesos, garantizando que las tareas se realicen dentro de los tiempos previstos y se logre un flujo de trabajo eficiente. Además, ClickUp facilita el seguimiento continuo de las tareas asignadas y sus fechas límite, asegurando que se cumplan los objetivos de cada sprint.
-
-
-1.4	Identificación de los riesgos y las medidas para mitigarlos
-1.4.1	Cambios en los requerimientos: Solicitudes de cambios pueden afectar los tiempos.
-Mitigación: Reuniones periódicas con el cliente para ajustar prioridades.
-1.4.2	Problemas de integración entre frontend y backend: Podría haber descoordinación.
-Mitigación: Revisiones de código y pruebas de integración frecuentes.
-1.4.3	Retrasos por fallos técnicos: Errores en infraestructura podrían ocasionar retrasos.
-Mitigación: Pruebas continuas y entorno seguro para detectar problemas temprano.
-1.4.4	Sobrecarga de trabajo: Equipo reducido puede enfrentar exceso de tareas.
-Mitigación: Priorización y sprints manejables para distribuir la carga.
-1.4.5	Dependencia de tecnologías externas: Fallos en herramientas externas pueden afectar el proyecto.
-Mitigación: Uso de tecnologías confiables y alternativas disponibles.
-
-1.5	Estrategia de comunicación entre los miembros del equipo
-La estrategia de comunicación del equipo se gestionará a través de la herramienta TRELLLO, que no solo permitirá la asignación y seguimiento de tareas, sino también la comunicación directa mediante los apartados de observaciones y mensajes integrados. Esto facilitará una comunicación constante entre los miembros del equipo de trabajo, permitiendo resolver dudas y hacer ajustes de manera eficiente. La herramienta asegura que todas las interacciones queden registradas, lo que contribuye a una mejor organización y alineación en cada fase del proyecto.
-
-
-
-
 2.- Metodología de Desarrollo
 2.1 Selección de Metodología de Desarrollo Ágil (Scrum)
 Scrum fue seleccionada para el desarrollo de una PWA para la Telesecundaria 763, por su enfoque ágil y adaptabilidad a las necesidades educativas. Esta metodología organiza el trabajo en sprints cortos que permiten la entrega continua de incrementos funcionales. Cada sprint incluye planificación, ejecución, revisión y retrospectiva, garantizando un proceso iterativo y adaptable.
