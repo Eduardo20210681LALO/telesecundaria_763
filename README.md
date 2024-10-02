@@ -30,7 +30,7 @@ Esta planificación iterativa permite la flexibilidad para adaptarse a cambios y
 
 3.- Issue Tracking y Asignación de Issues
 3.1 Selección de Herramienta para la Gestión (TRELLO)
-Para la gestión eficiente del proyecto, se ha seleccionado TRELLO como la herramienta principal. Esta plataforma ofrece una amplia gama de funcionalidades que permiten organizar y controlar las tareas, establecer plazos, asignar responsabilidades y facilitar la comunicación entre los miembros del equipo. La elección de ClickUp se basa en su capacidad para gestionar proyectos ágiles como en este caso lo presenta, proporcionando una visión clara del progreso mediante sprints, así como la posibilidad de registrar observaciones y mensajes directamente dentro de cada tarea, lo que optimiza la colaboración y el seguimiento del trabajo en tiempo real.
+Para la gestión eficiente del proyecto, se ha seleccionado TRELLO como la herramienta principal. Esta plataforma ofrece una amplia gama de funcionalidades que permiten organizar y controlar las tareas, establecer plazos, asignar responsabilidades y facilitar la comunicación entre los miembros del equipo. La elección de TRELLO se basa en su capacidad para gestionar proyectos ágiles como en este caso lo presenta, proporcionando una visión clara del progreso mediante sprints, así como la posibilidad de registrar observaciones y mensajes directamente dentro de cada tarea, lo que optimiza la colaboración y el seguimiento del trabajo en tiempo real.
 Justificación: TRELLO permite una planificación estructurada, con calendarios y fechas de entrega bien definidas, asegurando que se cumplan los objetivos establecidos en cada fase del proyecto.
 
 4.- Selección de Herramienta de Control de Versiones
