@@ -42,6 +42,9 @@ import DashboardAdministrativos from "../components/DashboardAdministrativos";
 import NavDocentes from "../components/NavDocentes";
 import NavAdministrativos from "../components/NavAdministrativos";
 import Sidebar2 from "../components/Sidebar2";
+import EnviarCorreoChay from "../views/RecuperacionContraseñas/EnviarCorreoChay";
+import Carrito from "../views/Carrito";
+import Perfil1 from "../views/Inicio/Admin/Perfil1";
 
 export const router = createBrowserRouter ([
   {
@@ -59,8 +62,16 @@ export const router = createBrowserRouter ([
       element: <Home/>,
     },
     {
+      path: "/NotFound",
+      element: <NotFound/>,
+    },
+    {
       path: "/Login",
       element: <Login/>,
+    },
+    {
+      path: "/Carrito",
+      element: <Carrito/>,
     },
     {
       path: "/TerminosCondiciones",
@@ -85,6 +96,10 @@ export const router = createBrowserRouter ([
     {
       path:'/EnviarCorreo',
       element: <EnviarCorreo/>
+    },
+    {
+      path:'/EnviarCorreoChay',
+      element: <EnviarCorreoChay/>
     },
     {
       path:'/EnviarMensaje',
@@ -137,6 +152,10 @@ export const router = createBrowserRouter ([
         {
           path:'/Perfil',
           element: <Perfil/>
+        },
+        {
+          path:'/Perfil1',
+          element: <Perfil1/>
         },
         {
           path:'/PerfilDocente',

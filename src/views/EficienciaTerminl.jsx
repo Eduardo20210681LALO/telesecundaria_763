@@ -8,7 +8,6 @@ function EficienciaTerminl() {
     const [prediccionAlumnosIngresos, setPrediccionAlumnosIngresos] = useState(null);
     const [prediccionAlumnosBajas, setPrediccionAlumnosBajas] = useState(null);
     const [eficienciaTerminal, setEficienciaTerminal] = useState(null);
-
     const [ingresosData, setIngresosData] = useState([]); 
 
     const PredicionAlumnosAInscribirse = (e, formData, setPrediccionAlumnos) => {
@@ -34,8 +33,6 @@ function EficienciaTerminl() {
             [name]: value
         }));
     };
-
-  
 
     const calcularEficienciaTerminal = () => {
         if (formDataIngresos.alumnosCI !== 0) {

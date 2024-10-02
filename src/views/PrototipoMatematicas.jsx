@@ -1,180 +1,172 @@
-import React, { useState } from 'react';
-import Nav from '../components/Nav'
-import { message } from 'antd'
+import React, { useState, useEffect, useRef} from 'react'
+import { CustomSelect2 } from '../components/Input';
+import { createChart } from 'lightweight-charts';
+import Nav from '../components/Nav';
 
 function PrototipoMatematicas() {
-    const [datos, setDatos] = useState({
-        C1: '',
-        tiempoC1: '',
-        K: '',
-        tiempoK: '',
-        P1: '',
-        tiempoP1: '',
-        tiempoP2: ''
+    const [selectAño1, setSelectAño1] = useState()
+    const [selectAño2, setSelectAño2] = useState()
+    const [selectAño3, setSelectAño3] = useState()
+    const [prediccion, setPrediccion] = useState()
+    
+    const PredictorInscripciones = (opcion1, opcion2, opcion3) => {
+      console.log(opcion1.value, opcion1.cant)
+      console.log(opcion2.value, opcion2.cant)
+      console.log(opcion3.value)
+      console.log('Hola')
+      let c, k, p
+      c = Math.exp(opcion1.value) * opcion1.cant
+      k = Math.log(opcion2.value / ((c < 0 || c>0) ? c : 1)) / opcion2.cant
+      p = ((c != 0) ? c : 1) * Math.exp(k * opcion3.value)
+      const sinDecimal = Math.trunc(p)
+      setPrediccion(sinDecimal)
+    }
+    
+    const handleOptionAño1 = (option) => {
+      console.log(option)
+      setSelectAño1(option)
+    }
+    
+    const handleOptionAño2 = (option) => {
+      setSelectAño2(option)
+    }
+    
+    const handleOptionAño3 = (option) => {
+      setSelectAño3(option)
+    }
+    
+    const inscripcionesData = [
+      { id: 0, año: 2015, alumnos: 80 },
+      { id: 1, año: 2016, alumnos: 90 },
+      { id: 2, año: 2017, alumnos: 100 },
+      { id: 3, año: 2018, alumnos: 110 },
+      { id: 4, año: 2019, alumnos: 120 },
+      { id: 5, año: 2020, alumnos: 130 },
+      { id: 6, año: 2021, alumnos: 140 },
+      { id: 7, año: 2022, alumnos: 150 },
+      { id: 8, año: 2023, alumnos: 160 },
+    ] 
+    
+    const egresosData = [
+      { año_ingreso: 2015, alumnos_ingresados: 80, año_egreso: 2018, alumnos_egresados: 60 },
+      { año_ingreso: 2016, alumnos_ingresados: 90, año_egreso: 2019, alumnos_egresados: 70 },
+      { año_ingreso: 2017, alumnos_ingresados: 100, año_egreso: 2020, alumnos_egresados: 80 },
+      { año_ingreso: 2018, alumnos_ingresados: 110, año_egreso: 2021, alumnos_egresados: 90 },
+      { año_ingreso: 2019, alumnos_ingresados: 120, año_egreso: 2022, alumnos_egresados: 100 },
+      { año_ingreso: 2020, alumnos_ingresados: 130, año_egreso: 2023, alumnos_egresados: 110 },
+      { año_ingreso: 2021, alumnos_ingresados: 140, año_egreso: 2024, alumnos_egresados: 120 },
+    ]
+    
+    const AñosFuturos = [
+      {id: 9, año: 2024},
+      {id: 10, año: 2025},
+      {id: 11, año: 2026},
+      {id: 12, año: 2027},
+      {id: 13, año: 2028},
+      {id: 14, año: 2029},
+      {id: 15, año: 2030}
+    ]
+    
+    const dataForChart = inscripcionesData.map((item) => ({
+      time: item.año,
+      value: parseInt(item.alumnos),
+    }));
+    
+    if (selectAño3 && prediccion) {
+      dataForChart.push({
+        time: parseInt(selectAño3.label),
+        value: parseInt(prediccion),
       });
+    }
     
-      const [resultadoPoblacion, setResultadoPoblacion] = useState(null);
-      const [resultadoEficiencia, setResultadoEficiencia] = useState(null);
-    
-      const handleInputChange = (event) => {
-        const { name, value } = event.target;
-        setDatos({ ...datos, [name]: value });
-      };
-    
-      const handlePoblacionSubmit = (event) => {
-        event.preventDefault();
-    
-        const { C1, tiempoC1, K, tiempoK, P1, tiempoP1, tiempoP2 } = datos;
-    
-        const C1Value = parseFloat(C1);
-        const tiempoC1Value = parseFloat(tiempoC1);
-        const KValue = parseFloat(K);
-        const tiempoKValue = parseFloat(tiempoK);
-        const P1Value = parseFloat(P1);
-        const tiempoP1Value = parseFloat(tiempoP1);
-        const tiempoP2Value = parseFloat(tiempoP2);
-    
-        if (!isNaN(C1Value) && !isNaN(tiempoC1Value) && !isNaN(KValue) && !isNaN(tiempoKValue) && !isNaN(P1Value) && !isNaN(tiempoP1Value) && !isNaN(tiempoP2Value)) {
-            const k = Math.log(KValue / C1Value) / tiempoKValue;
-            const P2 = C1Value * Math.exp(k * tiempoP2Value);
-            setResultadoPoblacion({ poblacion: P2, tiempo: tiempoP2Value });
-        } else {
-          alert('Por favor, ingrese números válidos en los campos.');
-        }
-      };
-    
-      const handleEficienciaTerminalSubmit = (event) => {
-        event.preventDefault();
-    
-        const { C1, K } = datos;
-    
-        const C1Value = parseFloat(C1);
-        const KValue = parseFloat(K);
-    
-        if (!isNaN(C1Value) && !isNaN(KValue)) {
-          const eficiencia = (KValue / C1Value) * 100;
-          setResultadoEficiencia({ eficienciaTerminal: eficiencia });
-        } else {
-          alert('Por favor, ingrese números válidos en los campos.');
-        }
-      };
+    const chartContainerRef = useRef();
+    useEffect(() => {
+      const chart = createChart(chartContainerRef.current, { width: 800, height: 400 });
+      const lineSeries = chart.addLineSeries();
+      lineSeries.setData(dataForChart);
+      return () => chart.remove();
+    }, [dataForChart]);
+
 
     return (
-        <div>
-            <Nav/>
-            <div>
-                <div className="w-full h-screen flex justify-center items-center" style={{ marginTop: '3%' }}>
-                    <div className="w-1/2 p-4">
-                        <div className="login-card p-4" style={{ width: '100%', maxWidth: '100%', borderRadius: '10px', boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)', backgroundColor: '#fff', marginBottom: '20px' }}>
-                            <form className="container" onSubmit={handlePoblacionSubmit}>
-                                <h2 className="text-3xl font-bold text-center my-4">Prototipo Matematicas para Ingenieria II</h2>
-                                <h4 className="text-1xl font-bold text-center my-4">Eficiencia terminal</h4>
+        
+<div>
+    <Nav/>
 
-                                <div className="row">
-                                    <div className="col-md-6 mb-3">
-                                        <label htmlFor="alumnosCI" className="form-label"><b>Alumnos nuevos(CI)</b></label>
-                                        <input type="number" className="form-control rounded-md" name="C1" placeholder="Ingrese la población de nuevos alumnos (C1)" value={datos.C1} onChange={handleInputChange} />
-                                    </div>
-                                    <div className="col-md-6 mb-3">
-                                        <label htmlFor="TiempoUNO" className="form-label"><b>Tiempo en años (CI)</b></label>
-                                        <input type="number" className="form-control rounded-md" name="tiempoC1" placeholder="Ingrese el tiempo correspondiente a C1" value={datos.tiempoC1} onChange={handleInputChange} />
-                                    </div>
-                                </div>
-                                <div className="row">
-                                    <div className="col-md-6 mb-3">
-                                        <label htmlFor="alumnosK" className="form-label"><b>Alumnos que lograron terminar (K)</b></label>
-                                        <input type="number" className="form-control rounded-md" name="K" placeholder="Ingrese la población de alumnos que lograron terminar (K)" value={datos.K} onChange={handleInputChange} />
-                                    </div>
-                                    <div className="col-md-6 mb-3">
-                                        <label htmlFor="TiempoDOS" className="form-label"><b>Tiempo en años transcurridos (K)</b></label>
-                                        <input type="number" className="form-control rounded-md" name="tiempoK" placeholder="Ingrese el tiempo correspondiente a K" value={datos.tiempoK} onChange={handleInputChange} />
-                                    </div>
-                                </div>
-                                <div className="row">
-                                    <div className="col-md-6 mb-3">
-                                        <label htmlFor="alumnosK" className="form-label"><b>Alumnos de nuevo ingreso (P1)</b></label>
-                                        <input type="number" className="form-control rounded-md" name="P1" placeholder="Ingrese la población de alumnos que lograron terminar y son nuevos (P1)" value={datos.P1} onChange={handleInputChange} />
-                                    </div>
-                                    <div className="col-md-6 mb-3">
-                                        <label htmlFor="TiempoDOS" className="form-label"><b>Tiempo en años (P1)</b></label>
-                                        <input type="number" className="form-control rounded-md" name="tiempoP1" placeholder="Ingrese el tiempo correspondiente a P1" value={datos.tiempoP1} onChange={handleInputChange} />
-                                    </div>
-                                </div>
+        {/* Formulario para Selects e Inputs */}
+        <div className="flex justify-center items-center h-screen">
+            <div className="w-full sm:w-3/4 md:w-2/3 lg:w-1/2 xl:w-1/3 p-4">
+                <div className="login-card p-4 rounded-lg shadow-lg bg-white">
+                    <h2 className="text-3xl font-bold text-center my-4">Prototipo Matemáticas para Ingeniería II</h2>
+                    <h4 className="text-xl font-bold text-center my-4">Eficiencia terminal</h4>
 
-                                <div className="row">
-                                    <div className="col-md-6 mb-3">
-                                        <label htmlFor="TiempoP1" className="form-label"><b>Eficiencia terminal (?)</b></label>
-                                        <button type="submit" className="btn btn-lg btn-primary btn-block"
-                                            style={{ backgroundColor: 'var(--first-color)', borderColor: 'transparent', color: '#fff', padding: '8px 85px', borderRadius: '10px', fontSize: '16px', fontWeight: 'bold' }}
-                                            onMouseOver={(event) => { event.target.style.backgroundColor = 'black'; }}
-                                            onMouseOut={(event) => { event.target.style.backgroundColor = 'var(--first-color)'; }}
-                                        >
-                                            Calcular Tendencia
-                                        </button>
-                                    </div>
-                                    <div className="col-md-6 mb-3">
-                                        <label htmlFor="TiempoP1" className="form-label"><b>Tiempo en años (P2)</b></label>
-                                        <input type="number" className="form-control rounded-md" name="tiempoP2" placeholder="Ingrese el tiempo correspondiente a P2" value={datos.tiempoP2} onChange={handleInputChange} />
-                                    </div>
-                                </div>
-
-                            </form>
-                            {resultadoPoblacion !== null && (
-                                <div className="result">
-                                    <p>La tendencia estimada de posibles alumnos que podrían terminar es: {resultadoPoblacion.poblacion.toFixed(2)}</p>
-                                </div>
-                            )}
+                    <form>
+                        <div className="mb-4">
+                            <CustomSelect2
+                                options={inscripcionesData.map((item) => ({
+                                    value: item.id,
+                                    label: item.año.toString(),
+                                    cant: item.alumnos.toString()
+                                }))}
+                                placeholder="Año"
+                                onChange={handleOptionAño1}
+                                value={selectAño1}
+                            />
+                            <h3>Alumnos inscritos: {selectAño1?.cant}</h3>
                         </div>
-                    </div>
+                        <div className="mb-4">
+                            <CustomSelect2
+                                options={inscripcionesData.map((item) => ({
+                                    value: item.id,
+                                    label: item.año.toString(),
+                                    cant: item.alumnos.toString()
+                                }))}
+                                placeholder="Año"
+                                onChange={handleOptionAño2}
+                                value={selectAño2}
+                            />
+                            <h3>Alumnos inscritos: {selectAño2?.cant}</h3>
+                        </div>
+                        <div className="mb-4">
+                            <CustomSelect2
+                                options={AñosFuturos.map((item) => ({
+                                    value: item.id,
+                                    label: item.año.toString(),
+                                }))}
+                                placeholder="Año"
+                                onChange={handleOptionAño3}
+                                value={selectAño3}
+                            />
+                            <h3>Alumnos que se inscribirán en el año {selectAño3?.label}</h3>
+                        </div>
+                        <p>{prediccion}</p>
+                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => PredictorInscripciones(selectAño1, selectAño2, selectAño3)}>Predecir</button>
+                    </form>
                 </div>
             </div>
-
-
-            <div>
-                <div className="w-full h-screen flex justify-center items-center" style={{ marginTop: '-10%' }}>
-                        <div className="w-1/2 p-4">
-                            <div className="login-card p-4" style={{ width: '100%', maxWidth: '100%', borderRadius: '10px', boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)', backgroundColor: '#fff', marginBottom: '20px' }}>
-                                <form class="container" onSubmit={handleEficienciaTerminalSubmit}>
-                                    <h2 className="text-3xl font-bold text-center my-4">Calculadora de Eficiencia Terminal</h2>
-                                    <h4 className="text-1xl font-bold text-center my-4">Eficiencia terminal</h4>
-                                    
-                        
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label for="alumnosK" class="form-label"><b>Total de alumnos que ingresaron</b></label>
-                                            <input type="text" class="form-control rounded-md"name="C1" placeholder="Ingrese el total de alumnos que ingresaron" onChange={handleInputChange} />
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label for="TiempoDOS" class="form-label"><b>Total de alumnos que lograron terminar</b></label>
-                                            <input type="text" class="form-control rounded-md" name="K" placeholder="Ingrese el total de alumnos que lograron terminar" onChange={handleInputChange} />
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                        <label for="TiempoP1" class="form-label"><b>Eficiencia terminal (?)</b></label>
-                                            <button type="submit" className="btn btn-lg btn-primary btn-block"
-                                                style={{ backgroundColor: 'var(--first-color)', borderColor: 'transparent', color: '#fff', padding: '8px 85px', borderRadius: '10px', fontSize: '16px', fontWeight: 'bold' }}
-                                                onMouseOver={(event) => { event.target.style.backgroundColor = 'black'; }}
-                                                onMouseOut={(event) => { event.target.style.backgroundColor = 'var(--first-color)'; }}
-                                                >
-                                                Calcular Eficiencia Terminal
-                                            </button>
-                                        </div>
-                                    </div>
-                                    
-                                </form>
-                                {resultadoEficiencia !== null && (
-                                    <div className="result">
-                                        <p>La eficiencia terminal calculada es: {resultadoEficiencia.eficienciaTerminal.toFixed(2)}%</p>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-            </div>
-
         </div>
+
+        {/* Tabla de la Gráfica */}
+        <div className="flex justify-center items-center">
+            <div className="w-full sm:w-3/4 md:w-2/3 lg:w-1/2 xl:w-1/3 p-4">
+                <div className="login-card p-4 rounded-lg shadow-lg bg-white">
+                    <h2 className="text-lg font-bold mb-4">Gráfica</h2>
+                    {/* Aquí puedes colocar la tabla para la gráfica */}
+                </div>
+            </div>
+        </div>
+
+        {/* Tabla de Otro Conjunto de Datos */}
+        <div className="flex justify-center items-center">
+            <div className="w-full sm:w-3/4 md:w-2/3 lg:w-1/2 xl:w-1/3 p-4">
+                <div className="login-card p-4 rounded-lg shadow-lg bg-white">
+                    <h2 className="text-lg font-bold mb-4">Otro Conjunto de Datos</h2>
+                    {/* Aquí puedes colocar la tabla para el otro conjunto de datos */}
+                </div>
+            </div>
+        </div>
+    </div>
+
     )
 }
 

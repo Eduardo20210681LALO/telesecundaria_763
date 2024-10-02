@@ -9,7 +9,6 @@ import BreadCrumb from './BreadCrumbView';
 import { message } from 'antd';
 //import { toast } from 'react-hot-toast';
 
-
 function Login() {
   const navigate = useNavigate();
   const [usuario, setUsuario] = useState('');
@@ -39,7 +38,7 @@ function Login() {
 
   const habilitarCuentaEnBaseDeDatos = async () => {
     try {
-      const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/ActivarEstadoUsuario.php', {//              http://localhost/TeleSecundaria763/ActivarEstadoUsuario.php
+      const response = await fetch('http://localhost/TeleSecundaria763/ActivarEstadoUsuario.php', {//        https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/ActivarEstadoUsuario.php
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -59,15 +58,15 @@ function Login() {
         console.log('Error al habilitar la cuenta');
       }
     } catch (error) {
-      console.error('Error al habilitar la cuenta:', error);
+      
       navigate('/NotServe');
     }
   };
 
-  const activarBloqueoDesabilitarUsuarios = async () => {
+  const bloquerUsuario = async () => {
     console.log(usuario, email, password);
     try {
-      const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/disableAccount.php', {//             http://localhost/TeleSecundaria763/disableAccount.php
+      const response = await fetch('http://localhost/TeleSecundaria763/bloquearUsuario.php', {//      https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/disableAccount.php
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -100,17 +99,17 @@ function Login() {
 
   useEffect(() => {
     if (isLoginBlocked === true) {
-      activarBloqueoDesabilitarUsuarios();
+      bloquerUsuario();
     }
   }, [isLoginBlocked]);
-
   const handleLogin = async (e) => {
     e.preventDefault();
     if (isLoginBlocked) {
       return;
     }
     try {
-      const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/login.php', {//           http://localhost/TeleSecundaria763/login.php
+      console.log(email, password, usuario);
+      const response = await fetch('http://localhost/TeleSecundaria763/login.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -121,48 +120,59 @@ function Login() {
           usuario
         })
       });
-      const { success, id_usuario, id_rol, id_estatus, message } = await response.json();
-
-      const usuario_logueado = id_usuario; console.log(usuario_logueado);
-      const tipo_rol = id_rol; console.log(tipo_rol);
-      const estado_usuario = id_estatus; console.log(estado_usuario, 'el estado de usuario');
-
-      if (success === true) {
-        const token = generateToken();
-        Cookies.set('token', token, { expires: 7 });
-
-        //se guardara el id del usuario el el localStorage
-        localStorage.setItem('idUsuario', usuario_logueado);
-
-        if (estado_usuario === '1') {
-          if (tipo_rol === '1') {//verifica que tipo de rol tiene en la bd
-            navigate('/HomeDirectivos');
-          } else if (tipo_rol === '2') {
-            navigate('/HomeAdministrativos');
-          } else if (tipo_rol === '3') {
-            navigate('/HomeDocentes');
-          } else if (tipo_rol === '4') {
-            setDatosIncorrectos2('Tu cuenta aun no tiene ningun rol, por favor espere a que el administrador le asigne uno.'); setTimeout(() => setDatosIncorrectos2(null), 3000);
+      if (response.ok) {
+        const { success, id_usuario, id_rol, id_estatus, messages } = await response.json();
+  
+        console.log(id_usuario);
+        console.log(id_rol);
+        console.log(id_estatus);
+        console.log(messages);
+  
+        if (success === true) {
+          const token = generateToken();
+          Cookies.set('token', token, { expires: 7 });
+          localStorage.setItem('idUsuario', id_usuario);
+  
+          if (id_estatus === '1') {
+            switch (id_rol) {
+              case '1':
+                navigate('/HomeDirectivos');
+                break;
+              case '2':
+                navigate('/HomeAdministrativos');
+                break;
+              case '3':
+                navigate('/HomeDocentes');
+                break;
+              default:
+                setDatosIncorrectos2('Tu cuenta aún no tiene ningún rol, por favor espere a que el administrador le asigne uno.');
+                setTimeout(() => setDatosIncorrectos2(null), 3000);
+                break;
+            }
           } else {
-            navigate('/NotFound');
+            console.log('Tu cuenta está bloqueada, por favor comunícate con el administrador');
           }
         } else {
-          console.log('Tu cuenta esta bloqueada, por favor comunicate con el administrador')
+          console.log(messages);
+          message.warning('Datos Incorrectos');
+          setDatosIncorrectos('Datos Incorrectos');
+          setTimeout(() => setDatosIncorrectos(null), 3000);
+          setContadorIntentos(contadorIntentos + 1);
+          if (contadorIntentos >= 5) {
+            console.log("Se activó el bloqueo del botón");
+            setIsLoginBlocked(true);
+          }
         }
       } else {
-        console.log(message)
-        setDatosIncorrectos('Datos Incorrectos'); setTimeout(() => setDatosIncorrectos(null), 3000);
-        setContadorIntentos(contadorIntentos + 1);
-        if (contadorIntentos >= 5) {
-          console.log("Se activó el bloqueo del boton");
-          setIsLoginBlocked(true);
-        }
+        console.log('Error en la respuesta del servidor:', response.status);
+        // Muestra un mensaje de error al usuario o maneja la situación de otra manera
       }
     } catch (error) {
-      console.log('error en el catch.');
+      console.error(error);
+      console.log('Error en el catch.');
       navigate('/NotServe');
     }
-  };
+  };  
 
   const generateToken = () => {
     return Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2);//se

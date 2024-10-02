@@ -12,7 +12,7 @@ function Prototipo() {
     useEffect(() => {
         const fetchPeriodos = async () => {
             try {
-                const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/traerPeriodos.php');  //                      http://localhost/TeleSecundaria763/traerPeriodos.php
+                const response = await fetch('http://localhost/TeleSecundaria763/traerPeriodos.php');  //https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/login.php
                 if (!response.ok) {
                     throw new Error('Error al obtener los periodos');
                 }

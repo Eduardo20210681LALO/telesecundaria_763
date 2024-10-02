@@ -12,7 +12,6 @@ import logotelesecundaria763 from '../images/logotelesecundaria763.png';
 import ReCAPTCHA from 'react-google-recaptcha';
 import Nav2 from '../components/Nav2';
 
-/*
 const Captcha = ({ onCaptchaVerify }) => {
     const handleCaptchaChange = () => {
         onCaptchaVerify(true)
@@ -27,9 +26,9 @@ const Captcha = ({ onCaptchaVerify }) => {
             </div>
         </div>
     );
-};*/
+};
 
-
+/* en este codidog lleva el captcha del servidor y el que se esta utilizando es de local,  ATENTION cambiar cuando se haga push
 const Captcha = ({ onCaptchaVerify }) => {
     const handleCaptchaChange = () => {
         onCaptchaVerify(true)
@@ -46,7 +45,7 @@ const Captcha = ({ onCaptchaVerify }) => {
     );
 };
 
-
+*/
 
 function Registro() {
     const navigate = useNavigate();
@@ -112,7 +111,7 @@ function Registro() {
             return;
         }
         try {
-            const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/registro.php', {//          http://localhost/TeleSecundaria763/registro.php
+            const response = await fetch('http://localhost/TeleSecundaria763/registro.php ', {//   https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/registro.php
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -146,7 +145,7 @@ function Registro() {
             telefono: telefono
         };
         try {
-            const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/telefonoExistente.php', {//            http://localhost/TeleSecundaria763/telefonoExistente.php
+            const response = await fetch('http://localhost/TeleSecundaria763/telefonoExistente.php', {//    https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/telefonoExistente.php
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -175,7 +174,7 @@ function Registro() {
             email: email
         };
         try {
-            const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/correoExistente.php', {//                      http://localhost/TeleSecundaria763/correoExistente.php
+            const response = await fetch('http://localhost/TeleSecundaria763/correoExistente.php', {//   https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/correoExistente.php
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
