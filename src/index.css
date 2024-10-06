@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Escala del 79% solo en dispositivos móviles */
+@media (max-width: 639px) { /* Tailwind's sm breakpoint is 640px */
+    .transform-w {
+      zoom: 0.7; /* Escala al 80% del tamaño original */
+    }
+  
+  }

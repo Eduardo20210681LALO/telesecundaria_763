@@ -1,0 +1,153 @@
+/* Estilos generales */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f8f8;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .form {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 400px;
+  }
+  
+  .titulo {
+    margin-top: 0;
+  }
+  
+  .cajas {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+  }
+  
+  .combo_box {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+  }
+  
+  .btn {
+    background-color: #4caf50;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .tengo-cuenta {
+    color: #333;
+    text-decoration: none;
+    display: block;
+    margin-top: 10px;
+  }
+  
+  /* Estilos de validación */
+  #validarNombre,
+  #validarApellidoPa,
+  #validarApellidoma,
+  #validarusuario,
+  #validado,
+  #mensajeTel2,
+  #mensajeTel,
+  #validarContra2,
+  #validarContra,
+  #contraMensaje {
+    font-size: 20px;
+    margin-left: 5px;
+  }
+  
+  #validarNombre::before,
+  #validarApellidoPa::before,
+  #validarApellidoma::before,
+  #validarusuario::before,
+  #validado::before,
+  #mensajeTel2::before,
+  #mensajeTel::before,
+  #validarContra2::before,
+  #validarContra::before,
+  #contraMensaje::before {
+    content: '';
+  }
+  
+  #validarNombre::before,
+  #validarApellidoPa::before,
+  #validarApellidoma::before,
+  #validarusuario::before,
+  #validado::before,
+  #mensajeTel2::before,
+  #mensajeTel::before,
+  #validarContra2::before,
+  #validarContra::before,
+  #contraMensaje::before {
+    margin-right: 5px;
+  }
+  
+  #validarNombre {
+    color: green;
+  }
+  
+  #validarApellidoPa {
+    color: green;
+  }
+  
+  #validarApellidoma {
+    color: green;
+  }
+  
+  #validarusuario {
+    color: green;
+  }
+  
+  #validado {
+    color: green;
+  }
+  
+  #mensajeTel2 {
+    color: green;
+  }
+  
+  #mensajeTel {
+    color: red;
+  }
+  
+  #validarContra2 {
+    color: green;
+  }
+  
+  #validarContra {
+    color: red;
+  }
+  
+  #contraMensaje {
+    color: red;
+  }
+  
+  /* Estilos de mensajes de éxito o error */
+  div {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: bold;
+  }
+  
+  div.success {
+    background-color: #4caf50;
+    color: #fff;
+  }
+  
+  div.error {
+    background-color: #f44336;
+    color: #fff;
+  }
+  

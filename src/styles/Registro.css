@@ -1,0 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Roboto:wght@400;700&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: rgb(255, 255, 255);
+    font-family: 'Montserrat', sans-serif;
+    font-family: 'Roboto', sans-serif;
+}
+
+.styledForm {
+    /* Estilos para el formulario principal */
+    /* Agregar estilos según sea necesario */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;  /* Se aumenta el ancho a 800px */
+    margin: auto;
+    padding: 40px;  /* Se aumenta el padding a 40px */
+    border: 2px solid #808080;  /* Se cambia el borde a gris */
+}
