@@ -25,6 +25,7 @@ function DashboardAdministrativos() {
                 <Sidebar aria-label="Sidebar with multi-level dropdown example"  className={`bg-white shadow-lg ${isSidebarOpen ? 'mr-2 mt-24' : 'hidden'} fixed inset-y-0 left-0 z-10 flex-shrink-0 w-64 text-white sidebar`}>
                     <Sidebar.Items>
                         <Sidebar.ItemGroup>
+<<<<<<< HEAD
 
                             <Sidebar.Item href="#" icon={HiHome}>
                                 INICIO
@@ -57,6 +58,37 @@ function DashboardAdministrativos() {
                                 <Sidebar.Item href="#">
                                     <Link to="/InsertarAlumnos">Ingresar Alumnos</Link>
                                 </Sidebar.Item>
+=======
+                            <Sidebar.Item href="#" icon={HiHome}>
+                                Administrativo
+                            </Sidebar.Item>
+
+                            <Sidebar.Collapse icon={HiAdjustments} label="Sistema">
+                                <Sidebar.Item href="#">
+                                        <Link to="/Periodos">Crear Periodo</Link>
+                                    </Sidebar.Item>
+                                    <Sidebar.Item href="#">
+                                        <Link to="/CrearGradoYgrupo">Crear Grado Y Grupo</Link>
+                                    </Sidebar.Item>
+                                  
+                                    <Sidebar.Item href="#">
+                                        <Link to="/">Materias</Link>
+                                    </Sidebar.Item>
+
+                                    <Sidebar.Item href="#">
+                                        <Link to="/">Alumnos X Grado X Grupo</Link>
+                                    </Sidebar.Item>
+
+                            </Sidebar.Collapse>
+
+                            <Sidebar.Collapse icon={HiUser} label="Alumnos">
+                                <Sidebar.Item href="#">
+                                    <Link to="/InsertarAlumnos">Insertar Alumnos</Link>
+                                </Sidebar.Item>
+
+                                <Sidebar.Item href="#">Listar Alumnos</Sidebar.Item>
+                                <Sidebar.Item href="#">Consultar Alumnos</Sidebar.Item>
+>>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668
                             </Sidebar.Collapse>
 
                             <Sidebar.Collapse icon={HiUser} label="Docentes">
@@ -64,6 +96,7 @@ function DashboardAdministrativos() {
                                     <Link to="/">Crear Docentes</Link>
                                 </Sidebar.Item>
                                 <Sidebar.Item href="#">
+<<<<<<< HEAD
                                     <Link to="/">Docentes</Link>
                                 </Sidebar.Item>
                             </Sidebar.Collapse>
@@ -83,12 +116,24 @@ function DashboardAdministrativos() {
                                 <Sidebar.Item href="#">
                                     <Link to="/">Estadisticas Individual</Link>
                                 </Sidebar.Item>
+=======
+                                    <Link to="/">Administrar Docentes</Link>
+                                </Sidebar.Item>
+                            </Sidebar.Collapse>
+
+                            <Sidebar.Collapse  icon={HiChartBar} label="Estadisticas">
+                                <Sidebar.Item href="#">Mejores Promedios</Sidebar.Item>
+>>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668
                             </Sidebar.Collapse>
 
                         
 
                             <Sidebar.Item href="#" icon={HiArrowRight}>
+<<<<<<< HEAD
                                 <button onClick={handleOptionClick}>CERRAR SESIÓN</button>
+=======
+                                <button onClick={handleOptionClick}>Cerrar Sesión</button>
+>>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668
                             </Sidebar.Item>
 
                         </Sidebar.ItemGroup>
