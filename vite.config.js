@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -41,3 +42,12 @@ const manifestForPlugin = {
 export default defineConfig({
   plugins: [react(), VitePWA(manifestForPlugin)],
 });
+=======
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react-swc'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react()],
+})
+>>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668

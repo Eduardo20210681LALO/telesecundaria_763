@@ -61,7 +61,17 @@
 /*=== Responsive =========================================================================*/
 @media screen and (max-width: 768px) {
     .nav__menu {
+<<<<<<< HEAD
         display: none; /* Ocultar el menú por defecto en pantallas pequeñas */
+=======
+        position: fixed;
+        top: var(--header-height);
+        right: -100%; /* Ocultar el menú por defecto en pantallas pequeñas */
+        width: 100%;
+        height: calc(100vh - var(--header-height));
+        background-color: #000; /* Color de fondo del menú de hamburguesa */
+        transition: 0.3s ease; /* Agregar transición suave */
+>>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668
     }
 
     .nav__toggle {
@@ -83,11 +93,15 @@
     }
 
     .nav__link {
+<<<<<<< HEAD
         color: #000; /* Texto en negro */
     }
 
     .ant-drawer-body {
         background-color: #fff !important; /* Fondo blanco para el Drawer */
         color: #000 !important; /* Texto negro para el Drawer */
+=======
+        color: #fff;
+>>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668
     }
 }
