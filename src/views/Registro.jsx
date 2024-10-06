@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
-=======
-import React, {useState, useEffect} from 'react'
->>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Link, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
@@ -18,21 +14,13 @@ import Nav2 from '../components/Nav2';
 
 const Captcha = ({ onCaptchaVerify }) => {
     const handleCaptchaChange = () => {
-<<<<<<< HEAD
         onCaptchaVerify(true);
-=======
-        onCaptchaVerify(true)
->>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668
     };
     return (
         <div className="d-flex justify-content-center align-items-center vh-10">
             <div className="max-w-md p-6 bg-white rounded-md shadow-md">
                 <h6 className="text-1xl font-bold mb-4 text-black">¡Completa el Captcha como verificación!</h6>
-<<<<<<< HEAD
                 <ReCAPTCHA className="mb-4" sitekey={'6LdmDKopAAAAAHiieNBo_tct8v77tLcXaNnCwDy7'}
-=======
-                <ReCAPTCHA className="mb-4" sitekey={'6LdmDKopAAAAAHiieNBo_tct8v77tLcXaNnCwDy7'}//cuando ya se suba cambiar por la clave que esta aqui abajo, este es del sitio web
->>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668
                     onChange={handleCaptchaChange}
                 />
             </div>
@@ -40,28 +28,6 @@ const Captcha = ({ onCaptchaVerify }) => {
     );
 };
 
-<<<<<<< HEAD
-=======
-/* en este codidog lleva el captcha del servidor y el que se esta utilizando es de local,  ATENTION cambiar cuando se haga push
-const Captcha = ({ onCaptchaVerify }) => {
-    const handleCaptchaChange = () => {
-        onCaptchaVerify(true)
-    };
-    return (
-        <div className="d-flex justify-content-center align-items-center vh-10">
-            <div className="max-w-md p-6 bg-white rounded-md shadow-md">
-                <h6 className="text-1xl font-bold mb-4 text-black">¡Completa el Captcha como verificación!</h6>
-                <ReCAPTCHA className="mb-4" sitekey={'6LdxpZ0pAAAAAAVeLXDbfFo6iAa4GajnPRYMQPG9'}
-                    onChange={handleCaptchaChange}
-                />
-            </div>
-        </div>
-    );
-};
-
-*/
-
->>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668
 function Registro() {
     const navigate = useNavigate();
 
@@ -84,11 +50,7 @@ function Registro() {
 
     const handleCaptchaVerify = (verified) => {
         setIsCaptchaVerified(verified);
-<<<<<<< HEAD
     };
-=======
-    }
->>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668
       
     useEffect(() => {
         if (registroExitoso2) {
@@ -97,19 +59,11 @@ function Registro() {
         if (registroExitoso) {
             message.success('Su cuenta ha sido registrada. Espere a que el administrador le asigne un rol.');
         }
-<<<<<<< HEAD
     }, [registroExitoso, registroExitoso2]);
 
     const { register, handleSubmit, formState: { errors }, setValue, setError, watch } = useForm();
     const password = watch('pass', '');
     const errorMess = [];
-=======
-    },  [registroExitoso, registroExitoso2]);
-
-    const {register, handleSubmit, formState: {errors}, setValue, setError, watch } = useForm()
-    const password = watch ('pass', '')
-    const errorMess = []
->>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668
 
     const toggleMostrarContrasenia = () => {
         setMostrarContrasenia(!mostrarContrasenia);
@@ -120,10 +74,7 @@ function Registro() {
     };
 
     const RegistrarUsuarioValido = async () => {
-<<<<<<< HEAD
         
-=======
->>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668
         const datos = {
             nombre: nombre,
             apellidoPaterno: apellidoPaterno,
@@ -133,15 +84,11 @@ function Registro() {
             telefono: telefono,
             contrasenia: contrasenia
         };
-<<<<<<< HEAD
 
-=======
->>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668
         if (!aceptaTodo) {
             message.warning('Por favor, Acepta los Términos Y Condiciones antes de registrarte.');
             return;
         }
-<<<<<<< HEAD
     
         if (!isCaptchaVerified) {
             message.warning('Por favor, completa el CAPTCHA antes de registrarte.');
@@ -151,14 +98,6 @@ function Registro() {
         try {
             console.log('Datos a enviar:', datos);
             const response = await fetch('http://localhost/TeleSecundaria763/registro.php', {
-=======
-        if (!isCaptchaVerified) {
-            message.warning('Por favor, completa el CAPTCHA antes de logearse.');
-            return;
-        }
-        try {
-            const response = await fetch('http://localhost/TeleSecundaria763/registro.php ', {//   https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/registro.php
->>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -166,7 +105,6 @@ function Registro() {
                 body: JSON.stringify(datos),
             });
             const responseData = await response.json();
-<<<<<<< HEAD
             console.log(responseData, 'esto es lo que devuelve el backend');
             if (response.ok) {
                 const { success, message } = responseData;
@@ -176,14 +114,6 @@ function Registro() {
                     setRegistroExitoso2(true);
                     setRegistroExitoso(true);
     
-=======
-            if (response.ok) {
-                const { success, message } = responseData;
-                if (success) {
-                    Cookies.set('token', responseData.token, { expires: 7 });
-                    setRegistroExitoso2(true);
-                    setRegistroExitoso(true);
->>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668
                     setTimeout(() => {
                         navigate('/Login');
                     }, 5000);
@@ -199,20 +129,12 @@ function Registro() {
         }
     };
 
-<<<<<<< HEAD
     const VerificarTelefonoExistente = async () => {
-=======
-    const VerificarTelefonoExistente = async (e) => {
->>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668
         const datos = {
             telefono: telefono
         };
         try {
-<<<<<<< HEAD
             const response = await fetch('http://localhost/TeleSecundaria763/telefonoExistente.php', {
-=======
-            const response = await fetch('http://localhost/TeleSecundaria763/telefonoExistente.php', {//    https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/telefonoExistente.php
->>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -221,7 +143,6 @@ function Registro() {
             });
             if (response.ok) {
                 const responseData = await response.json();
-<<<<<<< HEAD
                 console.log(responseData);
                 if (responseData.success === true) {
                     message.warning('El teléfono ya está en uso, por favor intente con otro número.'); setTimeout(() => setTelefonoError(null), 3000);
@@ -231,16 +152,6 @@ function Registro() {
                 }
             } else {
                 setTelefonoError('Error al intentar verificar si el teléfono está en uso:'); setTimeout(() => setTelefonoError(null), 3000);
-=======
-                console.log(responseData)
-                if (responseData.success === true) {
-                    message.warning('El telefono ya esta en uso, por favor intente con otro numero.'); setTimeout(() => setTelefonoError(null), 3000);
-                } else {
-                    RegistrarUsuarioValido();
-                }
-            } else {
-                setTelefonoError('Error al intentar verificar si el telefono esta en uso:'); setTimeout(() => setTelefonoError(null), 3000);
->>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668
             }
         } catch (error) {
             console.log('Error del servidor');
@@ -248,20 +159,12 @@ function Registro() {
         }
     };
 
-<<<<<<< HEAD
     const verificarCorreoExistente = async () => {
-=======
-    const verificarCorreoExistente = async (e) => {
->>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668
         const datos = {
             email: email
         };
         try {
-<<<<<<< HEAD
             const response = await fetch('http://localhost/TeleSecundaria763/correoExistente.php', {
-=======
-            const response = await fetch('http://localhost/TeleSecundaria763/correoExistente.php', {//   https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/correoExistente.php
->>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -270,34 +173,22 @@ function Registro() {
             });
             if (response.ok) {
                 const responseData = await response.json();
-<<<<<<< HEAD
                 console.log(responseData);
                 if (responseData.success === true) {
                     setCorreoError('El correo ya está en uso, intente con otro correo por favor'); setTimeout(() => setCorreoError(null), 3000);
                 } else {
                     console.log('ya jaló el correo existente');
-=======
-                console.log(responseData)
-                if (responseData.success === true) {
-                    setCorreoError('El correo ya esta en uso, intente con otro correo por favor'); setTimeout(() => setCorreoError(null), 3000);
-                } else {
->>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668
                     VerificarTelefonoExistente();
                 }
             } else {
                 setCorreoError('Datos incorrectos'); setTimeout(() => setCorreoError(null), 3000);
             }
         } catch (error) {
-<<<<<<< HEAD
             console.log('Error del servidor');
-=======
-            console.log('Error del servidor')
->>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668
             navigate('/NotServe');
         }
     };
 
-<<<<<<< HEAD
     const ValidarUsuario = (e) => {
         // Permitir solo letras, números, y comas, no permitir espacios ni caracteres especiales
         const texto = e.target.value.replace(/[^a-zA-ZñÑáéíóúüÁÉÍÓÚÜ0-9,]/g, '');
@@ -321,60 +212,14 @@ function Registro() {
         if (!contenerMinusculas) errorMess.push('Debe contener al menos una letra minúscula.');
         if (!contenerNumeros) errorMess.push('Debe contener al menos un número.');
         if (!contenerCaracteresEsp) errorMess.push('Debe contener al menos uno de los siguientes caracteres especiales: !, @, #, $, *.');
-=======
-    function validCorreo(validacion) {
-        console.log(validacion);
-        message.loading('Verificando correo...');
-        if (validacion === 'DELIVERABLE') {
-            message.success('El correo es válido');
-            verificarCorreoExistente();
-        } else if (validacion === 'UNDELIVERABLE') {
-            message.error('El correo no es válido');
-        }
-    }
-
-    const consultarCorreoApi = async (email) => {
-        const ApiKey = '289d98b1b45f4a4b8ce5a79510444552';
-        try {
-            const response = await fetch(`https://emailvalidation.abstractapi.com/v1/?api_key=${ApiKey}&email=${email}`);
-            const data = await response.json();
-            validCorreo(data.deliverability);
-        } catch (error) {
-            console.error('Error al consultar el servicio de validación de correo:', error);
-        }
-    };
-
-    const ValidarTextos = (content,e) => {
-        const texto = e.target.value.replace(/[^a-zA-ZñÑáéíóúüÁÉÍÓÚÜ\s]/g, '');
-        setValue(content, texto);
-    }
-
-    const Validaciones_Contras = (value) => {
-        const contenerMacusculas = /[A-Z]/.test(value)
-        const contenerMinusculas = /[a-z]/.test(value)
-        const contenerNumeros = /\d/.test(value)
-        const contenerCaracteresEsp = /[!@#$*]/.test(value)
-        
-        if (!contenerMacusculas) errorMess.push('Debe contener al menos una letra mayúscula.')
-        if (!contenerMinusculas) errorMess.push('Debe contener al menos una letra minúscula.')
-        if (!contenerNumeros) errorMess.push('Debe contener al menos un número.')
-        if (!contenerCaracteresEsp) errorMess.push('Debe contener al menos uno de los siguientes caracteres especiales: !, @, #, $, *.')
->>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668
         
         return errorMess.length === 0 ? '' : errorMess.join(' ');
     };
 
-<<<<<<< HEAD
     const validarTelefono = (e) => {
         const inputValue = e.target.value.replace(/[^0-9]/g, '');
         setValue('telefono', inputValue);
     };
-=======
-    const validarTelefono =  (e) => {
-        const inputValue = e.target.value.replace(/[^0-9]/g, '')
-        setValue('telefono', inputValue)
-    }
->>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668
 
     function Registro() {
         const handleCheckboxChange = () => { setAceptaTodo(!aceptaTodo); };
@@ -400,7 +245,6 @@ function Registro() {
         );
     }
     
-<<<<<<< HEAD
     const onSubmit = handleSubmit(async (value) => {
         const errorPass = Validaciones_Contras(value.pass);
         if (errorPass) {
@@ -531,156 +375,3 @@ function Registro() {
 }
 
 export default Registro;
-=======
-    const onSubmit = handleSubmit(async (value, e) =>{
-        const errorPass = Validaciones_Contras(value.pass)
-        if (errorPass) {
-            setError('pass', { type: 'manual', message: errorPass});
-            return
-        }
-        consultarCorreoApi(value.email);
-    });
-
-    return (
-        <div className="login-container d-flex justify-content-center align-items-center" style={{ backgroundColor: '#f7f7f7', height: '160vh', flexDirection: 'column' }}>
-            <Nav2 />
-            <div className="login-card p-4" style={{ width: '100%', maxWidth: '50%', borderRadius: '10px', boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)', backgroundColor: '#fff', marginBottom: '20px' }}>
-            <img src={logotelesecundaria763} alt="Logo de la Empresa" className="company-logo-olvi" style={{ backgroundColor: '#f7f7f7', height: '10vh', width:'12vh', marginBottom: '-70px' }} />
-                <form onSubmit={onSubmit} className="form" style={{ marginTop: '10px' }}>
-                    <div className="datosReg container">
-                        <h1 className="mb-11 text-center text-magenta">Bienvenido a Registro</h1>
-                        <h5 className="mb-11 text-center text-magenta">Ingrese los datos correspondientes</h5>
-
-                        <div className="row">
-                            <div className="col-md-6 mb-4">
-                                <label htmlFor="usuario" className="form-label"><b>Nombre(s):</b></label>
-                                <input type="text" className="form-control rounded-md" placeholder="Ingrese su nombre completo"
-                                    {...register('nombre', { required: 'El nombre es requerido.',
-                                    minLength: { value: 3, message: 'El Nombre debe ser mayor a 3 caracteres.', }, 
-                                    maxLength: { value: 20, message: 'El Nombre debe ser menor a 20 caracteres.', },})}
-                                    onChange={(e) => { ValidarTextos('nombre', e); setNombre(e.target.value); }}/>
-                                {errors.nombre && <p className="text-danger">{errors.nombre.message}</p>}
-                            </div>
-
-                            <div className="col-md-6 mb-4">
-                                <label htmlFor="usuario" className="form-label"><b>Apellido Paterno:</b></label>
-                                <input type="text" className="form-control rounded-md" placeholder="Ingrese su apellido Paterno"
-                                    {...register('app', { required: 'El Apellido Paterno es requerido.',
-                                        minLength: { value: 3, message: 'El Apellido Paterno debe ser mayor a 3 caracteres.', },
-                                        maxLength: { value: 20, message: 'El Apellido Paterno debe ser menor a 20 caracteres.', },
-                                    })}
-                                    onChange={(e) => { ValidarTextos('app', e); setApellidoPaterno(e.target.value); }} />
-                                {errors.app && <p className="text-danger">{errors.app.message}</p>}
-                            </div>
-
-                            <div className="col-md-6 mb-4">
-                                <label htmlFor="usuario" className="form-label"><b>Apellido Materno:</b></label>
-                                <input type="text" className="form-control rounded-md" placeholder="Ingrese su apellido Materno"
-                                    {...register('apm', {
-                                        required: 'El Apellido Materno es requerido.',
-                                        minLength: { value: 3, message: 'El Apellido Materno debe ser mayor a 3 caracteres.', },
-                                        maxLength: { value: 20, message: 'El Apellido Materno debe ser menor a 20 caracteres.', },
-                                    })}
-                                    onChange={(e) => { ValidarTextos('apm', e); setApellidoMaterno(e.target.value); }}/>
-                                {errors.apm && <p className="text-danger">{errors.apm.message}</p>}
-                            </div>
-
-                            <div className="col-md-6 mb-4">
-                                <label htmlFor="usuario" className="form-label"><b>Usuario:</b></label>
-                                <input type="text" className="form-control rounded-md" placeholder="Ingrese un nombre de usuario"
-                                    {...register('usuario', {
-                                        required: 'El nombre de usuario es requerido.',
-                                        minLength: { value: 8, message: 'El Nombre de usuario debe ser mayor a 8 caracteres.' },
-                                        pattern: { value: /^[a-zA-Z0-9]+$/, message: 'Ingresa solo letras y números.' },
-                                        maxLength: { value: 30, message: 'El Nombre de usuario debe ser menor a 30 caracteres.' }
-                                    })}
-                                    onChange={(e) => { ValidarTextos('usuario', e); setUsuario(e.target.value); }}/>
-                                {errors.usuario && <p className="text-danger">{errors.usuario.message}</p>}
-                            </div>
-
-                            <div className="col-md-6 mb-4">
-                                <label htmlFor="usuario" className="form-label"><b>Correo Electronico:</b></label>
-                                {correoError && <p style={{ color: 'red' }}>{correoError}</p>}
-                                <input type="email" className="form-control rounded-md" placeholder="Ingrese un Correo Electrónico"
-                                    {...register('email', {
-                                        required: 'El Correo Electrónico es requerido.',
-                                        minLength: { value: 3, message: 'El Correo Electrónico debe ser mayor a 3 caracteres.', },
-                                        maxLength: { value: 300, message: 'El Correo Electrónico debe ser menor a 300 caracteres.', },
-                                    })}
-                                    onChange={(e) => { setEmail(e.target.value); }}/>
-                                {errors.email && <p className="text-danger">{errors.email.message}</p>}
-                            </div>
-
-                            <div className="col-md-6 mb-4">
-                                {telefonoError && <p style={{ color: 'red' }}>{telefonoError}</p>}
-                                <label htmlFor="usuario" className="form-label"><b>Telefono:</b></label>
-                                <input type="tel" id='phone' className="form-control rounded-md" placeholder="Ingrese un numero de Telefono"
-                                    {...register('telefono', {
-                                        required: 'El teléfono es requerido.',
-                                        minLength: { value: 3, message: 'El teléfono debe ser mayor a 3 caracteres.', },
-                                        pattern: {value: /^[0-9]+$/, message: 'Ingresa solo números en el campo de teléfono.', },
-                                        maxLength: { value: 16, message: 'El teléfono debe ser menor de 16 caracteres.',},
-                                    })}
-                                    onChange={(e) => { validarTelefono(e); setTelefono(e.target.value); }} />
-                                {errors.telefono && <p className="text-danger">{errors.telefono.message}</p>}
-                            </div>
-
-                            <div className="col-md-6 mb-4" style={{ position: 'relative' }}>
-                                <label htmlFor="usuario" className="form-label"><b>Contraseña:</b></label>
-                                <div style={{ position: 'relative' }}>
-                                    <input type={mostrarContrasenia ? 'text' : 'password'} className="form-control rounded-md" placeholder="Ingrese una contraseña"
-                                        {...register('pass', {
-                                            required: 'La contraseña es requerida.',
-                                            minLength: { value: 8, message: 'La contraseña debe ser mayor a 7 caracteres.', },
-                                            maxLength: { value: 20, message: 'La contraseña debe ser menor a 20 caracteres.', },
-                                        })}
-                                        onChange={(e) => { setContrasenia(e.target.value); const erro = Validaciones_Contras(e.target.value); setError('pass', { type: 'manual', message: erro, });}}
-                                    />
-                                    <button type="button" onClick={toggleMostrarContrasenia} 
-                                        style={{ position: 'absolute', right: '5px', top: '50%', transform: 'translateY(-50%)', backgroundColor: 'transparent', border: 'none', cursor: 'pointer' }} >
-                                        {mostrarContrasenia ? <FontAwesomeIcon icon={faEyeSlash} /> : <FontAwesomeIcon icon={faEye} />}
-                                    </button>
-                                </div>
-                                {errors.pass && <p className="text-danger">{errors.pass.message}</p>}
-                            </div>
-
-                            <div className="col-md-6 mb-4" style={{ position: 'relative' }}>
-                                <label htmlFor="usuario" className="form-label"><b>Confirmar Contraseña:</b></label>
-                                <div style={{ position: 'relative' }}>
-                                    <input type={mostrarContrasenia2 ? 'text' : 'password'} className="form-control rounded-md" placeholder="Confirma la contraseña"
-                                        {...register('passConf', { required: 'La confirmación de contraseña es requerida.', validate: (value) => value === password || 'La contraseña no coincide',})}
-                                        onChange={(e) => { const err = e.target.value === password ? '' : 'La contraseña no coincide'; setError('passConf', { type: 'manual', message: err, });}}
-                                    />
-                                    <button type="button" onClick={toggleMostrarContrasenia2} 
-                                        style={{ position: 'absolute', right: '5px', top: '50%', transform: 'translateY(-50%)', backgroundColor: 'transparent', border: 'none', cursor: 'pointer' }}>
-                                        {mostrarContrasenia2 ? <FontAwesomeIcon icon={faEyeSlash} /> : <FontAwesomeIcon icon={faEye} />}
-                                    </button>
-                                </div>
-                                {errors.passConf && <p className="text-danger">{errors.passConf.message}</p>}
-                            </div>
-
-                            <Registro />
-                            <Captcha onCaptchaVerify={handleCaptchaVerify} />
-
-                            <div className="col-12 text-center mb-4">
-                                <input type="submit" value="Crear cuenta" className="btn btn-primary"
-                                style={{ backgroundColor: 'var(--first-color)', borderColor: '#004b9b', padding: '15px 25px', borderRadius: '4px', fontSize: '16px', fontWeight: 'bold',  borderColor: 'transparent' }}
-                                onMouseOver={(event) => { event.target.style.backgroundColor = 'black'; }}
-                                onMouseOut={(event) => { event.target.style.backgroundColor = 'var(--first-color)';}}
-                                />
-                            </div>
-    
-                            <div className="col-12 text-center">
-                                <p className="mt-1">¿Ya tienes una cuenta? <Link to="/Login" style={{ color: '#7d0430', textDecoration: 'none' }}><b>Login</b></Link></p>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-                <BreadCrumb />
-            </div>
-        </div>
-    )
-}
-
-export default Registro
->>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668

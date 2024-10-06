@@ -19,11 +19,9 @@ function NavAdministrativos() {
         const data = {
             idUsuario: idUsuario
         };
-<<<<<<< HEAD
-        const url = 'https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/datosUsuario.php';  //                   http://localhost/TeleSecundaria763/datosUsuario.php
-=======
+
         const url = 'http://localhost/TeleSecundaria763/datosUsuario.php';  // https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/
->>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668
+
         const options = {
             method: 'POST',
             headers: {
