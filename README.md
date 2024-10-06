@@ -6,8 +6,7 @@ Currently, two official plugins are available:
 
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-<<<<<<< HEAD
-=======
+
 
 
 El proyecto ***PORTAL VIRTUAL PARA LA TELESECUNDARIA 763*** es una plataforma educativa diseñada para facilitar los procesos de captura de información de los alumnos de esta institución. Los principales usuarios son los docentes, junto con el personal administrativo y directivo. Los módulos principales del portal incluyen la captura de calificaciones, la descarga de calificaciones en formato Excel, y la visualización de estadísticas gráficas, brindando una herramienta integral para la gestión y análisis de la información académica.
@@ -95,6 +94,3 @@ npm run dev
 ```bash
 npm run test
 ```
-
-
->>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668

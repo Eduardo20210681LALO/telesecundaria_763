@@ -18,28 +18,15 @@ import work1 from '../images/work1.jpg';
 import work2 from '../images/work2.jpg';
 import work3 from '../images/work3.jpg';
 
-<<<<<<< HEAD
 
-=======
+
 import BreadCrumb from "./BreadCrumbView";
->>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668
+
 
 function Home() {
   return (
     <div>
       <Nav/>
-<<<<<<< HEAD
-      
-      <main className="l-main pt-10" style={{ backgroundColor: '#F5F5F5' }}>
-        <section className="home bd-grid" id="inicio">{/* HOME */}
-          <div className="home__data">
-            <h1 className="home__title" style={{ fontFamily: 'Roboto', fontWeight: 'bold', fontSize: '3.5rem' }}>
-              Bienvenid@<br />
-              al Portal Virtual<br />
-              <span className="home__title-color">TeleSecundaria 763</span>
-            </h1>
-            <Link to="/Login" className="button rounded" style={{textDecoration: 'none'}}>Inicio de Sesión</Link>
-=======
       <main className="l-main" style={{ backgroundColor: '#F5F5F5' }}>
         <section className="home bd-grid" id="inicio">{/* HOME */}
           <div className="home__data">
@@ -49,7 +36,7 @@ function Home() {
               <span className="home__title-color">TeleSecundaria 763</span>
             </h1>
             <Link to="/login" className="button" style={{textDecoration: 'none'}}>Inicio de sesión</Link>
->>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668
+
           </div>
 
           <div className="home__social">
@@ -79,17 +66,11 @@ function Home() {
                   </div>
                 </Slider>
               </div>
-<<<<<<< HEAD
 
               <div className="col-lg-6">
                 <p className="about__text" style={{ color: '#333', fontWeight: 'bold' }}>Somos una escuela que logra un trabajo colaborativo entre dirección, docentes, personal de apoyo, alumnos(as) y padres de familia, para obtener aprendizajes significativos y lograr los objetivos de la nueva escuela mexicana.</p>
               </div>
-              
-=======
-              <div className="col-lg-6">
-                <p className="about__text" style={{ color: '#333', fontWeight: 'bold' }}>Somos una escuela que logra un trabajo colaborativo entre dirección, docentes, personal de apoyo, alumnos(as) y padres de familia, para obtener aprendizajes significativos y lograr los objetivos de la nueva escuela mexicana.</p>
-              </div>
->>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668
+
             </div>
           </div>
         </section>
@@ -143,11 +124,8 @@ function Home() {
         </section>
         
       </main>
-<<<<<<< HEAD
-      
-=======
       <BreadCrumb/>
->>>>>>> 728f6c1fe90a13ac054225c47d3d02a60e1cf668
+
       <Footer/>
      
     </div>
