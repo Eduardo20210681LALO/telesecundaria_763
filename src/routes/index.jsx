@@ -24,7 +24,6 @@ import NavAdministrativos from "../components/NavAdministrativos";
 import Materias from "../views/Inicio/Admin/Configuracion/Materias";
 import HomeAdmin from "../views/Inicio/HomeAdmin";
 import SIDEBARADMIN from "../components/SIDEBARADMIN";
-import OtorgarGradoXGrupoDocente from "../views/Inicio/Admin/Docentes/OtorgarGradoXGrupoDocente";
 import Usuarios from "../views/Inicio/Admin/Configuracion/Usuarios";
 import InfoEscuela from "../views/Inicio/Admin/Configuracion/InfoEscuela";
 import IngresarAlumnos from "../views/Inicio/Admin/Alumnos/IngresarAlumnos";
@@ -63,6 +62,8 @@ import PerfilUD from "../views/Inicio/Docentes/Usuario/PerfilUD";
 import PerfilDirectivos from "../views/Inicio/Directivos/PerfilDirectivos";
 import PerfilUADM from "../views/Inicio/Admin/Ajustes/PerfilUADM";
 import PerfilUDRT from "../views/Inicio/Directivos/Ajustes/PerfilUDRT";
+import EstadisticasGrupalDocent from "../views/Inicio/Docentes/EstadisticasDocent/EstadisticasGrupalDocent";
+import EstadisticasIndivDocent from "../views/Inicio/Docentes/EstadisticasDocent/EstadisticasIndivDocent";
 
 export const router = createBrowserRouter ([
   {
@@ -237,6 +238,16 @@ export const router = createBrowserRouter ([
           element: <VisualizarCapturaCalificaciones/>
         },
 
+        {
+          path:'/EstadisticasGrupalDocent',
+          element: <EstadisticasGrupalDocent/>
+        },
+
+        {
+          path:'/EstadisticasIndivDocent',
+          element: <EstadisticasIndivDocent/>
+        },
+
         //******************************************************* */
 
 
@@ -275,10 +286,6 @@ export const router = createBrowserRouter ([
         {
           path:'/IngresarAlumnos',
           element: <IngresarAlumnos/>
-        },
-        {
-          path:'/OtorgarGradoXGrupoDocente',
-          element: <OtorgarGradoXGrupoDocente/>
         },
         {
           path:'/InfoEscuela',

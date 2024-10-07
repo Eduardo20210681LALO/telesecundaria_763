@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Breadcrumb, Select, Typography, Card, Button, message, Spin, Alert, Empty } from 'antd'; // Ant Design components
-import SIDEBARADMIN from '../../components/SIDEBARADMIN';
-import BreadcrumbAdmin from './Admin/BreadcrumbAdmin';
+import SIDEBARDOCENT from '../../../../components/SIDEBARDOCENT';
+import BreadcrumDocent from '../BreadcrumDocent';
 import Chart from "react-apexcharts";  // Cambiamos a ApexCharts
 import axios from 'axios';
 import { Bar, Doughnut, Line } from 'react-chartjs-2';
@@ -11,7 +11,7 @@ ChartJS.register(Title, Tooltip, Legend, ArcElement, BarElement, LineElement, Ca
 
 const { Option } = Select;
 
-function Prueba2() {
+function EstadisticasIndivDocent() {
     const [periodos, setPeriodos] = useState([]);
     const [grados, setGrados] = useState([]);
     const [grupos, setGrupos] = useState([]);
@@ -216,10 +216,11 @@ function Prueba2() {
         );
     }
 
+
     return (
-        <SIDEBARADMIN>
+        <SIDEBARDOCENT>
             <div style={{ display: 'flex', flexDirection: 'column', minHeight: 'calc(100vh - 60px)', padding: '20px', overflowX: 'hidden' }}>
-                <BreadcrumbAdmin />
+                <BreadcrumDocent />
 
                 <Typography.Title level={2}>Estadísticas por Alumnos</Typography.Title>
 
@@ -388,8 +389,8 @@ function Prueba2() {
                     </Card>
                 </div>
             </div>
-        </SIDEBARADMIN>
-    );
+        </SIDEBARDOCENT>
+    )
 }
 
-export default Prueba2;
+export default EstadisticasIndivDocent

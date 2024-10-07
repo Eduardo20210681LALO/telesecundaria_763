@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Breadcrumb, Select, Typography, Card, Button, message, Spin, Alert, Empty } from 'antd'; // Ant Design components
-import SIDEBARDIRECT from '../../../components/SIDEBARDIRECT';
-import BreadcrumDirect from './BreadcrumDirect';
+import SIDEBARDOCENT from '../../../../components/SIDEBARDOCENT';
+import BreadcrumDocent from '../BreadcrumDocent';
 import Chart from "react-apexcharts";  // Cambiamos a ApexCharts
 import axios from 'axios';
 
 const { Option } = Select;
 
-function GraficasGrupal() {
+function EstadisticasGrupalDocent() {
     const [periodos, setPeriodos] = useState([]);
     const [grados, setGrados] = useState([]);
     const [grupos, setGrupos] = useState([]);
@@ -165,11 +165,11 @@ function GraficasGrupal() {
             </div>
         );
     }
-  
+
     return (
-        <SIDEBARDIRECT>
+        <SIDEBARDOCENT>
             <div style={{ display: 'flex', flexDirection: 'column', minHeight: 'calc(100vh - 60px)', padding: '20px', overflowX: 'hidden' }}>
-                <BreadcrumDirect />
+                <BreadcrumDocent />
 
                 <Typography.Title level={2}>Estadísticas Alumnos por Grupo</Typography.Title>
 
@@ -311,8 +311,8 @@ function GraficasGrupal() {
                     </Card>
                 </div>
             </div>
-        </SIDEBARDIRECT>
-    );
+        </SIDEBARDOCENT>
+    )
 }
 
-export default GraficasGrupal;
+export default EstadisticasGrupalDocent

@@ -4,9 +4,7 @@ import SIDEBARADMIN from '../../../../components/SIDEBARADMIN';
 import BreadcrumbAdmin from '../BreadcrumbAdmin';
 import axios from 'axios';
 
-
 const { Title } = Typography;
-
 
 const Materias = () => {
     const [inputs, setInputs] = useState({ clave: '', nombre: '', grado: '' });
@@ -166,19 +164,57 @@ const Materias = () => {
     const columns = [
         { title: 'Clave', dataIndex: 'vchClvMateria', key: 'clave' },
         { title: 'Nombre Materia', dataIndex: 'vchNomMateria', key: 'nombre' },
-        selectedGrado === '' && { title: 'Grado', dataIndex: 'intClvGrado', key: 'grado' },
+        ...(selectedGrado === '' ? [{ title: 'Grado', dataIndex: 'intClvGrado', key: 'grado' }] : []),
         {
             title: 'Acciones',
-            dataIndex: 'id_MarxGrado',
-            render: (id) => (
-                <span>
-                    <Button onClick={() => openEditModal(id)}>Editar</Button>
-                    <Button onClick={() => deleteMateria(id)}>Eliminar</Button>
-                </span>
+            key: 'acciones',
+            render: (record) => (
+                <>
+                    <Button 
+                        style={{ 
+                            marginRight: 8, 
+                            borderColor: '#007bff', // Borde azul
+                            color: '#007bff', // Texto azul
+                            backgroundColor: 'transparent', // Fondo transparente
+                            transition: 'background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease',
+                        }}
+                        onClick={() => openEditModal(record.id_MarxGrado)} // Usar el ID correcto
+                        onMouseOver={(event) => { 
+                            event.currentTarget.style.backgroundColor = '#007bff'; // Fondo azul al pasar el ratón
+                            event.currentTarget.style.color = '#fff'; // Texto blanco al pasar el ratón
+                        }}
+                        onMouseOut={(event) => { 
+                            event.currentTarget.style.backgroundColor = 'transparent'; // Vuelve a transparente
+                            event.currentTarget.style.color = '#007bff'; // Texto azul
+                        }}
+                    >
+                        Editar
+                    </Button>
+
+                    <Button 
+                        style={{ 
+                            marginRight: 8, 
+                            borderColor: '#dc3545', // Borde rojo
+                            color: '#dc3545', // Texto rojo
+                            backgroundColor: 'transparent', // Fondo transparente
+                            transition: 'background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease',
+                        }}
+                        onClick={() => deleteMateria(record.id_MarxGrado)} // Usar el ID correcto
+                        onMouseOver={(event) => { 
+                            event.currentTarget.style.backgroundColor = '#dc3545'; // Fondo rojo al pasar el ratón
+                            event.currentTarget.style.color = '#fff'; // Texto blanco al pasar el ratón
+                        }}
+                        onMouseOut={(event) => { 
+                            event.currentTarget.style.backgroundColor = 'transparent'; // Vuelve a transparente
+                            event.currentTarget.style.color = '#dc3545'; // Texto rojo
+                        }}
+                    >
+                        Eliminar
+                    </Button>
+                </>
             ),
         },
-    ].filter(Boolean); // Usamos .filter para eliminar columnas que no son necesarias cuando selectedGrado no está vacío
-
+    ];
 
     return (
         <SIDEBARADMIN>
@@ -298,9 +334,7 @@ const Materias = () => {
                             </div>
                         </form>
 
-
-
-                        <div style={{ flex: 1, marginTop: '20px', marginBottom: '20px', maxWidth: '300px' }}> {/* Ajusta el maxWidth al mismo que el primer select */}
+                        <div style={{ flex: 1, marginTop: '20px', marginBottom: '20px', maxWidth: '300px' }}>
                             <Title level={4} style={{ color: 'black', marginBottom: '10px' }}>
                                 Visualización de Materias por Grado
                             </Title>
@@ -312,7 +346,7 @@ const Materias = () => {
                                 value={selectedGrado}
                                 onChange={handleGradoChange}
                                 style={{
-                                    width: '90%',
+                                    width: '100%',
                                     borderRadius: '8px',
                                     border: '1px solid #d9d9d9',
                                     height: '40px', // Igualamos la altura al select superior
@@ -333,7 +367,6 @@ const Materias = () => {
                             pagination={false} // Sin paginación
                         />
 
-                            
                         {/* Modal para Editar Materia */}
                         {isEditModalOpen && (
                             <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
