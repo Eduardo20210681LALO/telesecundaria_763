@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Typography, Card, Input, Button, message, Descriptions, Avatar, Space, Tag } from 'antd'; // Añadimos Tag
 import { PhoneOutlined } from '@ant-design/icons'; // Íconos de Ant Design
 import BreadcrumDirect from '../../Directivos/BreadcrumDirect';
-import SIDEBARDIRECT from '../../../../components/SIDEBARADMIN';
+import SIDEBARDIRECT from '../../../../components/SIDEBARDIRECT';
 
 const { Title } = Typography;
 

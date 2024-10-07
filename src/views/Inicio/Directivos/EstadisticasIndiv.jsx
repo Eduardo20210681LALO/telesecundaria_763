@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Breadcrumb, Select, Typography, Card, Button, message, Spin, Alert, Empty } from 'antd'; // Ant Design components
+import SIDEBARDIRECT from '../../../components/SIDEBARDIRECT';
+import BreadcrumDirect from './BreadcrumDirect';
+import Chart from "react-apexcharts";  // Cambiamos a ApexCharts
 import axios from 'axios';
 import { Bar, Doughnut, Line } from 'react-chartjs-2';
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, BarElement, LineElement, CategoryScale, LinearScale } from 'chart.js';
-import { Select, Spin, Alert, Button, message, Empty } from 'antd';
-import SIDEBARDIRECT from '../../../components/SIDEBARDIRECT';
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement, BarElement, LineElement, CategoryScale, LinearScale);
 
 const { Option } = Select;
+
 
 function EstadisticasIndiv() {
     const [periodos, setPeriodos] = useState([]);
@@ -53,50 +56,67 @@ function EstadisticasIndiv() {
     }, [selectedPeriodo, selectedGrado, selectedGrupo]);
 
     const fetchCalificaciones = () => {
-        if (selectedPeriodo && selectedGrado && selectedGrupo && selectedAlumno) {
-            setLoading(true);
-            setError(null);
-
-            axios.get('http://localhost/TeleSecundaria763/Directivos/ObtenerCalificacionesAlumno.php', {
-                params: {
-                    periodo: selectedPeriodo,
-                    grado: selectedGrado,
-                    grupo: selectedGrupo,
-                    alumno: selectedAlumno,
-                }
-            })
-                .then(response => {
-                    if (response.data && Array.isArray(response.data.calificaciones)) {
-                        setCalificaciones(response.data.calificaciones);
-                    } else {
-                        setError('No se encontraron calificaciones para el alumno seleccionado.');
-                    }
-                    setLoading(false);
-                })
-                .catch(error => {
-                    setError('Error al obtener las calificaciones.');
-                    setLoading(false);
-                });
-
-            axios.get('http://localhost/TeleSecundaria763/Directivos/ObtenerPromediosGenerales.php', {
-                params: {
-                    alumno: selectedAlumno,
-                    periodo: selectedPeriodo,
-                }
-            })
-                .then(response => {
-                    if (response.data && response.data.promedios) {
-                        setPromediosGenerales(response.data.promedios);
-                    } else {
-                        setError('No se encontraron promedios generales para el alumno seleccionado.');
-                    }
-                    setLoading(false);
-                })
-                .catch(error => {
-                    setError('Error al obtener los promedios generales.');
-                    setLoading(false);
-                });
+        // Validación para asegurarse de que todas las opciones estén seleccionadas
+        if (!selectedPeriodo) {
+            message.warning('Por favor selecciona un Periodo');
+            return;
         }
+        if (!selectedGrado) {
+            message.warning('Por favor selecciona un Grado');
+            return;
+        }
+        if (!selectedGrupo) {
+            message.warning('Por favor selecciona un Grupo');
+            return;
+        }
+        if (!selectedAlumno) {
+            message.warning('Por favor selecciona un Alumno');
+            return;
+        }
+
+        // Si todas las validaciones pasan, se procede con las llamadas a la API
+        setLoading(true);
+        setError(null);
+
+        axios.get('http://localhost/TeleSecundaria763/Directivos/ObtenerCalificacionesAlumno.php', {
+            params: {
+                periodo: selectedPeriodo,
+                grado: selectedGrado,
+                grupo: selectedGrupo,
+                alumno: selectedAlumno,
+            }
+        })
+            .then(response => {
+                if (response.data && Array.isArray(response.data.calificaciones)) {
+                    setCalificaciones(response.data.calificaciones);
+                } else {
+                    setError('No se encontraron calificaciones para el alumno seleccionado.');
+                }
+                setLoading(false);
+            })
+            .catch(error => {
+                setError('Error al obtener las calificaciones.');
+                setLoading(false);
+            });
+
+        axios.get('http://localhost/TeleSecundaria763/Directivos/ObtenerPromediosGenerales.php', {
+            params: {
+                alumno: selectedAlumno,
+                periodo: selectedPeriodo,
+            }
+        })
+            .then(response => {
+                if (response.data && response.data.promedios) {
+                    setPromediosGenerales(response.data.promedios);
+                } else {
+                    setError('No se encontraron promedios generales para el alumno seleccionado.');
+                }
+                setLoading(false);
+            })
+            .catch(error => {
+                setError('Error al obtener los promedios generales.');
+                setLoading(false);
+            });
     };
 
     const procesarDatos = (calificaciones) => {
@@ -197,78 +217,143 @@ function EstadisticasIndiv() {
         );
     }
 
+
     return (
         <SIDEBARDIRECT>
-            <div className="flex flex-col md:flex-row justify-center w-full mx-auto mt-10 gap-6">
-                <main className="flex-grow p-6 bg-gray-100 dark:bg-gray-900">
-                    <div className="bg-white dark:bg-gray-800 shadow-md sm:rounded-lg p-6 w-full max-w-7xl mx-auto pb-16">
-                        <h2 className="text-2xl font-semibold mb-6 text-center text-gray-700 dark:text-gray-300">Promedios por Materia</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                            <div>
-                                <label className="block text-gray-700 dark:text-gray-300 mb-2">Periodo</label>
-                                <Select
-                                    placeholder="Seleccionar Periodo"
-                                    onChange={setSelectedPeriodo}
-                                    value={selectedPeriodo}
-                                    className="w-full"
-                                >
-                                    {periodos.map(periodo => (
-                                        <Option key={periodo.intClvPeriodo} value={periodo.intClvPeriodo}>
-                                            {periodo.vchPeriodo}
-                                        </Option>
-                                    ))}
-                                </Select>
+            <div style={{ display: 'flex', flexDirection: 'column', minHeight: 'calc(100vh - 60px)', padding: '20px', overflowX: 'hidden' }}>
+                <BreadcrumDirect />
+
+                <Typography.Title level={2}>Estadísticas por Alumnos</Typography.Title>
+
+                <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                    <Card
+                        style={{
+                            background: '#fff',
+                            padding: '20px',
+                            flexGrow: 1,
+                            overflowY: 'auto',
+                            overflowX: 'hidden',
+                        }}
+                    >
+                        <form style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }} onClick={fetchCalificaciones} disabled={!selectedAlumno}>
+                            <div style={{ display: 'flex', gap: '20px', width: '100%' }}>
+                                <div style={{ flex: 1 }}>
+                                    <label className="block mb-2">Periodo:</label>
+                                    <Select
+                                        value={selectedPeriodo}
+                                        placeholder="Seleccionar Periodo"
+                                        onChange={setSelectedPeriodo}
+                                        style={{
+                                            width: '100%',
+                                            height: '40px',
+                                            borderRadius: '8px',
+                                            border: '1px solid #d9d9d9',
+                                        }}
+                                    >
+                                        {periodos.map(periodo => (
+                                            <Option key={periodo.intClvPeriodo} value={periodo.intClvPeriodo}>
+                                                {periodo.vchPeriodo}
+                                            </Option>
+                                        ))}
+                                    </Select>
+                                </div>
+
+                                <div style={{ flex: 1 }}>
+                                    <label className="block mb-2">Grado:</label>
+                                    <Select
+                                        value={selectedGrado}
+                                        placeholder="Seleccionar Grado"
+                                        onChange={setSelectedGrado}
+                                        style={{
+                                            width: '100%',
+                                            height: '40px',
+                                            borderRadius: '8px',
+                                            border: '1px solid #d9d9d9',
+                                        }}
+                                    >
+                                        {grados.map(grado => (
+                                            <Option key={grado.intClvGrado} value={grado.intClvGrado}>
+                                                {grado.vchGrado}
+                                            </Option>
+                                        ))}
+                                    </Select>
+                                </div>
+
+                                <div style={{ flex: 1 }}>
+                                    <label className="block mb-2">Grupo:</label>
+                                    <Select
+                                        value={selectedGrupo}
+                                        placeholder="Seleccionar Grupo"
+                                        onChange={setSelectedGrupo}
+                                        style={{
+                                            width: '100%',
+                                            height: '40px',
+                                            borderRadius: '8px',
+                                            border: '1px solid #d9d9d9',
+                                        }}
+                                    >
+                                        {grupos.map(grupo => (
+                                            <Option key={grupo.intClvGrupo} value={grupo.intClvGrupo}>
+                                                {grupo.vchGrupo}
+                                            </Option>
+                                        ))}
+                                    </Select>
+                                </div>
+
+                                <div style={{ flex: 1 }}>
+                                    <label className="block mb-2">Alumno:</label>
+                                    <Select
+                                        value={selectedAlumno}
+                                        placeholder="Seleccionar Alumno"
+                                        onChange={setSelectedAlumno}
+                                        disabled={!selectedGrupo}
+                                        style={{
+                                            width: '100%',
+                                            height: '40px',
+                                            borderRadius: '8px',
+                                            border: '1px solid #d9d9d9',
+                                        }}
+                                    >
+                                        {alumnos.map(alumno => (
+                                            <Option key={alumno.vchCurpAlumno} value={alumno.vchCurpAlumno}>
+                                                {alumno.vchNombre} {alumno.vchAPaterno} {alumno.vchAMaterno}
+                                            </Option>
+                                        ))}
+                                    </Select>
+                                </div>
+
                             </div>
-                            <div>
-                                <label className="block text-gray-700 dark:text-gray-300 mb-2">Grado</label>
-                                <Select
-                                    placeholder="Seleccionar Grado"
-                                    onChange={setSelectedGrado}
-                                    value={selectedGrado}
-                                    className="w-full"
+
+                            <div style={{ textAlign: 'center', marginTop: '10px' }}>
+                                <Button
+                                    type="submit"
+                                    style={{
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        backgroundColor: 'var(--first-color)',
+                                        borderColor: 'transparent',
+                                        color: '#fff',
+                                        padding: '10px 20px',
+                                        borderRadius: '8px',
+                                        fontSize: '16px',
+                                        fontWeight: 'bold',
+                                        height: '40px',
+                                        width: '400px',
+                                        cursor: 'pointer',
+                                        transition: 'background-color 0.3s ease'
+                                    }}
+                                    onMouseOver={(event) => {
+                                        event.currentTarget.style.backgroundColor = 'black';
+                                    }}
+                                    onMouseOut={(event) => {
+                                        event.currentTarget.style.backgroundColor = 'var(--first-color)';
+                                    }}
                                 >
-                                    {grados.map(grado => (
-                                        <Option key={grado.intClvGrado} value={grado.intClvGrado}>
-                                            {grado.vchGrado}
-                                        </Option>
-                                    ))}
-                                </Select>
+                                    Visualizar Calificaciones
+                                </Button>
                             </div>
-                            <div>
-                                <label className="block text-gray-700 dark:text-gray-300 mb-2">Grupo</label>
-                                <Select
-                                    placeholder="Seleccionar Grupo"
-                                    onChange={setSelectedGrupo}
-                                    value={selectedGrupo}
-                                    className="w-full"
-                                >
-                                    {grupos.map(grupo => (
-                                        <Option key={grupo.intClvGrupo} value={grupo.intClvGrupo}>
-                                            {grupo.vchGrupo}
-                                        </Option>
-                                    ))}
-                                </Select>
-                            </div>
-                            <div>
-                                <label className="block text-gray-700 dark:text-gray-300 mb-2">Alumno</label>
-                                <Select
-                                    placeholder="Seleccionar Alumno"
-                                    onChange={setSelectedAlumno}
-                                    value={selectedAlumno}
-                                    className="w-full"
-                                    disabled={!selectedGrupo}
-                                >
-                                    {alumnos.map(alumno => (
-                                        <Option key={alumno.vchCurpAlumno} value={alumno.vchCurpAlumno}>
-                                            {alumno.vchNombre} {alumno.vchAPaterno} {alumno.vchAMaterno}
-                                        </Option>
-                                    ))}
-                                </Select>
-                            </div>
-                        </div>
-                        <Button type="primary" onClick={fetchCalificaciones} disabled={!selectedAlumno}>
-                            Ver Calificaciones
-                        </Button>
+                        </form>
 
                         {calificaciones.length === 0 ? (
                             <div className="flex justify-center items-center w-full h-64">
@@ -302,8 +387,8 @@ function EstadisticasIndiv() {
                                 </div>
                             </>
                         )}
-                    </div>
-                </main>
+                    </Card>
+                </div>
             </div>
         </SIDEBARDIRECT>
     );

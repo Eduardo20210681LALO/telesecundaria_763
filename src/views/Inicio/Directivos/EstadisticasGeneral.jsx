@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Bar, Doughnut, Line } from 'react-chartjs-2';
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, LineElement, PointElement, ArcElement, CategoryScale, LinearScale } from 'chart.js';
-import { Select, Spin, Alert, Button, message, Empty } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Breadcrumb, Select, Typography, Card, Button, message, Spin, Alert, Empty } from 'antd'; // Ant Design components
 import SIDEBARDIRECT from '../../../components/SIDEBARDIRECT';
+import BreadcrumDirect from './BreadcrumDirect';
+import axios from 'axios';
+import Chart from 'react-apexcharts';  // Importamos ApexCharts para los gráficos
+import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale } from 'chart.js';
 
-ChartJS.register(Title, Tooltip, Legend, BarElement, LineElement, PointElement, ArcElement, CategoryScale, LinearScale);
+ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale);
 
 const { Option } = Select;
 
@@ -17,51 +18,55 @@ function EstadisticasGeneral() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // Inicializar los estados como null para que los placeholders aparezcan
     const [selectedPeriodo, setSelectedPeriodo] = useState(null);
     const [selectedGrado, setSelectedGrado] = useState(null);
     const [selectedGrupo, setSelectedGrupo] = useState(null);
 
     useEffect(() => {
-        axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php')
-            .then(response => setPeriodos(response.data))
-            .catch(() => message.error('Error al obtener los periodos'));
+        const fetchInitialData = async () => {
+            try {
+                const [periodosRes, gradosRes, gruposRes] = await Promise.all([
+                    axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php'),
+                    axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php'),
+                    axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php'),
+                ]);
+                setPeriodos(periodosRes.data);
+                setGrados(gradosRes.data);
+                setGrupos(gruposRes.data);
+            } catch (err) {
+                message.error('Error al cargar los datos iniciales');
+            }
+        };
 
-        axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php')
-            .then(response => setGrados(response.data))
-            .catch(() => message.error('Error al obtener los grados'));
-
-        axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php')
-            .then(response => setGrupos(response.data))
-            .catch(() => message.error('Error al obtener los grupos'));
+        fetchInitialData();
     }, []);
 
-    const fetchEstadisticasGeneral = () => {
-        if (selectedPeriodo && selectedGrado && selectedGrupo) {
-            setLoading(true);
-            setError(null);
+    const fetchEstadisticasGeneral = async () => {
+        if (!selectedPeriodo || !selectedGrado || !selectedGrupo) {
+            message.warning('Por favor seleccione todos los campos');
+            return;
+        }
+        setLoading(true);
+        setError(null);
 
-            axios.get('http://localhost/TeleSecundaria763/Directivos/ObtenerEstadisticasGenerales.php', {
+        try {
+            const response = await axios.get('http://localhost/TeleSecundaria763/Directivos/ObtenerEstadisticasGenerales.php', {
                 params: {
                     periodo: selectedPeriodo,
                     grado: selectedGrado,
                     grupo: selectedGrupo,
-                }
-            })
-                .then(response => {
-                    if (response.data && Array.isArray(response.data.estadisticas)) {
-                        setEstadisticas(response.data.estadisticas);
-                    } else {
-                        setError('No se encontraron estadísticas para la selección realizada.');
-                    }
-                    setLoading(false);
-                })
-                .catch(() => {
-                    setError('Error al obtener las estadísticas generales.');
-                    setLoading(false);
-                });
-        } else {
-            message.error('Por favor seleccione todos los campos');
+                },
+            });
+
+            if (response.data && Array.isArray(response.data.estadisticas)) {
+                setEstadisticas(response.data.estadisticas);
+            } else {
+                setError('No se encontraron estadísticas para la selección realizada.');
+            }
+        } catch (err) {
+            setError('Error al obtener las estadísticas generales.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -86,222 +91,268 @@ function EstadisticasGeneral() {
 
     const { grupos: labels, T1, T2, T3, promedioGeneral } = procesarDatos(estadisticas);
 
-    const dataBar = {
-        labels: labels,
-        datasets: [
-            {
-                label: 'Trimestre 1',
-                data: T1,
-                backgroundColor: 'rgba(255, 99, 132, 0.8)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 2,
-            },
-            {
-                label: 'Trimestre 2',
-                data: T2,
-                backgroundColor: 'rgba(54, 162, 235, 0.4)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1,
-            },
-            {
-                label: 'Trimestre 3',
-                data: T3,
-                backgroundColor: 'rgba(255, 206, 86, 0.4)',
-                borderColor: 'rgba(255, 206, 86, 1)',
-                borderWidth: 1,
-            },
-            {
-                label: 'Promedio General',
-                data: promedioGeneral,
-                backgroundColor: 'rgba(75, 192, 192, 0.4)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1,
-            },
-        ],
-    };
-
-    const dataDoughnut = {
-        labels: ['Promedio T1', 'Promedio T2', 'Promedio T3'],
-        datasets: [
-            {
-                data: [T1.reduce((a, b) => a + b, 0), T2.reduce((a, b) => a + b, 0), T3.reduce((a, b) => a + b, 0)],
-                backgroundColor: ['rgba(255, 99, 132, 0.8)', 'rgba(54, 162, 235, 0.8)', 'rgba(255, 206, 86, 0.8)'],
-                hoverBackgroundColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)'],
-            },
-        ],
-    };
-
-    const dataLine = {
-        labels: ['Trimestre 1', 'Trimestre 2', 'Trimestre 3', 'Promedio Final'],
-        datasets: [
-            {
-                label: labels[0],
-                data: [T1[0], T2[0], T3[0], promedioGeneral[0]],
-                fill: false,
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 2,
-                pointBackgroundColor: 'rgba(54, 162, 235, 1)',
-                pointBorderColor: 'rgba(54, 162, 235, 1)',
-                pointRadius: 4,
-                tension: 0.1,
-            },
-        ],
-    };
-
+    // Configuración para el gráfico de barras con ApexCharts
     const optionsBar = {
-        responsive: true,
-        plugins: {
-            legend: {
-                position: 'top',
-            },
-            tooltip: {
-                mode: 'index',
-                intersect: false,
-            },
+        chart: {
+            type: 'bar',
+            height: 300,
+            stacked: false,
         },
-        scales: {
-            x: {
-                beginAtZero: true,
-            },
-            y: {
-                beginAtZero: true,
-            },
+        plotOptions: {
+            bar: {
+                horizontal: true,
+                dataLabels: {
+                    position: 'top',
+                },
+            }
+        },
+        colors: ['#008FFB', '#00E396', '#FEB019', '#FF4560'],
+        dataLabels: {
+            enabled: true,
+            offsetX: -6,
+            style: {
+                fontSize: '12px',
+                colors: ['#fff']
+            }
+        },
+        stroke: {
+            show: true,
+            width: 1,
+            colors: ['#fff']
+        },
+        xaxis: {
+            categories: labels || [],
         },
     };
+
+    const seriesBar = [
+        {
+            name: 'Trimestre 1',
+            data: T1 || [],
+        },
+        {
+            name: 'Trimestre 2',
+            data: T2 || [],
+        },
+        {
+            name: 'Trimestre 3',
+            data: T3 || [],
+        },
+        {
+            name: 'Promedio General',
+            data: promedioGeneral || [],
+        },
+    ];
+
+    // Gráfico de Líneas (ApexCharts como área)
+    const seriesLine = labels.map((label, idx) => ({
+        name: label,
+        data: [T1[idx], T2[idx], T3[idx], promedioGeneral[idx]]
+    }));
 
     const optionsLine = {
-        responsive: true,
-        plugins: {
-            legend: {
-                position: 'top',
-            },
-            tooltip: {
-                mode: 'index',
-                intersect: false,
-            },
+        chart: {
+            type: 'area',
+            height: 300,
+            zoom: {
+                enabled: false
+            }
         },
-        scales: {
-            y: {
-                beginAtZero: true,
-                min: 7,
-                max: 10,
-                ticks: {
-                    stepSize: 0.5,
-                },
-                title: {
-                    display: true,
-                    text: 'Calificaciones',
-                },
-            },
-            x: {
-                title: {
-                    display: true,
-                    text: 'Trimestres',
-                },
-            },
+        colors: ['#00E396', '#FEB019', '#FF4560', '#775DD0'],
+        fill: {
+            type: 'gradient',
+            gradient: {
+                shadeIntensity: 1,
+                opacityFrom: 0.7,
+                opacityTo: 0.9,
+                stops: [0, 80, 100]
+            }
         },
+        dataLabels: {
+            enabled: false
+        },
+        stroke: {
+            curve: 'smooth',
+            width: 3,
+        },
+        xaxis: {
+            categories: ['Trimestre 1', 'Trimestre 2', 'Trimestre 3', 'Promedio Final'],
+        },
+        yaxis: {
+            opposite: true,
+        },
+        legend: {
+            horizontalAlign: 'left'
+        }
     };
 
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center min-h-screen">
-                <Spin size="large" />
-            </div>
-        );
-    }
+    // Nueva configuración para la gráfica de pastel (Pie) con ApexCharts
+    const seriesPie = [T1.reduce((a, b) => a + b, 0), T2.reduce((a, b) => a + b, 0), T3.reduce((a, b) => a + b, 0)];
+    const optionsPie = {
+        colors: ['#008FFB', '#00E396', '#FEB019'],
+        labels: ['Promedio T1', 'Promedio T2', 'Promedio T3'],
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: 200
+                },
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }]
+    };
 
-    if (error) {
-        return (
-            <div className="flex justify-center items-center min-h-screen">
-                <Alert message="Error" description={error} type="error" showIcon />
-            </div>
-        );
-    }
 
     return (
         <SIDEBARDIRECT>
-            <div className="flex flex-col justify-center items-center w-full mx-auto mt-10 gap-6 p-4">
-                <div className="bg-white dark:bg-gray-800 shadow-md sm:rounded-lg p-6 w-full max-w-5xl">
-                    <h2 className="text-2xl font-semibold mb-6 text-center text-gray-700 dark:text-gray-300">Estadísticas Generales</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                        <div>
-                            <label className="block text-gray-700 dark:text-gray-300 mb-2">Periodo</label>
-                            <Select
-                                placeholder="Seleccionar Periodo"
-                                onChange={setSelectedPeriodo}
-                                value={selectedPeriodo}
-                                className="w-full"
-                            >
-                                {periodos.map(periodo => (
-                                    <Option key={periodo.intClvPeriodo} value={periodo.intClvPeriodo}>
-                                        {periodo.vchPeriodo}
-                                    </Option>
-                                ))}
-                            </Select>
-                        </div>
-                        <div>
-                            <label className="block text-gray-700 dark:text-gray-300 mb-2">Grado</label>
-                            <Select
-                                placeholder="Seleccionar Grado"
-                                onChange={setSelectedGrado}
-                                value={selectedGrado}
-                                className="w-full"
-                            >
-                                {grados.map(grado => (
-                                    <Option key={grado.intClvGrado} value={grado.intClvGrado}>
-                                        {grado.vchGrado}
-                                    </Option>
-                                ))}
-                            </Select>
-                        </div>
-                        <div>
-                            <label className="block text-gray-700 dark:text-gray-300 mb-2">Grupo</label>
-                            <Select
-                                placeholder="Seleccionar Grupo"
-                                onChange={setSelectedGrupo}
-                                value={selectedGrupo}
-                                className="w-full"
-                            >
-                                {grupos.map(grupo => (
-                                    <Option key={grupo.intClvGrupo} value={grupo.intClvGrupo}>
-                                        {grupo.vchGrupo}
-                                    </Option>
-                                ))}
-                            </Select>
-                        </div>
-                    </div>
-                    <Button type="primary" onClick={fetchEstadisticasGeneral} className="mb-6 w-full">
-                        Ver Estadísticas Generales
-                    </Button>
+            <div style={{ display: 'flex', flexDirection: 'column', minHeight: 'calc(100vh - 60px)', padding: '20px', overflow: 'hidden' }}>
+                <BreadcrumDirect />
 
-                    {estadisticas.length === 0 ? (
-                        <div className="flex justify-center items-center w-full h-64">
-                            <Empty description="No hay datos" />
-                        </div>
-                    ) : (
-                        <>
-                            <div className="flex flex-row justify-between gap-6 mb-6">
-                                <div className="flex flex-col items-center flex-1">
+                <Typography.Title level={2}>Estadísticas Generales</Typography.Title>
+
+                <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                    <Card
+                        style={{
+                            background: '#fff',
+                            padding: '20px',
+                            flexGrow: 1,
+                            overflowY: 'auto',
+                            overflowX: 'hidden', // Asegura que no haya scroll horizontal
+                        }}
+                    >
+                        <form style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+                            <div style={{ display: 'flex', gap: '20px', width: '100%', maxWidth: '100%' }}> {/* Aseguramos que no se exceda del 100% */}
+                                <div style={{ flex: 1 }}>
+                                    <label className="block mb-2">Periodo:</label>
+                                    <Select
+                                        value={selectedPeriodo}
+                                        placeholder="Seleccionar Periodo"
+                                        onChange={setSelectedPeriodo}
+                                        style={{
+                                            width: '100%',
+                                            height: '40px',
+                                            borderRadius: '8px',
+                                            border: '1px solid #d9d9d9',
+                                        }}
+                                    >
+                                        {periodos.map(periodo => (
+                                            <Option key={periodo.intClvPeriodo} value={periodo.intClvPeriodo}>
+                                                {periodo.vchPeriodo}
+                                            </Option>
+                                        ))}
+                                    </Select>
+                                </div>
+
+                                <div style={{ flex: 1 }}>
+                                    <label className="block mb-2">Grado:</label>
+                                    <Select
+                                        value={selectedGrado}
+                                        placeholder="Seleccionar Grado"
+                                        onChange={setSelectedGrado}
+                                        style={{
+                                            width: '100%',
+                                            height: '40px',
+                                            borderRadius: '8px',
+                                            border: '1px solid #d9d9d9',
+                                        }}
+                                    >
+                                        {grados.map(grado => (
+                                            <Option key={grado.intClvGrado} value={grado.intClvGrado}>
+                                                {grado.vchGrado}
+                                            </Option>
+                                        ))}
+                                    </Select>
+                                </div>
+
+                                <div style={{ flex: 1 }}>
+                                    <label className="block mb-2">Grupo:</label>
+                                    <Select
+                                        value={selectedGrupo}
+                                        placeholder="Seleccionar Grupo"
+                                        onChange={setSelectedGrupo}
+                                        style={{
+                                            width: '100%',
+                                            height: '40px',
+                                            borderRadius: '8px',
+                                            border: '1px solid #d9d9d9',
+                                        }}
+                                    >
+                                        {grupos.map(grupo => (
+                                            <Option key={grupo.intClvGrupo} value={grupo.intClvGrupo}>
+                                                {grupo.vchGrupo}
+                                            </Option>
+                                        ))}
+                                    </Select>
+                                </div>
+                            </div>
+
+                            <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                                <Button
+                                    onClick={fetchEstadisticasGeneral}
+                                    type="button"
+                                    style={{
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        backgroundColor: 'var(--first-color)',
+                                        borderColor: 'transparent',
+                                        color: '#fff',
+                                        padding: '10px 20px',
+                                        borderRadius: '8px',
+                                        fontSize: '16px',
+                                        fontWeight: 'bold',
+                                        height: '40px',
+                                        width: '400px',
+                                        cursor: 'pointer',
+                                        transition: 'background-color 0.3s ease'
+                                    }}
+                                    onMouseOver={(event) => {
+                                        event.currentTarget.style.backgroundColor = 'black';
+                                    }}
+                                    onMouseOut={(event) => {
+                                        event.currentTarget.style.backgroundColor = 'var(--first-color)';
+                                    }}
+                                >
+                                    Ver Estadísticas Generales
+                                </Button>
+                            </div>
+                        </form>
+
+                        {estadisticas.length === 0 ? (
+                            <div className="flex justify-center items-center w-full h-64">
+                                <Empty description="No hay datos" />
+                            </div>
+                        ) : (
+                            <>
+                                {/* Primer gráfico: Gráfico de Barras (ApexCharts) */}
+                                <div className="flex flex-col items-center" style={{ maxWidth: '100%' }}>
+                                    <br></br><br></br>
                                     <h3 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-300 text-center">Gráfico de Barras</h3>
-                                    <div className="w-full h-64">
-                                        <Bar data={dataBar} options={optionsBar} />
+                                    <div style={{ width: '100%', maxWidth: '100%', overflow: 'hidden' }}> {/* Añadido overflow hidden aquí */}
+                                        <Chart options={optionsBar} series={seriesBar} type="bar" height={300} />
                                     </div>
                                 </div>
-                                <div className="flex flex-col items-center flex-1">
-                                    <h3 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-300 text-center">Gráfico de Dona</h3>
-                                    <div className="flex justify-center w-full h-64">
-                                        <Doughnut data={dataDoughnut} options={optionsBar} />
+
+                                {/* Segundo gráfico: Gráfico de Líneas (ApexCharts como área) */}
+                                <div className="flex flex-col items-center" style={{ maxWidth: '100%' }}>
+                                    <h3 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-300 text-center">Gráfico de Líneas</h3>
+                                    <div style={{ width: '100%', maxWidth: '100%', overflow: 'hidden' }}> {/* Añadido overflow hidden aquí */}
+                                        <Chart options={optionsLine} series={seriesLine} type="area" height={300} />
                                     </div>
                                 </div>
-                            </div>
-                            <div className="mt-6">
-                                <h3 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-300 text-center">Gráfico de Líneas</h3>
-                                <div className="flex justify-center w-full h-64">
-                                    <Line data={dataLine} options={optionsLine} />
+
+                                {/* Gráfico de Pastel (ApexCharts Pie) */}
+                                <div className="flex flex-col items-center" style={{ maxWidth: '100%' }}>
+                                    <h3 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-300 text-center">Gráfico de Pastel</h3>
+                                    <div style={{ width: '35%', maxWidth: '100%', overflow: 'hidden' }}>
+                                        <Chart options={optionsPie} series={seriesPie} type="pie" height={300} />
+                                    </div>
                                 </div>
-                            </div>
-                        </>
-                    )}
+                            </>
+                        )}
+                    </Card>
                 </div>
             </div>
         </SIDEBARDIRECT>

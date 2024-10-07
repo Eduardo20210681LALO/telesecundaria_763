@@ -18,27 +18,26 @@ const itemsSidebar = (CerrarSesión) => [
         getItem(<Link to="/Materias">Materias</Link>, '3'),
     ]),
     getItem('DOCENTES', 'sub2', <UserOutlined />, [
-        getItem(<Link to="/CrearDocentes">Crear Docentes</Link>, '4'),
-        getItem(<Link to="/OtorgarGradoXGrupoDocente">Asig. Grupo Doc</Link>, '5'),
+        getItem(<Link to="/CrearDocentes">Crear y Asignar Docentes</Link>, '4'),
     ]),
     getItem('ALUMNOS', 'sub3', <TeamOutlined />, [
-        getItem(<Link to="/IngresarAlumnos">Ingresar Alumnos</Link>, '6'),
-        getItem(<Link to="/VisualizaciónAlumnosInscritos">Inscribir Alumnos</Link>, '7'),
-        getItem(<Link to="/TodosAlum">Todos los Alumnos</Link>, '8'),
-        getItem(<Link to="/ActualizarDatosAlumnos">Actualizar Datos</Link>, '9'),
-        getItem(<Link to="/ReinscribirAlumXAdmin">Reinscribir Alumnos</Link>, '10'),
-        getItem(<Link to="/AlumnosEgresados">Alumnos Egresados</Link>, '11'),
-        getItem(<Link to="/alumnos-baja">Alumnos Baja</Link>, '12'),
+        getItem(<Link to="/IngresarAlumnos">Ingresar Alumnos</Link>, '5'),
+        getItem(<Link to="/VisualizaciónAlumnosInscritos">Inscribir Alumnos</Link>, '6'),
+        getItem(<Link to="/TodosAlum">Todos los Alumnos</Link>, '7'),
+        getItem(<Link to="/ActualizarDatosAlumnos">Actualizar Datos</Link>, '8'),
+        getItem(<Link to="/ReinscribirAlumXAdmin">Reinscribir Alumnos</Link>, '9'),
+        getItem(<Link to="/AlumnosEgresados">Alumnos Egresados</Link>, '10'),
+        getItem(<Link to="/alumnos-baja">Alumnos Baja</Link>, '11'),
     ]),
     getItem('ESTADÍSTICAS', 'sub4', <BarChartOutlined />, [
-        getItem(<Link to="/MejoresPromediosXAdmin">Mejores Promedios</Link>, '13'),
-        getItem(<Link to="/EstadisticasGeneralXAdmin">Estadísticas General</Link>, '14'),
-        getItem(<Link to="/EstadisticasGrupalXAdmin">Estadísticas Grupal</Link>, '15'),
-        getItem(<Link to="/EstadisticasIndividualXAdmin">Estadísticas Indiv.</Link>, '16'),
+        getItem(<Link to="/MejoresPromediosXAdmin">Mejores Promedios</Link>, '12'),
+        getItem(<Link to="/EstadisticasGeneralXAdmin">Estadísticas General</Link>, '13'),
+        getItem(<Link to="/EstadisticasGrupalXAdmin">Estadísticas Grupal</Link>, '14'),
+        getItem(<Link to="/EstadisticasIndividualXAdmin">Estadísticas Indiv.</Link>, '15'),
     ]),
     getItem('AJUSTES', 'sub5', <SettingOutlined />, [
-        getItem(<Link to="/Usuarios">Usuarios</Link>, '17'),
-        getItem(<Link to="/PerfilUADM">Mi Perfil</Link>, '18'),
+        getItem(<Link to="/Usuarios">Usuarios</Link>, '16'),
+        getItem(<Link to="/PerfilUADM">Mi Perfil</Link>, '17'),
     ]),
     getItem(
         <span onClick={CerrarSesión} style={{ cursor: 'pointer' }}>Cerrar Sesión</span>, 
@@ -73,47 +72,44 @@ function SIDEBARADMIN({ children }) {
         } else if (location.pathname.includes('/CrearDocentes')) {
             setSelectedKey('4');
             setOpenKeys(['sub2']); // Mantén abierto el submenú 'DOCENTES'
-        } else if (location.pathname.includes('/OtorgarGradoXGrupoDocente')) {
-            setSelectedKey('5');
-            setOpenKeys(['sub2']); // Mantén abierto el submenú 'DOCENTES'
         } else if (location.pathname.includes('/IngresarAlumnos')) {
-            setSelectedKey('6');
+            setSelectedKey('5');
             setOpenKeys(['sub3']); // Mantén abierto el submenú 'ALUMNOS'
         } else if (location.pathname.includes('/VisualizaciónAlumnosInscritos')) {
-            setSelectedKey('7');
+            setSelectedKey('6');
             setOpenKeys(['sub3']); // Mantén abierto el submenú 'ALUMNOS'
         } else if (location.pathname.includes('/TodosAlum')) {
-            setSelectedKey('8');
+            setSelectedKey('7');
             setOpenKeys(['sub3']); // Mantén abierto el submenú 'ALUMNOS'
         } else if (location.pathname.includes('/ActualizarDatosAlumnos')) {
-            setSelectedKey('9');
+            setSelectedKey('8');
             setOpenKeys(['sub3']); // Mantén abierto el submenú 'ALUMNOS'
         } else if (location.pathname.includes('/ReinscribirAlumXAdmin')) {
-            setSelectedKey('10');
+            setSelectedKey('9');
             setOpenKeys(['sub3']); // Mantén abierto el submenú 'ALUMNOS'
         } else if (location.pathname.includes('/AlumnosEgresados')) {
-            setSelectedKey('11');
+            setSelectedKey('10');
             setOpenKeys(['sub3']); // Mantén abierto el submenú 'ALUMNOS'
         } else if (location.pathname.includes('/alumnos-baja')) {
-            setSelectedKey('12');
+            setSelectedKey('11');
             setOpenKeys(['sub3']); // Mantén abierto el submenú 'ALUMNOS'
         } else if (location.pathname.includes('/MejoresPromediosXAdmin')) {
-            setSelectedKey('13');
+            setSelectedKey('12');
             setOpenKeys(['sub4']); // Mantén abierto el submenú 'ESTADÍSTICAS'
         } else if (location.pathname.includes('/EstadisticasGeneralXAdmin')) {
-            setSelectedKey('14');
+            setSelectedKey('13');
             setOpenKeys(['sub4']); // Mantén abierto el submenú 'ESTADÍSTICAS'
         } else if (location.pathname.includes('/EstadisticasGrupalXAdmin')) {
-            setSelectedKey('15');
+            setSelectedKey('14');
             setOpenKeys(['sub4']); // Mantén abierto el submenú 'ESTADÍSTICAS'
         } else if (location.pathname.includes('/EstadisticasIndividualXAdmin')) {
-            setSelectedKey('16');
+            setSelectedKey('15');
             setOpenKeys(['sub4']); // Mantén abierto el submenú 'ESTADÍSTICAS'
         } else if (location.pathname.includes('/Usuarios')) {
-            setSelectedKey('17');
+            setSelectedKey('16');
             setOpenKeys(['sub5']); // Mantén abierto el submenú 'AJUSTES'
         } else if (location.pathname.includes('/PerfilUADM')) {
-            setSelectedKey('18');
+            setSelectedKey('17');
             setOpenKeys(['sub5']);
         } else {
             setSelectedKey('home');
