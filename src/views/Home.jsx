@@ -22,11 +22,14 @@ import work3 from '../images/work3.jpg';
 
 import BreadCrumb from "./BreadCrumbView";
 
+import InstallPWA from "../components/InstallPWA";
+
 
 function Home() {
   return (
     <div>
       <Nav/>
+      <InstallPWA />
       <main className="l-main" style={{ backgroundColor: '#F5F5F5' }}>
         <section className="home bd-grid" id="inicio">{/* HOME */}
           <div className="home__data">
