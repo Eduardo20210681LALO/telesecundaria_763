@@ -11,9 +11,9 @@ const manifestForPlugin = {
     'manifest-icon-512.maskable.png',
   ],
   manifest: {
-    name: 'Gian TODO list',
-    short_name: 'Gian TODOs',
-    description: 'Una app para crear los TODOs de Gian',
+    name: 'Telesecundaria 763',
+    short_name: 'Telesecundaria 763',
+    description: 'Telesecundaria 763',
     icons: [
       {
         src: 'icon-192.png',

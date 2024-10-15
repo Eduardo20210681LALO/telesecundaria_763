@@ -1,394 +1,300 @@
-import React, { useState, useEffect } from 'react';
-import { Breadcrumb, Select, Typography, Card, Button, message, Spin, Alert, Empty } from 'antd'; // Ant Design components
-import SIDEBARADMIN from '../../components/SIDEBARADMIN';
-import BreadcrumbAdmin from './Admin/BreadcrumbAdmin';
-import Chart from "react-apexcharts";  // Cambiamos a ApexCharts
+import React, { useState } from 'react';
+import { Descriptions, Typography, Card, message, Upload, Button, Table } from 'antd'; // Importamos los componentes de Ant Design
+import { UploadOutlined } from '@ant-design/icons'; // Icono de Ant Design
+import * as XLSX from 'xlsx';
 import axios from 'axios';
-import { Bar, Doughnut, Line } from 'react-chartjs-2';
-import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, BarElement, LineElement, CategoryScale, LinearScale } from 'chart.js';
+import SIDEBARDOCENT from '../../components/SIDEBARDOCENT';
+import BreadcrumDocent from '../../views/Inicio/Docentes/BreadcrumDocent';
 
-ChartJS.register(Title, Tooltip, Legend, ArcElement, BarElement, LineElement, CategoryScale, LinearScale);
-
-const { Option } = Select;
+const { Title } = Typography;
 
 function Prueba2() {
-    const [periodos, setPeriodos] = useState([]);
-    const [grados, setGrados] = useState([]);
-    const [grupos, setGrupos] = useState([]);
-    const [alumnos, setAlumnos] = useState([]);
-    const [calificaciones, setCalificaciones] = useState([]);
-    const [promediosGenerales, setPromediosGenerales] = useState({});
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const [studentsData, setStudentsData] = useState([]);
+    const [materias, setMaterias] = useState([]);
+    const [periodo, setPeriodo] = useState('');
+    const [grado, setGrado] = useState('');
+    const [grupo, setGrupo] = useState('');
+    const [trimestre, setTrimestre] = useState('');
+    const [selectedFile, setSelectedFile] = useState(null);
 
-    const [selectedPeriodo, setSelectedPeriodo] = useState(null); // Inicializa en null para placeholder
-    const [selectedGrado, setSelectedGrado] = useState(null);
-    const [selectedGrupo, setSelectedGrupo] = useState(null);
-    const [selectedAlumno, setSelectedAlumno] = useState(null);
+    const closeModal = () => {
+        setStudentsData([]);
+        setMaterias([]);
+        setPeriodo('');
+        setGrado('');
+        setGrupo('');
+        setTrimestre('');
+        setSelectedFile(null);
+    };
 
-    useEffect(() => {
-        axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php')
-            .then(response => setPeriodos(response.data))
-            .catch(error => message.error('Error al obtener los periodos'));
+    const handleFileUpload = (file) => {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+            const data = evt.target.result;
+            const workbook = XLSX.read(data, { type: 'binary' });
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-        axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php')
-            .then(response => setGrados(response.data))
-            .catch(error => message.error('Error al obtener los grados'));
-
-        axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php')
-            .then(response => setGrupos(response.data))
-            .catch(error => message.error('Error al obtener los grupos'));
-    }, []);
-
-    useEffect(() => {
-        if (selectedPeriodo && selectedGrado && selectedGrupo) {
-            axios.get('http://localhost/TeleSecundaria763/Directivos/ObtenerAlumnosPorGrupo.php', {
-                params: {
-                    periodo: selectedPeriodo,
-                    grado: selectedGrado,
-                    grupo: selectedGrupo,
+            const findValue = (data, searchValue) => {
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i][0] && data[i][0].toString().toLowerCase().includes(searchValue.toLowerCase())) {
+                        return data[i][1];
+                    }
                 }
-            })
-                .then(response => setAlumnos(response.data))
-                .catch(error => message.error('Error al obtener los alumnos'));
-        }
-    }, [selectedPeriodo, selectedGrado, selectedGrupo]);
+                return '';
+            };
 
-    const fetchCalificaciones = () => {
-        // Validación para asegurarse de que todas las opciones estén seleccionadas
-        if (!selectedPeriodo) {
-            message.warning('Por favor selecciona un Periodo');
-            return;
-        }
-        if (!selectedGrado) {
-            message.warning('Por favor selecciona un Grado');
-            return;
-        }
-        if (!selectedGrupo) {
-            message.warning('Por favor selecciona un Grupo');
-            return;
-        }
-        if (!selectedAlumno) {
-            message.warning('Por favor selecciona un Alumno');
+            const additionalData = {
+                PERIODO: findValue(jsonData, 'PERIODO'),
+                GRADO: findValue(jsonData, 'GRADO'),
+                GRUPO: findValue(jsonData, 'GRUPO'),
+                TRIMESTRE: findValue(jsonData, 'TRIMESTRE')
+            };
+            setPeriodo(additionalData.PERIODO);
+            setGrado(additionalData.GRADO);
+            setGrupo(additionalData.GRUPO);
+            setTrimestre(additionalData.TRIMESTRE);
+
+            console.log("Datos adicionales:", additionalData);
+
+            const startIndex = jsonData.findIndex(row => row.includes('CURP'));
+
+            const materiaRow = jsonData[startIndex];
+            const endIndex = materiaRow.findIndex(header => header.toLowerCase() === 'calificacion trimestre');
+            const headers = materiaRow.slice(2, endIndex); // Excluye CURP y Nombre del Alumno
+            setMaterias(headers);
+
+            console.log("Materias:", headers);
+
+            const filteredData = jsonData.slice(startIndex + 1).map(row => ({
+                claveAlumno: row[0] || null,
+                nombreCompleto: row[1] || null,
+                calificaciones: row.slice(2, endIndex), // Ajustar el rango para las calificaciones
+                calificacionTrimestre: row[endIndex] || null // Obtener "CALIFICACION TRIMESTRE"
+            })).filter(student => student.claveAlumno && student.nombreCompleto && student.calificaciones.length === headers.length);
+
+            console.log("Datos de estudiantes filtrados:", filteredData);
+
+            setStudentsData(filteredData);
+            setSelectedFile(file);
+        };
+        reader.readAsBinaryString(file);
+    };
+
+    const saveGradesToDatabase = () => {
+        if (studentsData.length === 0) {
+            message.error('No hay datos válidos para guardar.');
             return;
         }
 
-        // Si todas las validaciones pasan, se procede con las llamadas a la API
-        setLoading(true);
-        setError(null);
+        const dataToSend = {
+            Periodo: periodo,
+            Grado: grado,
+            Grupo: grupo,
+            Trimestre: trimestre,
+            students: studentsData.map(student => ({
+                ClaveAlumno: student.claveAlumno,
+                Calificaciones: Object.fromEntries(materias.map((materia, index) => [materia, student.calificaciones[index]]))
+            }))
+        };
 
-        axios.get('http://localhost/TeleSecundaria763/Directivos/ObtenerCalificacionesAlumno.php', {
-            params: {
-                periodo: selectedPeriodo,
-                grado: selectedGrado,
-                grupo: selectedGrupo,
-                alumno: selectedAlumno,
-            }
-        })
+        console.log('Datos que se enviarán:', dataToSend);
+
+        axios.post('http://localhost/TeleSecundaria763/Docentes/InsertarCalificacionesSegundo.php', dataToSend)
             .then(response => {
-                if (response.data && Array.isArray(response.data.calificaciones)) {
-                    setCalificaciones(response.data.calificaciones);
+                console.log(response.data);
+                if (response.data.success) {
+                    message.success('Datos guardados en la base de datos correctamente.');
+                    saveFinalGradesToDatabase();
                 } else {
-                    setError('No se encontraron calificaciones para el alumno seleccionado.');
+                    message.error(response.data.message);
                 }
-                setLoading(false);
             })
             .catch(error => {
-                setError('Error al obtener las calificaciones.');
-                setLoading(false);
+                console.error('Error al guardar los datos:', error);
+                message.warning('Hubo un error al intentar guardar los datos en la base de datos.');
             });
+    };
 
-        axios.get('http://localhost/TeleSecundaria763/Directivos/ObtenerPromediosGenerales.php', {
-            params: {
-                alumno: selectedAlumno,
-                periodo: selectedPeriodo,
-            }
-        })
+    const saveFinalGradesToDatabase = () => {
+        const finalGradesToSend = {
+            Periodo: periodo,
+            Trimestre: trimestre,
+            students: studentsData.map(student => ({
+                ClaveAlumno: student.claveAlumno,
+                Calificacion: student.calificacionTrimestre
+            }))
+        };
+
+        console.log('Datos que se enviarán para calificaciones finales:', finalGradesToSend);
+
+        axios.post('http://localhost/TeleSecundaria763/Docentes/InsertarCalificacionesFinales.php', finalGradesToSend)
             .then(response => {
-                if (response.data && response.data.promedios) {
-                    setPromediosGenerales(response.data.promedios);
+                console.log(response.data);
+                if (response.data.success) {
+                    message.success('Promedio general guardado correctamente.');
                 } else {
-                    setError('No se encontraron promedios generales para el alumno seleccionado.');
+                    message.error(response.data.message);
                 }
-                setLoading(false);
+                closeModal();
             })
             .catch(error => {
-                setError('Error al obtener los promedios generales.');
-                setLoading(false);
+                console.error('Error al guardar el promedio general:', error);
+                message.warning('Hubo un error al intentar guardar el promedio general en la base de datos.');
             });
     };
 
-    const procesarDatos = (calificaciones) => {
-        const materias = [];
-        const trimestre1 = [];
-        const trimestre2 = [];
-        const trimestre3 = [];
-        const promedioFinal = [];
-
-        calificaciones.forEach(calif => {
-            materias.push(calif.Materia);
-            trimestre1.push(calif.PromedioTrimestre1);
-            trimestre2.push(calif.PromedioTrimestre2);
-            trimestre3.push(calif.PromedioTrimestre3);
-            promedioFinal.push(calif.PromedioFinal);
-        });
-
-        return { materias, trimestre1, trimestre2, trimestre3, promedioFinal };
+    // Props para el componente Upload
+    const uploadProps = {
+        name: 'file',
+        accept: '.xlsx, .xls', // Solo aceptar archivos Excel
+        beforeUpload: (file) => {
+            handleFileUpload(file); // Llamar la función de manejo de archivo
+            return false; // Evita la subida automática por defecto
+        },
+        onChange(info) {
+            if (info.file.status !== 'uploading') {
+                console.log(info.file, info.fileList);
+            }
+            if (info.file.status === 'done') {
+                message.success(`${info.file.name} fue cargado exitosamente`);
+            } else if (info.file.status === 'error') {
+                message.error(`${info.file.name} falló en la carga.`);
+            }
+        }
     };
 
-    const { materias, trimestre1, trimestre2, trimestre3, promedioFinal } = procesarDatos(calificaciones);
+    // Configurar las columnas de la tabla
+    const columns = [
+        {
+            title: 'Clave Alumno',
+            dataIndex: 'claveAlumno',
+            key: 'claveAlumno',
+        },
+        {
+            title: 'Nombre Completo',
+            dataIndex: 'nombreCompleto',
+            key: 'nombreCompleto',
+        },
+        // Generar dinámicamente columnas para las materias
+        ...materias.map((materia, index) => ({
+            title: materia,
+            dataIndex: ['calificaciones', index], // Acceder a las calificaciones por índice
+            key: `materia-${index}`,
+        })),
+        {
+            title: 'Calificación Trimestre',
+            dataIndex: 'calificacionTrimestre',
+            key: 'calificacionTrimestre',
+        },
+    ];
 
-    const dataBar = {
-        labels: materias,
-        datasets: [
-            {
-                label: 'Trimestre 1',
-                data: trimestre1,
-                backgroundColor: materias.map(() => 'rgba(75, 192, 192, 0.2)'),
-                borderColor: materias.map(() => 'rgba(75, 192, 192, 1)'),
-                borderWidth: 1,
-            },
-            {
-                label: 'Trimestre 2',
-                data: trimestre2,
-                backgroundColor: materias.map(() => 'rgba(54, 162, 235, 0.2)'),
-                borderColor: materias.map(() => 'rgba(54, 162, 235, 1)'),
-                borderWidth: 1,
-            },
-            {
-                label: 'Trimestre 3',
-                data: trimestre3,
-                backgroundColor: materias.map(() => 'rgba(255, 206, 86, 0.2)'),
-                borderColor: materias.map(() => 'rgba(255, 206, 86, 1)'),
-                borderWidth: 1,
-            },
-            {
-                label: 'Promedio Final',
-                data: promedioFinal,
-                backgroundColor: materias.map(() => 'rgba(153, 102, 255, 0.2)'),
-                borderColor: materias.map(() => 'rgba(153, 102, 255, 1)'),
-                borderWidth: 1,
-            },
-        ],
+    // Crear los datos de la tabla
+    const dataSource = studentsData.map((student, index) => ({
+        key: index,
+        claveAlumno: student.claveAlumno,
+        nombreCompleto: student.nombreCompleto,
+        calificaciones: student.calificaciones, // Lista de calificaciones para cada materia
+        calificacionTrimestre: student.calificacionTrimestre,
+    }));
+
+    // Estilos personalizados para compactar la tabla
+    const compactTableStyle = {
+        fontSize: '12px', // Tamaño de texto más pequeño
+        padding: '4px 8px', // Reducir el padding de las celdas
     };
-
-    const dataDoughnut = {
-        labels: ['Trimestre 1', 'Trimestre 2', 'Trimestre 3', 'Promedio General'],
-        datasets: [
-            {
-                data: [
-                    promediosGenerales.Trimestre1 || 0,
-                    promediosGenerales.Trimestre2 || 0,
-                    promediosGenerales.Trimestre3 || 0,
-                    promediosGenerales.PromedioGeneralPeriodo || 0
-                ],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.6)',
-                    'rgba(54, 162, 235, 0.6)',
-                    'rgba(255, 206, 86, 0.6)',
-                    'rgba(75, 192, 192, 0.6)',
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                ],
-                borderWidth: 1,
-                cutout: '70%', // Ajusta el tamaño del agujero en el centro
-            },
-        ],
-    };
-
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center min-h-screen">
-                <Spin size="large" />
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="flex justify-center items-center min-h-screen">
-                <Alert message="Error" description={error} type="error" showIcon />
-            </div>
-        );
-    }
 
     return (
-        <SIDEBARADMIN>
-            <div style={{ display: 'flex', flexDirection: 'column', minHeight: 'calc(100vh - 60px)', padding: '20px', overflowX: 'hidden' }}>
-                <BreadcrumbAdmin />
+        <SIDEBARDOCENT>
+            {/* Contenedor principal con padding */}
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    minHeight: 'calc(100vh - 60px)', // Ajusta para que ocupe todo el espacio restante
+                    padding: '20px',
+                }}
+            >
+                <BreadcrumDocent />
 
-                <Typography.Title level={2}>Estadísticas por Alumnos</Typography.Title>
+                {/* Título de la vista */}
+                <Title level={2}>Captura de Calificaciones por Excel</Title>
 
-                <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                {/* Contenedor para el contenido principal */}
+                <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                     <Card
                         style={{
                             background: '#fff',
                             padding: '20px',
-                            flexGrow: 1,
-                            overflowY: 'auto',
-                            overflowX: 'hidden',
+                            flexGrow: 1, // Hace que el card se extienda para ocupar el espacio disponible
+                            overflowY: 'auto', // Permite hacer scroll si el contenido es demasiado grande
                         }}
                     >
-                        <form style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }} onClick={fetchCalificaciones} disabled={!selectedAlumno}>
-                            <div style={{ display: 'flex', gap: '20px', width: '100%' }}>
-                                <div style={{ flex: 1 }}>
-                                    <label className="block mb-2">Periodo:</label>
-                                    <Select
-                                        value={selectedPeriodo}
-                                        placeholder="Seleccionar Periodo"
-                                        onChange={setSelectedPeriodo}
-                                        style={{
-                                            width: '100%',
-                                            height: '40px',
-                                            borderRadius: '8px',
-                                            border: '1px solid #d9d9d9',
-                                        }}
-                                    >
-                                        {periodos.map(periodo => (
-                                            <Option key={periodo.intClvPeriodo} value={periodo.intClvPeriodo}>
-                                                {periodo.vchPeriodo}
-                                            </Option>
-                                        ))}
-                                    </Select>
-                                </div>
+                        <div style={{ width: '100%', padding: '20px' }}>
+                            {/* Título y botón de carga */}
+                            <Title level={4} style={{ color: 'black', marginBottom: '20px' }}>
+                                Por favor, seleccione el archivo de Excel que contiene las calificaciones para su carga.
+                            </Title>
 
-                                <div style={{ flex: 1 }}>
-                                    <label className="block mb-2">Grado:</label>
-                                    <Select
-                                        value={selectedGrado}
-                                        placeholder="Seleccionar Grado"
-                                        onChange={setSelectedGrado}
-                                        style={{
-                                            width: '100%',
-                                            height: '40px',
-                                            borderRadius: '8px',
-                                            border: '1px solid #d9d9d9',
-                                        }}
-                                    >
-                                        {grados.map(grado => (
-                                            <Option key={grado.intClvGrado} value={grado.intClvGrado}>
-                                                {grado.vchGrado}
-                                            </Option>
-                                        ))}
-                                    </Select>
-                                </div>
-
-                                <div style={{ flex: 1 }}>
-                                    <label className="block mb-2">Grupo:</label>
-                                    <Select
-                                        value={selectedGrupo}
-                                        placeholder="Seleccionar Grupo"
-                                        onChange={setSelectedGrupo}
-                                        style={{
-                                            width: '100%',
-                                            height: '40px',
-                                            borderRadius: '8px',
-                                            border: '1px solid #d9d9d9',
-                                        }}
-                                    >
-                                        {grupos.map(grupo => (
-                                            <Option key={grupo.intClvGrupo} value={grupo.intClvGrupo}>
-                                                {grupo.vchGrupo}
-                                            </Option>
-                                        ))}
-                                    </Select>
-                                </div>
-
-                                <div style={{ flex: 1 }}>
-                                    <label className="block mb-2">Alumno:</label>
-                                    <Select
-                                        value={selectedAlumno}
-                                        placeholder="Seleccionar Alumno"
-                                        onChange={setSelectedAlumno}
-                                        disabled={!selectedGrupo}
-                                        style={{
-                                            width: '100%',
-                                            height: '40px',
-                                            borderRadius: '8px',
-                                            border: '1px solid #d9d9d9',
-                                        }}
-                                    >
-                                        {alumnos.map(alumno => (
-                                            <Option key={alumno.vchCurpAlumno} value={alumno.vchCurpAlumno}>
-                                                {alumno.vchNombre} {alumno.vchAPaterno} {alumno.vchAMaterno}
-                                            </Option>
-                                        ))}
-                                    </Select>
-                                </div>
-
+                            {/* Botón de Carga de Archivos Excel con Ant Design */}
+                            <div style={{ marginBottom: '20px' }}>
+                                <Upload {...uploadProps}>
+                                    <Button icon={<UploadOutlined />}>
+                                        Cargar archivo Excel
+                                    </Button>
+                                </Upload>
+                                {selectedFile && (
+                                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                                        Archivo seleccionado: {selectedFile.name}
+                                    </p>
+                                )}
                             </div>
 
-                            <div style={{ textAlign: 'center', marginTop: '10px' }}>
-                                <Button
-                                    type="submit"
-                                    style={{
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        backgroundColor: 'var(--first-color)',
-                                        borderColor: 'transparent',
-                                        color: '#fff',
-                                        padding: '10px 20px',
-                                        borderRadius: '8px',
-                                        fontSize: '16px',
-                                        fontWeight: 'bold',
-                                        height: '40px',
-                                        width: '400px',
-                                        cursor: 'pointer',
-                                        transition: 'background-color 0.3s ease'
-                                    }}
-                                    onMouseOver={(event) => {
-                                        event.currentTarget.style.backgroundColor = 'black';
-                                    }}
-                                    onMouseOut={(event) => {
-                                        event.currentTarget.style.backgroundColor = 'var(--first-color)';
-                                    }}
-                                >
-                                    Visualizar Calificaciones
+                            {/* Mostrar datos del archivo Excel cargado */}
+                            <div className="mb-8">
+                                <Title level={4} style={{ color: 'black', marginBottom: '20px' }}>
+                                    Datos requeridos: Trimestre, Periodo, Grado y Grupo.
+                                </Title>
+
+                                <Descriptions bordered column={4}>
+                                    <Descriptions.Item label="Periodo">{periodo}</Descriptions.Item>
+                                    <Descriptions.Item label="Trimestre">{trimestre}</Descriptions.Item>
+                                    <Descriptions.Item label="Grado">{grado}</Descriptions.Item>
+                                    <Descriptions.Item label="Grupo">{grupo}</Descriptions.Item>
+                                </Descriptions>
+                            </div>
+
+                            {/* Tabla de alumnos y calificaciones usando Ant Design Table */}
+                            <div className="mb-8">
+                                <Title level={4} style={{ color: 'black', marginBottom: '20px' }}>
+                                    Visualización de Alumnos y sus Calificaciones.
+                                </Title>
+
+                                {/* Aplicar el estilo compacto a la tabla */}
+                                <Table
+                                    columns={columns}
+                                    dataSource={dataSource}
+                                    pagination={false}
+                                    scroll={{ x: '100%', y: 400 }}  // Habilitar scroll horizontal y vertical
+                                    size="small" // Hacer la tabla más compacta
+                                    style={compactTableStyle} // Aplicar estilo personalizado
+                                />
+                            </div>
+
+                            {/* Botones de acción */}
+                            <div className="flex justify-end space-x-4 mt-4">
+                                <Button type="primary" onClick={saveGradesToDatabase}>
+                                    Guardar en la Base de Datos
+                                </Button>
+                                <Button type="danger" onClick={closeModal}>
+                                    Cancelar
                                 </Button>
                             </div>
-                        </form>
-
-                        {calificaciones.length === 0 ? (
-                            <div className="flex justify-center items-center w-full h-64">
-                                <Empty description="No hay datos" />
-                            </div>
-                        ) : (
-                            <>
-                                <div className="mt-6">
-                                    <h3 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-300 text-center">Gráfico de Barras</h3>
-                                    <Bar data={dataBar} options={{ responsive: true, plugins: { legend: { position: 'top' } } }} />
-                                </div>
-
-                                <div className="mt-10">
-                                    <h3 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-300 text-center">Gráfico de Líneas</h3>
-                                    <Line data={dataBar} options={{ responsive: true, plugins: { legend: { position: 'top' } } }} />
-                                </div>
-
-                                <div className="mt-10 flex justify-center">
-                                    <div style={{ width: '400px', height: '400px' }}>
-                                        <h3 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-300 text-center">Gráfico de Dona</h3>
-                                        <Doughnut 
-                                            data={dataDoughnut} 
-                                            options={{ 
-                                                responsive: true, 
-                                                plugins: { 
-                                                    legend: { position: 'top' } 
-                                                }
-                                            }} 
-                                        />
-                                    </div>
-                                </div>
-                            </>
-                        )}
+                        </div>
                     </Card>
                 </div>
             </div>
-        </SIDEBARADMIN>
+        </SIDEBARDOCENT>
     );
 }
 

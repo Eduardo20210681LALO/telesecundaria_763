@@ -12,6 +12,16 @@ import { message } from 'antd';
 //DisableAccount.php
 //
 
+/*
+  git init
+
+  git add .
+
+  git commit -m "Version 11.4"
+
+  git push -u origin main
+*/ 
+
 function Login() {
   const navigate = useNavigate();
   const [usuario, setUsuario] = useState('');
@@ -63,7 +73,6 @@ function Login() {
     setBloqueado(false);
     setTiempoRestante(0);
   };
-
 
   const toggleMostrarOpciones = () => {
     setMostrarOpciones(!mostrarOpciones);
