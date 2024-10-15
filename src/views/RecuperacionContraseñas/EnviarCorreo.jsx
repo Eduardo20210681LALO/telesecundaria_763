@@ -48,12 +48,12 @@ function EnviarCorreo() {
         console.log('Error al mandar los datos', error);
       }
     }
-  };  
+  };
 
-  const verifyCode = async(e)=>{
+  const verifyCode = async (e) => {
     e.preventDefault()
     if (token === '') {
-        message.warning('Por favor, ingrese el código de verificación para poder hacer la confirmación')
+      message.warning('Por favor, ingrese el código de verificación para poder hacer la confirmación')
     } else {
       if (String(token) === String(tokenrecibido)) {
         message.success('¡Bien! El código de verificación es correcto.')
@@ -71,7 +71,7 @@ function EnviarCorreo() {
         <div className="row justify-content-center align-items-center" style={{ minHeight: '110vh' }}>
           <div className="col-md-4">
             <div className="card p-4 shadow text-center">
-              
+
               <div style={{ minHeight: '100px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
                 <img src={logotelesecundaria763} alt="Logo de la Empresa" className="company-logo-olvi" style={{ maxWidth: '100%', maxHeight: '100%' }} />
               </div>
@@ -88,7 +88,7 @@ function EnviarCorreo() {
                   />
                 </div>
                 <div className="d-grid gap-3">
-                  <button onClick={enviarCorreo} type="submit" className="btn btn-primary" style={{ backgroundColor: 'var(--first-color)', borderColor: '#004b9b', padding: '8px 25px', borderRadius: '4px', fontSize: '16px', fontWeight: 'bold',  borderColor: 'transparent' }}>Enviar Codigo al correo</button>
+                  <button onClick={enviarCorreo} type="submit" className="btn btn-primary" style={{ backgroundColor: 'var(--first-color)', borderColor: '#004b9b', padding: '8px 25px', borderRadius: '4px', fontSize: '16px', fontWeight: 'bold', borderColor: 'transparent' }}>Enviar Codigo al correo</button>
                 </div>
 
                 {mostrarVerificacion && (

@@ -224,6 +224,7 @@ function EstadisticasGeneralXAdmin() {
                     >
                         <form style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
                             <div style={{ display: 'flex', gap: '20px', width: '100%', maxWidth: '100%' }}> {/* Aseguramos que no se exceda del 100% */}
+
                                 <div style={{ flex: 1 }}>
                                     <label className="block mb-2">Periodo:</label>
                                     <Select
