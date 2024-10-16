@@ -22,7 +22,8 @@ jobs:
       - name: Read file  # Lee
         run: |
           cat hola.txt
-
+          ls -al
+          
   dos:
     runs-on: ubuntu-latest
     needs: [uno]
