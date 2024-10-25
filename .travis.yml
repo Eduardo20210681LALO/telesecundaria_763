@@ -1,0 +1,15 @@
+language: node_js
+node_js:
+  - 16 # O la versión de Node.js que estés usando
+
+cache:
+  directories:
+    - node_modules
+
+install:
+  - npm install # Instala las dependencias
+
+script:
+  - npm run lint     # Linter para asegurarte de que no haya errores de estilo
+  - npm run build    # Compila el proyecto
+  - npm run test     # Ejecuta las pruebas
