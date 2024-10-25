@@ -33,11 +33,3 @@ jobs:
         
       - name: Directorio
         run: ls -al
-
-      - name: Instalar
-        run: |
-          cd .github/workflows
-          ls -al
-          chmod +x script.sh
-          ls -al
-          ./script.sh
