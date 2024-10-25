@@ -8,7 +8,7 @@ export const CustomSelect2 = ({ options, placeholder, onChange, value, w = 'w-fu
     const toggleDropdown = () => {
         setIsOpen(!isOpen);
     };
-  
+    
     return (
         <div className="relative">
             <div onClick={toggleDropdown} className={`appearance-none rounded px-3 py-4 ${w} text-white leading-tight focus:outline-none pr-10 bg-zinc-800`} >
