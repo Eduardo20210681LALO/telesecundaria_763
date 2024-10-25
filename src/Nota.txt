@@ -1,0 +1,15 @@
+git init
+
+git add .
+
+git commit -m "Comentario"
+
+git push origin tipo de rama
+
+-------------------------
+
+para jalar los cambios remotos a local con el siguiente comando:
+
+git pull origin main
+
+-------------------------
