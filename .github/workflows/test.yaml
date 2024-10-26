@@ -1,35 +1,30 @@
+# test.yaml
 name: CI/CD Workflow Telesecundaria763
 
-on: 
-  push:
-    branches: [feature-branches]  # O especifica la rama en la que quieres que se active el flujo de trabajo
+on: [push]
 
 jobs:
   Prueba1:
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4.2.1
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x] # Prueba en varias versiones de Node.js
 
-      - name: Set up Node.js
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js environment
         uses: actions/setup-node@v3
         with:
-          node-version: '11.9.4'  # Asegúrate de que sea la versión de Node.js que usas en tu proyecto
+          node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies
         run: npm install
 
-      - name: Run integration tests with coverage
+      - name: Run tests with coverage
         run: npm test -- --coverage
 
-  # Descomenta y ajusta este bloque si necesitas un segundo trabajo
-  # dos:
-  #   runs-on: ubuntu-latest
-  #   needs: Prueba1
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4.2.1
-  #       
-  #     - name: List directory contents
-  #       run: ls -al
+      - name: Check Node.js version
+        run: node -v  # Paso opcional para verificar la versión de Node.js
