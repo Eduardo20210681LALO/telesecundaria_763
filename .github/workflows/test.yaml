@@ -32,7 +32,7 @@ jobs:
         run: npm test Login.test.js -- --coverage
 
       - name: Check Node.js version
-        run: node -v  # Paso opcional para verificar la versión de Node.js
+        run: node -v
 
   Prueba_Modulo_Captura_Calificaciones:
     runs-on: ubuntu-latest
@@ -58,7 +58,7 @@ jobs:
         run: npm test CapturaCalificacionesAlum.test.js -- --coverage
 
       - name: Check Node.js version
-        run: node -v  # Paso opcional para verificar la versión de Node.js
+        run: node -v
 
   Prueba_Modulo_Usuarios:
     runs-on: ubuntu-latest
@@ -84,7 +84,7 @@ jobs:
         run: npm test Usuarios.test.js -- --coverage
 
       - name: Check Node.js version
-        run: node -v  # Paso opcional para verificar la versión de Node.js
+        run: node -v
 
       - name: Add comment on PR
         if: github.event_name == 'pull_request'
