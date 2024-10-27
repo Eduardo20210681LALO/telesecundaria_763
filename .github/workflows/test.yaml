@@ -1,41 +1,13 @@
-name: Hola Mundo
+name: CI/CD Workflow Telesecundaria763
 
 on: [push]
 
 jobs:
-  uno:
+  selenium-tests:
     runs-on: ubuntu-latest
     steps:
-      - name: Mensaje
-        run: echo "Hola mundo!!!"
-        
-      - name: Touch file  # Crea
-        run: |
-          touch hola.txt
-          ls -al
-          
-      - name: Set text  # Agrega
-        run: |
-          echo "Hola mundo" >> hola.txt
-          ls -al
-          
-      - name: Read file  # Lee
-        run: |
-          cat hola.txt
-          ls -al
-
-  dos:
-    runs-on: ubuntu-latest
-    needs: [uno]
-    steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v3
-
-      - name: Directorio
-        run: ls -al
-
-      - name: Install dependencies
-        run: npm install
 
       - name: Start local server
         run: npm run dev &
@@ -43,11 +15,23 @@ jobs:
           CI: true
 
       - name: Wait for server to start
-        run: sleep 10
+        run: sleep 15  # Incrementa el tiempo si el servidor tarda
 
-      # Selenium IDE Website Tester
       - name: Selenium IDE Website Tester
         uses: Dylan700/selenium-ide-action@v1.1.3
         with:
-          url: "http://localhost:5173/EstadisticasGrupalDocent"
-          test: "tests/mis-pruebas.side"  # Ruta al archivo .side de Selenium IDE con las pruebas
+          url: "http://localhost:5173/EstadisticasGrupalDocent"  # URL de la ruta específica
+          test: "github/workflows/prueba.side"  # Asegúrate de que este archivo exista y esté configurado correctamente
+
+      - name: Selenium Test Report
+        if: always()  # Ejecuta siempre este paso
+        run: |
+          mkdir -p ./reports
+          mv ./path/to/generated/report.xml ./reports/test-report.xml
+
+      - name: Display Test Report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: Selenium Test Report
+          path: ./reports/test-report.xml

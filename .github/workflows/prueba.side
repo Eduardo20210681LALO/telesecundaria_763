@@ -1,0 +1,63 @@
+{
+  "id": "some-unique-id",
+  "version": "2.0",
+  "name": "ProyectoPruebas",
+  "url": "http://localhost:5173",
+  "tests": [
+    {
+      "id": "test-unique-id",
+      "name": "Prueba de EstadisticasGrupalDocent",
+      "commands": [
+        {
+          "id": "1",
+          "comment": "",
+          "command": "open",
+          "target": "/EstadisticasGrupalDocent",
+          "value": ""
+        },
+        {
+          "id": "2",
+          "comment": "",
+          "command": "click",
+          "target": "css=#some-button",  // Cambia el selector CSS según el botón que deseas probar
+          "value": ""
+        },
+        {
+          "id": "3",
+          "comment": "",
+          "command": "type",
+          "target": "css=#some-input",
+          "value": "test input"  // Texto a ingresar en el campo de entrada
+        },
+        {
+          "id": "4",
+          "comment": "",
+          "command": "click",
+          "target": "css=#submit-button",  // Cambia el selector al botón de envío
+          "value": ""
+        },
+        {
+          "id": "5",
+          "comment": "",
+          "command": "assertText",
+          "target": "css=#result",
+          "value": "Resultado esperado"  // Verifica que el resultado esperado aparezca en la página
+        }
+      ]
+    }
+  ],
+  "suites": [
+    {
+      "id": "suite-unique-id",
+      "name": "Suite de Pruebas",
+      "persistSession": false,
+      "tests": [
+        "test-unique-id"
+      ]
+    }
+  ],
+  "urls": [
+    "http://localhost:5173"
+  ],
+  "plugins": []
+}
