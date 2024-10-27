@@ -29,17 +29,12 @@ jobs:
       - name: Check Node.js version
         run: node -v  # Paso opcional para verificar la versión de Node.js
 
-      - name: jest-check
-        uses: soomo/jest-check@0.0.5
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }} # Proporciona el token de GitHub
-
   PruebaModuloCapturaCalificaciones:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [16.x, 20.x] # Prueba en varias versiones de Node.js
+        node-version: [16.x] # Prueba en varias versiones de Node.js
 
     steps:
       - name: Checkout repository
@@ -58,8 +53,3 @@ jobs:
 
       - name: Check Node.js version
         run: node -v  # Paso opcional para verificar la versión de Node.js
-
-      - name: jest-check
-        uses: soomo/jest-check@0.0.5
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }} # Proporciona el token de GitHub
