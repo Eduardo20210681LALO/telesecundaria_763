@@ -33,4 +33,61 @@ jobs:
         
       - name: Directorio
         run: ls -al
-        
+
+  tres:
+    runs-on: ubuntu-latest
+    needs: [dos]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'  # Puedes especificar otra versión de Node.js
+
+      - name: Install Selenium dependencies
+        run: |
+          npm install selenium-webdriver
+          npm install chromedriver  # Instala el controlador de Chrome
+          npm install mocha chai    # Opcional: Herramientas de prueba adicionales
+
+      - name: Start local server
+        run: npm run dev &
+        env:
+          CI: true
+
+      - name: Wait for server to start
+        run: sleep 10  # Ajusta el tiempo de espera si el servidor tarda más en arrancar
+
+      - name: Run Selenium test
+        run: |
+          # Código de prueba en Selenium para la ruta específica
+          echo "Running Selenium test on http://localhost:5173/CapturaCalificacionesAlum"
+          node <<EOF
+          const { Builder, By, until } = require('selenium-webdriver');
+          const chrome = require('selenium-webdriver/chrome');
+
+          async function runTest() {
+            let driver = await new Builder().forBrowser('chrome').build();
+            try {
+              // Navega a la ruta específica de tu aplicación
+              await driver.get('http://localhost:5173/CapturaCalificacionesAlum');
+              
+              // Ejemplo: Busca un botón específico y haz clic
+              let button = await driver.findElement(By.css('#boton-especifico'));
+              await button.click();
+
+              // Espera a que un elemento aparezca en la página
+              await driver.wait(until.elementLocated(By.css('#resultado')), 5000);
+              
+              console.log("Test passed successfully!");
+            } catch (error) {
+              console.error("Test failed:", error);
+            } finally {
+              await driver.quit();
+            }
+          }
+
+          runTest();
+          EOF
