@@ -11,4 +11,5 @@ module.exports = {
     transform: {
       "^.+\\.jsx?$": ["babel-jest", { sourceType: "module" }]
     },
+    moduleFileExtensions: ['js', 'jsx', 'json', 'node'],
 };
