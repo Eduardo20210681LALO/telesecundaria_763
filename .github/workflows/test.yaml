@@ -1,42 +1,10 @@
-name: Hola Mundo
+name: CI/CD Test Workflow
 
 on: [push]
 
 jobs:
-  uno:
+  test:
     runs-on: ubuntu-latest
-    steps:
-      - name: Mensaje
-        run: echo "Hola mundo!!!"
-        
-      - name: Touch file  # Crea
-        run: |
-          touch hola.txt
-          ls -al
-          
-      - name: Set text  # Agrega
-        run: |
-          echo "Hola mundo" >> hola.txt
-          ls -al
-          
-      - name: Read file  # Lee
-        run: |
-          cat hola.txt
-          ls -al
-
-  dos:
-    runs-on: ubuntu-latest
-    needs: [uno]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4.2.1
-        
-      - name: Directorio
-        run: ls -al
-
-  SELENIUM:
-    runs-on: ubuntu-latest
-    needs: [dos]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -50,7 +18,6 @@ jobs:
         run: |
           npm install selenium-webdriver
           npm install chromedriver
-          npm install mocha chai
 
       - name: Start local server
         run: npm run dev &
@@ -58,37 +25,75 @@ jobs:
           CI: true
 
       - name: Wait for server to start
-        run: sleep 10
+        run: sleep 15  # Ajusta el tiempo de espera si el servidor tarda más en arrancar
 
-      - name: Run Selenium test
+      - name: Run comprehensive Selenium test
         run: |
-          echo "Running Selenium test on http://localhost:5173/CapturaCalificacionesAlum"
+          echo "Running comprehensive Selenium test on http://localhost:5173/CapturaCalificacionesAlum"
           node <<EOF
           const { Builder, By, until } = require('selenium-webdriver');
           const chrome = require('selenium-webdriver/chrome');
 
-          async function runTest() {
+          async function runComprehensiveTest() {
             let options = new chrome.Options();
-            options.addArguments('--headless');  // Ejecuta en modo headless
-            options.addArguments('--no-sandbox');
-            options.addArguments('--disable-dev-shm-usage');
+            options.addArguments('--headless', '--no-sandbox', '--disable-dev-shm-usage');
 
             let driver = await new Builder().forBrowser('chrome').setChromeOptions(options).build();
             try {
+              // 1. Navega a la URL específica
               await driver.get('http://localhost:5173/CapturaCalificacionesAlum');
-              
-              // Ejemplo: Interactuar con elementos específicos en la ruta
-              let button = await driver.findElement(By.css('#boton-especifico'));
-              await button.click();
 
-              await driver.wait(until.elementLocated(By.css('#resultado')), 5000);
-              console.log("Test passed successfully!");
+              // 2. Verifica que los elementos clave estén presentes y visibles
+              console.log("Verificando elementos clave en la página...");
+              let inputField = await driver.findElement(By.css('#campoEntrada'));
+              let submitButton = await driver.findElement(By.css('#botonEnviar'));
+              await driver.wait(until.elementIsVisible(inputField), 3000);
+              await driver.wait(until.elementIsVisible(submitButton), 3000);
+
+              // 3. Simula una entrada y envío
+              console.log("Ingresando datos y enviando...");
+              await inputField.sendKeys("Prueba de entrada");
+              await submitButton.click();
+
+              // 4. Verifica el resultado esperado después de enviar
+              console.log("Verificando el resultado esperado...");
+              let result = await driver.wait(until.elementLocated(By.css('#resultado')), 5000);
+              let resultText = await result.getText();
+              if (resultText.includes("Resultado esperado")) {
+                console.log("Prueba exitosa: Resultado esperado obtenido.");
+              } else {
+                console.error("Prueba fallida: Resultado inesperado.");
+              }
+
+              // 5. Validación de no redundancia: verifica IDs únicos
+              console.log("Verificando no redundancia en IDs...");
+              const ids = await driver.executeScript(`
+                const ids = [...document.querySelectorAll('[id]')].map(el => el.id);
+                return ids.filter((id, index) => ids.indexOf(id) !== index);
+              `);
+              if (ids.length > 0) {
+                console.error("Prueba fallida: IDs redundantes encontrados:", ids);
+              } else {
+                console.log("No redundancia: Todos los IDs son únicos.");
+              }
+
+              // 6. Verificar que no haya errores en la consola de JavaScript
+              const logs = await driver.manage().logs().get('browser');
+              const errors = logs.filter(log => log.level.value >= 900); // 900 = SEVERE
+              if (errors.length > 0) {
+                console.error("Prueba fallida: Errores de JavaScript en la consola:", errors);
+              } else {
+                console.log("Sin errores de JavaScript en la consola.");
+              }
+
+              console.log("Prueba completa y sin errores detectados.");
+
             } catch (error) {
-              console.error("Test failed:", error);
+              console.error("Prueba fallida:", error);
             } finally {
               await driver.quit();
             }
           }
 
-          runTest();
+          runComprehensiveTest();
           EOF
