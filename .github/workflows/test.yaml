@@ -66,16 +66,13 @@ jobs:
           EOF
 
       - name: Comment on PR for Selenium Test
+        if: github.event_name == 'pull_request'
         uses: actions/github-script@v4
         with:
           script: |
-            if (context.issue.number) {
-              github.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: "Las pruebas de Selenium en el módulo de calificaciones se completaron."
-              })
-            } else {
-              console.log("No se detectó un número de PR; omitiendo el comentario.")
-            }
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: "Las pruebas de Selenium en el módulo de calificaciones se completaron."
+            })
