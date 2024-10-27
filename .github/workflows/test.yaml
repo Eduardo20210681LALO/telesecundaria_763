@@ -12,6 +12,9 @@ jobs:
         node-version: [16.x] # Prueba en varias versiones de Node.js
 
     steps:
+      - name: jest-check
+        uses: soomo/jest-check@0.0.5
+        
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -28,7 +31,4 @@ jobs:
 
       - name: Check Node.js version
         run: node -v  # Paso opcional para verificar la versión de Node.js
-
-      - name: jest-check
-        uses: soomo/jest-check@0.0.5
     
