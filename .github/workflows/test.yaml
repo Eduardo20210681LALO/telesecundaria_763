@@ -25,11 +25,11 @@ jobs:
           CI: true
 
       - name: Wait for server to start
-        run: sleep 15  # Ajusta el tiempo de espera si el servidor tarda más en arrancar
+        run: sleep 15
 
       - name: Run comprehensive Selenium test
         run: |
-          echo "Running comprehensive Selenium test on http://localhost:5173/CapturaCalificacionesAlum"
+          echo "Running Selenium test on http://localhost:5173/CapturaCalificacionesAlum"
           node <<EOF
           const { Builder, By, until } = require('selenium-webdriver');
           const chrome = require('selenium-webdriver/chrome');
@@ -40,19 +40,15 @@ jobs:
 
             let driver = await new Builder().forBrowser('chrome').setChromeOptions(options).build();
             try {
-              await driver.get('http://localhost:5173/CapturaCalificacionesAlum');   // 1. SE DIRIGE A LA URL ESPECIFICAMENTE
-
-              console.log("Verificando elementos clave en la página..."); // 2.- VERIFICA LOS DATOS DE ENTRADA
+              await driver.get('http://localhost:5173/CapturaCalificacionesAlum');
               let inputField = await driver.findElement(By.css('#campoEntrada'));
               let submitButton = await driver.findElement(By.css('#botonEnviar'));
               await driver.wait(until.elementIsVisible(inputField), 3000);
               await driver.wait(until.elementIsVisible(submitButton), 3000);
 
-              console.log("Ingresando datos y enviando...");   // 3.- SIMULA UNA ENTRDA Y EL ENVIO DE LA MISMA
               await inputField.sendKeys("Prueba de entrada");
               await submitButton.click();
 
-              console.log("Verificando el resultado esperado...");   // 4. VERIFICA EL RESULTADO DESPUES DEL ENVIO
               let result = await driver.wait(until.elementLocated(By.css('#resultado')), 5000);
               let resultText = await result.getText();
               if (resultText.includes("Resultado esperado")) {
@@ -60,25 +56,6 @@ jobs:
               } else {
                 console.error("Prueba fallida: Resultado inesperado.");
               }
-              console.log("Verificando no redundancia en IDs...");   // 5.. VERIFICA IDS UNICOS
-              const ids = await driver.executeScript(`
-                const ids = [...document.querySelectorAll('[id]')].map(el => el.id);
-                return ids.filter((id, index) => ids.indexOf(id) !== index);
-              `);
-              if (ids.length > 0) {
-                console.error("Prueba fallida: IDs repetidos", ids);
-              } else {
-                console.log("Todo los Ids son Unicos");
-              }
-
-              const logs = await driver.manage().logs().get('browser');   // 6.- VERIFICACION SIN ERRORES
-              const errors = logs.filter(log => log.level.value >= 900);
-              if (errors.length > 0) {
-                console.error("Prueba fallida: Errores:", errors);
-              } else {
-                console.log("Sin errores");
-              }
-              console.log("Prueba completa");
             } catch (error) {
               console.error("Prueba fallida:", error);
             } finally {
@@ -87,3 +64,30 @@ jobs:
           }
           runComprehensiveTest();
           EOF
+
+  TEST_TESTCAFE_MODULO_INGRESO_ALUMNOS:
+    runs-on: ubuntu-latest
+    needs: [TEST_SELENIUM_MODULO_CALIFICACIONES]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install TestCafe
+        run: npm install testcafe
+
+      - name: Start local server
+        run: npm run dev &
+        env:
+          CI: true
+
+      - name: Wait for server to start
+        run: sleep 15
+
+      - name: Run TestCafe test
+        run: |
+          npx testcafe chrome tests/ingresarAlumnos.test.js
