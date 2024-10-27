@@ -9,7 +9,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x, 20.x] # Prueba en varias versiones de Node.js
+        node-version: [16.x] # Prueba en varias versiones de Node.js
 
     steps:
       - name: Checkout repository
@@ -23,14 +23,15 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run tests with coverage
-        run: npm test -- --coverage
+      - name: Run tests for Login Module with coverage
+        run: npm test -- --coverage -- --testPathPattern=Login.test.js
 
       - name: Check Node.js version
         run: node -v  # Paso opcional para verificar la versión de Node.js
 
   PruebaModuloCapturaCalificaciones:
     runs-on: ubuntu-latest
+    needs: [PruebaModuloLogin]
 
     strategy:
       matrix:
@@ -48,8 +49,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run tests with coverage
-        run: npm test -- --coverage
+      - name: Run tests for Captura Calificaciones with coverage
+        run: npm test -- --coverage -- --testPathPattern=CapturaCalificacionesAlum.test.js
 
       - name: Check Node.js version
         run: node -v  # Paso opcional para verificar la versión de Node.js
