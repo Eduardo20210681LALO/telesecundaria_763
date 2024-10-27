@@ -34,7 +34,7 @@ jobs:
       - name: Directorio
         run: ls -al
 
-  SELENIUM IDE:
+  SELENIUM:
     runs-on: ubuntu-latest
     needs: [dos]
     steps:
