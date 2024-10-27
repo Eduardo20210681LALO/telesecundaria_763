@@ -4,7 +4,7 @@ name: CI/CD Workflow Telesecundaria763
 on: [push]
 
 jobs:
-  PruebaModuloLogin:
+  Pruebas:
     runs-on: ubuntu-latest
 
     strategy:
@@ -23,39 +23,16 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run tests with coverage
-        run: npm test -- --coverage
+      - name: Run tests for Captura Calificaciones
+        run: npm test -- --coverage -- --testPathPattern=CapturaCalificacionesAlum.test.js
+
+      - name: Run tests for Login Module
+        run: npm test -- --coverage -- --testPathPattern=Login.test.js
 
       - name: Check Node.js version
         run: node -v  # Paso opcional para verificar la versión de Node.js
 
       - name: jest-check
         uses: soomo/jest-check@0.0.5
-
-  PruebaModuloCapturaCalificaciones:
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [16.x] # Prueba en varias versiones de Node.js
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run tests with coverage
-        run: npm test -- --coverage
-
-      - name: Check Node.js version
-        run: node -v  # Paso opcional para verificar la versión de Node.js
-
-      - name: jest-check
-        uses: soomo/jest-check@0.0.5
+          github_token: ${{ secrets.GITHUB_TOKEN }} # Proporciona el token de GitHub
