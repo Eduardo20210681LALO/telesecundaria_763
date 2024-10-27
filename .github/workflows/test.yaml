@@ -17,7 +17,14 @@ jobs:
           mkdir -p spec
           touch spec/output.json
 
-          
+      - name: Check output.json
+        run: |
+          if [ ! -s spec/output.json ]; then
+            echo "output.json is empty or does not exist"
+            exit 1
+          fi
+
+
       - name: jest-check
         uses: soomo/jest-check@0.0.5
         with:
@@ -55,6 +62,13 @@ jobs:
         run: |
           mkdir -p spec
           touch spec/output.json
+
+      - name: Check output.json
+        run: |
+          if [ ! -s spec/output.json ]; then
+            echo "output.json is empty or does not exist"
+            exit 1
+          fi
 
       - name: jest-check
         uses: soomo/jest-check@0.0.5
