@@ -1,7 +1,12 @@
 # test.yaml
 name: CI/CD Workflow Telesecundaria763
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize]
 
 jobs:
   Prueba_Modulo_Login:
@@ -80,3 +85,15 @@ jobs:
 
       - name: Check Node.js version
         run: node -v  # Paso opcional para verificar la versión de Node.js
+
+      - name: Add comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v4
+        with:
+          script: |
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: "Las pruebas se completaron. Revísalas antes de hacer merge."
+            })
