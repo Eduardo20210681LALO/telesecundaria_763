@@ -1,3 +1,11 @@
+import '@testing-library/jest-dom';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import CalificaAlum from './CapturaCalificacionesAlum';
+import { BrowserRouter } from 'react-router-dom';
+import { message } from 'antd';
+import axios from 'axios';
+
+
 // Simula window.matchMedia en Jest
 beforeAll(() => {
 window.matchMedia = window.matchMedia || function() {
@@ -8,14 +16,6 @@ window.matchMedia = window.matchMedia || function() {
     };
 };
 });
-
-
-import '@testing-library/jest-dom';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import CalificaAlum from './CapturaCalificacionesAlum';
-import { BrowserRouter } from 'react-router-dom';
-import { message } from 'antd';
-import axios from 'axios';
 
 
 // Simula el módulo axios para que no haga peticiones reales
@@ -34,7 +34,7 @@ describe('CapturaCalificacionesAlum Component', () => {
         // Renderiza el componente Login dentro de BrowserRouter
         render(
             <BrowserRouter>
-            <CalificaAlum />
+                <CalificaAlum />
             </BrowserRouter>
         );
 
