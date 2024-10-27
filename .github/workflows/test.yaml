@@ -9,7 +9,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x] # Prueba en varias versiones de Node.js
+        node-version: [16.x, 20.x] # Prueba en varias versiones de Node.js
 
     steps:
       - name: Checkout repository
@@ -39,7 +39,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x] # Prueba en varias versiones de Node.js
+        node-version: [16.x, 20.x] # Prueba en varias versiones de Node.js
 
     steps:
       - name: Checkout repository
