@@ -4,7 +4,7 @@ name: CI/CD Workflow Telesecundaria763
 on: [push]
 
 jobs:
-  PruebaModuloLogin:
+  Prueba_Modulo_Login:
     runs-on: ubuntu-latest
 
     strategy:
@@ -12,7 +12,14 @@ jobs:
         node-version: [16.x] # Prueba en varias versiones de Node.js
 
     steps:
-      - name: Checkout repository
+      - name: jest-check
+        uses: soomo/jest-check@0.0.5
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JEST_FOLDER: ${{ github.workspace }}/spec
+  
+          
+      - name: Checkout
         uses: actions/checkout@v4.2.1
 
       - name: Setup Node.js environment
@@ -20,25 +27,32 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Install dependencies
+      - name: Instalar dependencias
         run: npm install
 
-      - name: Run tests for Login Module with coverage
+      - name: Ejecuta las pruebas de Test del modulo Login
         run: npm test Login.test.js -- --coverage
 
       - name: Check Node.js version
         run: node -v  # Paso opcional para verificar la versión de Node.js
 
-  PruebaModuloCapturaCalificaciones:
+  Prueba_Modulo_Captura_Calificaciones:
     runs-on: ubuntu-latest
-    needs: [PruebaModuloLogin]
+    needs: [Prueba_Modulo_Login]
 
     strategy:
       matrix:
         node-version: [16.x] # Prueba en varias versiones de Node.js
 
     steps:
-      - name: Checkout repository
+      - name: jest-check
+        uses: soomo/jest-check@0.0.5
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JEST_FOLDER: ${{ github.workspace }}/spec
+
+
+      - name: Checkout
         uses: actions/checkout@v4.2.1
 
       - name: Setup Node.js environment
@@ -46,10 +60,10 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Install dependencies
+      - name: Instalar dependencias
         run: npm install
 
-      - name: Run tests for Captura Calificaciones with coverage
+      - name: Ejecuta las pruebas de Test del modulo Captura Calificaciones
         run: npm test CapturaCalificacionesAlum.test.js -- --coverage
 
       - name: Check Node.js version
