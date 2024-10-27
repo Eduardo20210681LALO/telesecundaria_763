@@ -12,26 +12,6 @@ jobs:
         node-version: [16.x] # Prueba en varias versiones de Node.js
 
     steps:
-      - name: Create output.json if not exists
-        run: |
-          mkdir -p spec
-          touch spec/output.json
-
-      - name: Check output.json
-        run: |
-          if [ ! -s spec/output.json ]; then
-            echo "output.json is empty or does not exist"
-            exit 1
-          fi
-
-
-      - name: jest-check
-        uses: soomo/jest-check@0.0.5
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          JEST_FOLDER: ${{ github.workspace }}/spec
-  
-
       - name: Checkout
         uses: actions/checkout@v4.2.1
 
@@ -58,24 +38,6 @@ jobs:
         node-version: [16.x] # Prueba en varias versiones de Node.js
 
     steps:
-      - name: Create output.json if not exists
-        run: |
-          mkdir -p spec
-          touch spec/output.json
-
-      - name: Check output.json
-        run: |
-          if [ ! -s spec/output.json ]; then
-            echo "output.json is empty or does not exist"
-            exit 1
-          fi
-
-      - name: jest-check
-        uses: soomo/jest-check@0.0.5
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
       - name: Checkout
         uses: actions/checkout@v4.2.1
 
