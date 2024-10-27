@@ -29,28 +29,28 @@ jobs:
       - name: Check Node.js version
         run: node -v  # Paso opcional para verificar la versión de Node.js
 
-#  PruebaModuloCapturaCalificaciones:
-#    runs-on: ubuntu-latest
-#    needs: [PruebaModuloLogin]
+  PruebaModuloCapturaCalificaciones:
+    runs-on: ubuntu-latest
+    needs: [PruebaModuloLogin]
 
-#    strategy:
-#      matrix:
-#        node-version: [16.x] # Prueba en varias versiones de Node.js
+    strategy:
+      matrix:
+        node-version: [16.x] # Prueba en varias versiones de Node.js
 
-#    steps:
-#      - name: Checkout repository
-#        uses: actions/checkout@v4.2.1
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.1
 
-#      - name: Setup Node.js environment
-#        uses: actions/setup-node@v3
-#        with:
-#          node-version: ${{ matrix.node-version }}
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4.1.0
+        with:
+          node-version: ${{ matrix.node-version }}
 
-#      - name: Install dependencies
-#        run: npm install
+      - name: Install dependencies
+        run: npm install
 
-#      - name: Run tests for Captura Calificaciones with coverage
-#        run: npm test -- --coverage -- --testPathPattern=CapturaCalificacionesAlum.test.js
+      - name: Run tests for Captura Calificaciones with coverage
+        run: npm test CapturaCalificacionesAlum.test.js -- --coverage
 
-#      - name: Check Node.js version
-#        run: node -v  # Paso opcional para verificar la versión de Node.js
+      - name: Check Node.js version
+        run: node -v  # Paso opcional para verificar la versión de Node.js
