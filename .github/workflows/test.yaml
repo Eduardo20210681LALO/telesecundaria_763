@@ -65,8 +65,7 @@ jobs:
           runComprehensiveTest();
           EOF
 
-      - name: Comment on PR for Selenium Test
-        if: github.event_name == 'pull_request'
+      - name: Commentario Final en Selenium Test
         uses: actions/github-script@v4
         with:
           script: |
@@ -104,8 +103,7 @@ jobs:
         run: |
           npx testcafe "chrome:headless" tests/ingresarAlumnos.test.js
 
-      - name: Comment on PR for TestCafe Test
-        if: github.event_name == 'pull_request'
+      - name: Commentario Final en TestCafe Test
         uses: actions/github-script@v4
         with:
           script: |
