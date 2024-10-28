@@ -68,10 +68,53 @@ jobs:
       - name: Wait for server to start
         run: sleep 15  # Ajusta el tiempo de espera si el servidor tarda más en arrancar
 
-      - name: Run Selenium test for EstadisticasGrupalDocent
+      - name: Run inline Selenium test for EstadisticasGrupalDocent
         run: |
           echo "Running second Selenium test on http://localhost:5173/EstadisticasGrupalDocent"
-          node .github/workflows/seleniumTestEstadisticasGrupalDocent.js
+          node <<EOF
+          const { Builder, By, until } = require('selenium-webdriver');
+          const chrome = require('selenium-webdriver/chrome');
+
+          (async function testEstadisticasGrupalDocent() {
+            let options = new chrome.Options();
+            options.addArguments('--headless', '--no-sandbox', '--disable-dev-shm-usage');
+
+            let driver = await new Builder().forBrowser('chrome').setChromeOptions(options).build();
+
+            try {
+              await driver.get('http://localhost:5173/EstadisticasGrupalDocent');
+
+              const periodoSelect = await driver.findElement(By.css('select[placeholder="Seleccionar Periodo"]'));
+              await periodoSelect.click();
+              await driver.findElement(By.xpath("//option[contains(text(), 'Periodo 1')]")).click();
+
+              const gradoSelect = await driver.findElement(By.css('select[placeholder="Seleccionar Grado"]'));
+              await gradoSelect.click();
+              await driver.findElement(By.xpath("//option[contains(text(), 'Grado 1')]")).click();
+
+              const grupoSelect = await driver.findElement(By.css('select[placeholder="Seleccionar Grupo"]'));
+              await grupoSelect.click();
+              await driver.findElement(By.xpath("//option[contains(text(), 'Grupo A')]")).click();
+
+              const viewGradesButton = await driver.findElement(By.xpath("//button[contains(text(), 'Ver Calificaciones del Grupo')]"));
+              await viewGradesButton.click();
+
+              await driver.wait(until.elementLocated(By.css(".apexcharts-canvas")), 5000);
+              console.log("Gráfico de barras cargado correctamente.");
+
+              const bars = await driver.findElements(By.css(".apexcharts-bar-area"));
+              if (bars.length > 0) {
+                console.log("Prueba exitosa: Gráfico de estadísticas cargado con barras.");
+              } else {
+                console.error("Prueba fallida: No se encontraron barras en el gráfico.");
+              }
+            } catch (error) {
+              console.error("Prueba fallida:", error);
+            } finally {
+              await driver.quit();
+            }
+          })();
+          EOF
 
       - name: Comment on PR for Selenium Test 2
         if: github.event_name == 'pull_request'
