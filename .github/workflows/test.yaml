@@ -27,10 +27,44 @@ jobs:
       - name: Wait for server to start
         run: sleep 15  # Ajusta el tiempo de espera si el servidor tarda más en arrancar
 
-      - name: Run Selenium test for CapturaCalificacionesAlum
+      - name: Run inline Selenium test for CapturaCalificacionesAlum
         run: |
           echo "Running first Selenium test on http://localhost:5173/CapturaCalificacionesAlum"
-          node .github/workflows/seleniumTestCapturaCalificacionesAlum.js
+          node <<EOF
+          const { Builder, By, until } = require('selenium-webdriver');
+          const chrome = require('selenium-webdriver/chrome');
+
+          (async function testCapturaCalificacionesAlum() {
+            let options = new chrome.Options();
+            options.addArguments('--headless', '--no-sandbox', '--disable-dev-shm-usage');
+
+            let driver = await new Builder().forBrowser('chrome').setChromeOptions(options).build();
+
+            try {
+              await driver.get('http://localhost:5173/CapturaCalificacionesAlum');
+
+              const inputField = await driver.findElement(By.css('#campoEntrada'));
+              const submitButton = await driver.findElement(By.css('#botonEnviar'));
+              await driver.wait(until.elementIsVisible(inputField), 3000);
+              await driver.wait(until.elementIsVisible(submitButton), 3000);
+
+              await inputField.sendKeys("Prueba de entrada");
+              await submitButton.click();
+
+              const result = await driver.wait(until.elementLocated(By.css('#resultado')), 5000);
+              const resultText = await result.getText();
+              if (resultText.includes("Resultado esperado")) {
+                console.log("Prueba exitosa: Resultado esperado obtenido.");
+              } else {
+                console.error("Prueba fallida: Resultado inesperado.");
+              }
+            } catch (error) {
+              console.error("Prueba fallida:", error);
+            } finally {
+              await driver.quit();
+            }
+          })();
+          EOF
 
       - name: Comment on PR for Selenium Test 1
         if: github.event_name == 'pull_request'
