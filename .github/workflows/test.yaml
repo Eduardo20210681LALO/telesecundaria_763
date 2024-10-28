@@ -3,7 +3,7 @@ name: CI/CD Test Workflow
 on: [push, pull_request]
 
 jobs:
-  TEST_SELENIUM_MODULO_CALIFICACIONES:
+  TEST_SELENIUM_MODULO_CALIFICACIONES_INTEGRACION:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -27,45 +27,12 @@ jobs:
       - name: Wait for server to start
         run: sleep 15  # Ajusta el tiempo de espera si el servidor tarda más en arrancar
 
-      - name: Run comprehensive Selenium test
+      - name: Run Selenium test for CapturaCalificacionesAlum
         run: |
-          echo "Running Selenium test on http://localhost:5173/CapturaCalificacionesAlum"
-          node <<EOF
-          const { Builder, By, until } = require('selenium-webdriver');
-          const chrome = require('selenium-webdriver/chrome');
+          echo "Running first Selenium test on http://localhost:5173/CapturaCalificacionesAlum"
+          node tests/selenium/seleniumTestCapturaCalificacionesAlum.js
 
-          async function runComprehensiveTest() {
-            let options = new chrome.Options();
-            options.addArguments('--headless', '--no-sandbox', '--disable-dev-shm-usage');
-
-            let driver = await new Builder().forBrowser('chrome').setChromeOptions(options).build();
-            try {
-              await driver.get('http://localhost:5173/CapturaCalificacionesAlum');
-              let inputField = await driver.findElement(By.css('#campoEntrada'));
-              let submitButton = await driver.findElement(By.css('#botonEnviar'));
-              await driver.wait(until.elementIsVisible(inputField), 3000);
-              await driver.wait(until.elementIsVisible(submitButton), 3000);
-
-              await inputField.sendKeys("Prueba de entrada");
-              await submitButton.click();
-
-              let result = await driver.wait(until.elementLocated(By.css('#resultado')), 5000);
-              let resultText = await result.getText();
-              if (resultText.includes("Resultado esperado")) {
-                console.log("Prueba exitosa: Resultado esperado obtenido.");
-              } else {
-                console.error("Prueba fallida: Resultado inesperado.");
-              }
-            } catch (error) {
-              console.error("Prueba fallida:", error);
-            } finally {
-              await driver.quit();
-            }
-          }
-          runComprehensiveTest();
-          EOF
-
-      - name: Comment on PR for Selenium Test
+      - name: Comment on PR for Selenium Test 1
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v4
         with:
@@ -74,5 +41,46 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: "Las pruebas de Selenium en el módulo de calificaciones se completaron."
+              body: "La primera prueba de Selenium en el módulo de calificaciones se completó."
+            })
+
+  TEST_EXTRE_EXTRE_MODULO_SELENIUM_ESTADISTICAS:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install Selenium dependencies
+        run: |
+          npm install selenium-webdriver
+          npm install chromedriver
+
+      - name: Start local server
+        run: npm run dev &
+        env:
+          CI: true
+
+      - name: Wait for server to start
+        run: sleep 15
+
+      - name: Run Selenium test for EstadisticasGrupalDocent
+        run: |
+          echo "Running second Selenium test on http://localhost:5173/EstadisticasGrupalDocent"
+          node .github/workflows/seleniumTestEstadisticasGrupalDocent.js
+
+      - name: Comment on PR for Selenium Test 2
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v4
+        with:
+          script: |
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: "La segunda prueba de Selenium en el módulo de estadísticas se completó."
             })
