@@ -3,7 +3,7 @@ name: CI/CD Test Workflow
 on: [push, pull_request]
 
 jobs:
-  TEST_INTEGRACION_SELENIUM_ESTADISTICAS_ALUM:
+  TEST_SELENIUM_MODULO_CALIFICACIONES_INTEGRACION:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -78,7 +78,7 @@ jobs:
               body: "La primera prueba de Selenium en el módulo de calificaciones se completó."
             })
 
-  TEST_EXTREME_EXTREME_MODULO_SELENIUM_ESTADISTICAS:
+  TEST_EXTRE_MODULO_SELENIUM_ESTADISTICAS:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -162,7 +162,7 @@ jobs:
               body: "La segunda prueba de Selenium en el módulo de estadísticas se completó."
             })
 
-  TEST_EXPLORATORIA_SWAGGER_LOGIN:
+  GENERATE_SWAGGER_LOGIN_DOCUMENTATION:
     needs: [TEST_SELENIUM_MODULO_CALIFICACIONES_INTEGRACION, TEST_EXTRE_MODULO_SELENIUM_ESTADISTICAS]
     runs-on: ubuntu-latest
 
@@ -193,7 +193,7 @@ jobs:
                 version: '1.0.0',
               },
             },
-            apis: ['./src/views/Login.jsx']
+            apis: ['./src/views/Login.jsx']  // Ruta actualizada para el archivo de Login
           };
 
           const swaggerSpec = swaggerJSDoc(options);
@@ -218,5 +218,3 @@ jobs:
               repo: context.repo.repo,
               body: "La documentación de Swagger para el módulo de Login se generó y está disponible como artefacto."
             })
-
-            
