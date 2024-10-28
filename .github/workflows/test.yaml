@@ -30,7 +30,7 @@ jobs:
       - name: Run Selenium test for CapturaCalificacionesAlum
         run: |
           echo "Running first Selenium test on http://localhost:5173/CapturaCalificacionesAlum"
-          node tests/selenium/seleniumTestCapturaCalificacionesAlum.js
+          node .github/workflows/seleniumTestCapturaCalificacionesAlum.js
 
       - name: Comment on PR for Selenium Test 1
         if: github.event_name == 'pull_request'
@@ -44,7 +44,7 @@ jobs:
               body: "La primera prueba de Selenium en el módulo de calificaciones se completó."
             })
 
-  TEST_EXTRE_EXTRE_MODULO_SELENIUM_ESTADISTICAS:
+  TEST_EXTRE_MODULO_SELENIUM_ESTADISTICAS:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -66,7 +66,7 @@ jobs:
           CI: true
 
       - name: Wait for server to start
-        run: sleep 15
+        run: sleep 15  # Ajusta el tiempo de espera si el servidor tarda más en arrancar
 
       - name: Run Selenium test for EstadisticasGrupalDocent
         run: |
