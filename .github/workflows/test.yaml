@@ -3,7 +3,7 @@ name: CI/CD Test Workflow
 on: [push, pull_request]
 
 jobs:
-  TEST_SELENIUM_MODULO_CALIFICACIONES_INTEGRACION:
+  TEST_INTEGRACION_SELENIUM_ESTADISTICAS_ALUM:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -78,7 +78,7 @@ jobs:
               body: "La primera prueba de Selenium en el módulo de calificaciones se completó."
             })
 
-  TEST_EXTRE_MODULO_SELENIUM_ESTADISTICAS:
+  TEST_EXTREME_EXTREME_MODULO_SELENIUM_ESTADISTICAS:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -160,4 +160,61 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: "La segunda prueba de Selenium en el módulo de estadísticas se completó."
+            })
+
+  TEST_EXPLORATORIA_SWAGGER_LOGIN:
+    needs: [TEST_SELENIUM_MODULO_CALIFICACIONES_INTEGRACION, TEST_EXTRE_MODULO_SELENIUM_ESTADISTICAS]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install Swagger dependencies
+        run: |
+          npm install swagger-jsdoc swagger-ui-express
+
+      - name: Generate Swagger Documentation for Login
+        run: |
+          node <<EOF
+          const swaggerJSDoc = require('swagger-jsdoc');
+          const fs = require('fs');
+
+          const options = {
+            definition: {
+              openapi: '3.0.0',
+              info: {
+                title: 'Login API Documentation',
+                version: '1.0.0',
+              },
+            },
+            apis: ['./src/views/Login.jsx']
+          };
+
+          const swaggerSpec = swaggerJSDoc(options);
+          fs.writeFileSync('./swagger.json', JSON.stringify(swaggerSpec, null, 2));
+          console.log('Swagger documentation generated successfully for the Login module.');
+          EOF
+
+      - name: Upload Swagger Documentation Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: swagger-docs
+          path: ./swagger.json
+
+      - name: Comment on PR for Swagger Documentation
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v4
+        with:
+          script: |
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: "La documentación de Swagger para el módulo de Login se generó y está disponible como artefacto."
             })
