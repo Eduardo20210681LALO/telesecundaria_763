@@ -1,151 +1,113 @@
 import { useState, useEffect } from 'react';
-import { FiAlignRight } from 'react-icons/fi'; // Icono de menú
-import { Avatar, Menu } from 'antd'; // Componente de Avatar y Menu de Ant Design
+import { FiAlignRight } from 'react-icons/fi';
+import { Avatar, Menu } from 'antd';
 import { UserOutlined, FolderOutlined, HomeOutlined, TeamOutlined, BarChartOutlined, SettingOutlined, LogoutOutlined } from '@ant-design/icons';
-import { Link, useNavigate, useLocation } from 'react-router-dom'; // Agregamos useLocation para detectar la ruta actual
-import Cookies from 'js-cookie'; // Importamos Cookies para borrar cookies
-import logotelesecundaria763 from '../images/logotelesecundaria763.png'; // Imagen del logotipo
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import Cookies from 'js-cookie';
+import logotelesecundaria763 from '../images/logotelesecundaria763.png';
 
 function getItem(label, key, icon, children) {
     return { key, icon, children, label };
 }
 
+// Menú específico para el rol de administrativo
 const itemsSidebar = (CerrarSesión) => [
-    getItem(<Link to="/HomeAdmin">Inicio</Link>, 'home', <HomeOutlined />),
+    getItem(<Link to="/administrativo/HomeAdmin">Inicio</Link>, 'home', <HomeOutlined />),
     getItem('SISTEMA', 'sub1', <FolderOutlined />, [
-        getItem(<Link to="/Periodos">Períodos</Link>, '1'),
-        getItem(<Link to="/CrearGradoYgrupo">Grados y Grupos</Link>, '2'),
-        getItem(<Link to="/Materias">Materias</Link>, '3'),
+        getItem(<Link to="/administrativo/Periodos">Períodos</Link>, '1'),
+        getItem(<Link to="/administrativo/CrearGradoYgrupo">Grados y Grupos</Link>, '2'),
+        getItem(<Link to="/administrativo/Materias">Materias</Link>, '3'),
     ]),
     getItem('DOCENTES', 'sub2', <UserOutlined />, [
-        getItem(<Link to="/CrearDocentes">Crear y Asignar Docentes</Link>, '4'),
+        getItem(<Link to="/administrativo/CrearDocentes">Crear y Asignar Docentes</Link>, '4'),
     ]),
     getItem('ALUMNOS', 'sub3', <TeamOutlined />, [
-        getItem(<Link to="/IngresarAlumnos">Ingresar Alumnos</Link>, '5'),
-        getItem(<Link to="/VisualizaciónAlumnosInscritos">Inscribir Alumnos</Link>, '6'),
-        getItem(<Link to="/TodosAlum">Todos los Alumnos</Link>, '7'),
-        getItem(<Link to="/ActualizarDatosAlumnos">Actualizar Datos</Link>, '8'),
-        getItem(<Link to="/ReinscribirAlumXAdmin">Reinscribir Alumnos</Link>, '9'),
-        getItem(<Link to="/AlumnosEgresados">Alumnos Egresados</Link>, '10'),
-        getItem(<Link to="/alumnos-baja">Alumnos Baja</Link>, '11'),
+        getItem(<Link to="/administrativo/IngresarAlumnos">Ingresar Alumnos</Link>, '5'),
+        getItem(<Link to="/administrativo/VisualizaciónAlumnosInscritos">Inscribir Alumnos</Link>, '6'),
+        getItem(<Link to="/administrativo/TodosAlum">Todos los Alumnos</Link>, '7'),
+        getItem(<Link to="/administrativo/ActualizarDatosAlumnos">Actualizar Datos</Link>, '8'),
+        getItem(<Link to="/administrativo/ReinscribirAlumXAdmin">Reinscribir Alumnos</Link>, '9'),
+        getItem(<Link to="/administrativo/AlumnosEgresados">Alumnos Egresados</Link>, '10'),
+        getItem(<Link to="/administrativo/alumnos-baja">Alumnos Baja</Link>, '11'),
     ]),
     getItem('ESTADÍSTICAS', 'sub4', <BarChartOutlined />, [
-        getItem(<Link to="/MejoresPromediosXAdmin">Mejores Promedios</Link>, '12'),
-        getItem(<Link to="/EstadisticasGeneralXAdmin">Estadísticas General</Link>, '13'),
-        getItem(<Link to="/EstadisticasGrupalXAdmin">Estadísticas Grupal</Link>, '14'),
-        getItem(<Link to="/EstadisticasIndividualXAdmin">Estadísticas Indiv.</Link>, '15'),
+        getItem(<Link to="/administrativo/MejoresPromediosXAdmin">Mejores Promedios</Link>, '12'),
+        getItem(<Link to="/administrativo/EstadisticasGeneralXAdmin">Estadísticas General</Link>, '13'),
+        getItem(<Link to="/administrativo/EstadisticasGrupalXAdmin">Estadísticas Grupal</Link>, '14'),
+        getItem(<Link to="/administrativo/EstadisticasIndividualXAdmin">Estadísticas Indiv.</Link>, '15'),
     ]),
     getItem('AJUSTES', 'sub5', <SettingOutlined />, [
-        getItem(<Link to="/Usuarios">Usuarios</Link>, '16'),
-        getItem(<Link to="/PerfilUADM">Mi Perfil</Link>, '17'),
+        getItem(<Link to="/administrativo/Usuarios">Usuarios</Link>, '16'),
+        getItem(<Link to="/administrativo/PerfilUADM">Mi Perfil</Link>, '17'),
     ]),
     getItem(
-        <span onClick={CerrarSesión} style={{ cursor: 'pointer' }}>Cerrar Sesión</span>, 
-        'logout', 
+        <span onClick={CerrarSesión} style={{ cursor: 'pointer' }}>Cerrar Sesión</span>,
+        'logout',
         <LogoutOutlined />
     ),
 ];
 
 function SIDEBARADMIN({ children }) {
-    const [collapsed, setCollapsed] = useState(() => {
-        // Lee el estado inicial de `collapsed` de `localStorage`, si no existe usa `false` por defecto
-        return localStorage.getItem('sidebarCollapsed') === 'true';
-    });
-
-    const [openKeys, setOpenKeys] = useState([]); // Estado para manejar los menús abiertos
-    const [selectedKey, setSelectedKey] = useState('home'); // Mantener la clave seleccionada
-
+    const [collapsed, setCollapsed] = useState(() => localStorage.getItem('sidebarCollapsed') === 'true');
+    const [openKeys, setOpenKeys] = useState([]);
+    const [selectedKey, setSelectedKey] = useState('home');
     const navigate = useNavigate();
     const location = useLocation();
 
+    // Configuración de la selección del menú según la ruta actual
     useEffect(() => {
-        // Mantener la selección del menú según la ruta actual
-        if (location.pathname.includes('/Periodos')) {
-            setSelectedKey('1');
-            setOpenKeys(['sub1']); // Mantén abierto el submenú 'SISTEMA'
-        } else if (location.pathname.includes('/CrearGradoYgrupo')) {
-            setSelectedKey('2');
-            setOpenKeys(['sub1']); // Mantén abierto el submenú 'SISTEMA'
-        } else if (location.pathname.includes('/Materias')) {
-            setSelectedKey('3');
-            setOpenKeys(['sub1']); // Mantén abierto el submenú 'SISTEMA'
-        } else if (location.pathname.includes('/CrearDocentes')) {
-            setSelectedKey('4');
-            setOpenKeys(['sub2']); // Mantén abierto el submenú 'DOCENTES'
-        } else if (location.pathname.includes('/IngresarAlumnos')) {
-            setSelectedKey('5');
-            setOpenKeys(['sub3']); // Mantén abierto el submenú 'ALUMNOS'
-        } else if (location.pathname.includes('/VisualizaciónAlumnosInscritos')) {
-            setSelectedKey('6');
-            setOpenKeys(['sub3']); // Mantén abierto el submenú 'ALUMNOS'
-        } else if (location.pathname.includes('/TodosAlum')) {
-            setSelectedKey('7');
-            setOpenKeys(['sub3']); // Mantén abierto el submenú 'ALUMNOS'
-        } else if (location.pathname.includes('/ActualizarDatosAlumnos')) {
-            setSelectedKey('8');
-            setOpenKeys(['sub3']); // Mantén abierto el submenú 'ALUMNOS'
-        } else if (location.pathname.includes('/ReinscribirAlumXAdmin')) {
-            setSelectedKey('9');
-            setOpenKeys(['sub3']); // Mantén abierto el submenú 'ALUMNOS'
-        } else if (location.pathname.includes('/AlumnosEgresados')) {
-            setSelectedKey('10');
-            setOpenKeys(['sub3']); // Mantén abierto el submenú 'ALUMNOS'
-        } else if (location.pathname.includes('/alumnos-baja')) {
-            setSelectedKey('11');
-            setOpenKeys(['sub3']); // Mantén abierto el submenú 'ALUMNOS'
-        } else if (location.pathname.includes('/MejoresPromediosXAdmin')) {
-            setSelectedKey('12');
-            setOpenKeys(['sub4']); // Mantén abierto el submenú 'ESTADÍSTICAS'
-        } else if (location.pathname.includes('/EstadisticasGeneralXAdmin')) {
-            setSelectedKey('13');
-            setOpenKeys(['sub4']); // Mantén abierto el submenú 'ESTADÍSTICAS'
-        } else if (location.pathname.includes('/EstadisticasGrupalXAdmin')) {
-            setSelectedKey('14');
-            setOpenKeys(['sub4']); // Mantén abierto el submenú 'ESTADÍSTICAS'
-        } else if (location.pathname.includes('/EstadisticasIndividualXAdmin')) {
-            setSelectedKey('15');
-            setOpenKeys(['sub4']); // Mantén abierto el submenú 'ESTADÍSTICAS'
-        } else if (location.pathname.includes('/Usuarios')) {
-            setSelectedKey('16');
-            setOpenKeys(['sub5']); // Mantén abierto el submenú 'AJUSTES'
-        } else if (location.pathname.includes('/PerfilUADM')) {
-            setSelectedKey('17');
-            setOpenKeys(['sub5']);
+        const pathToKeyMap = {
+            '/administrativo/Periodos': { key: '1', open: ['sub1'] },
+            '/administrativo/CrearGradoYgrupo': { key: '2', open: ['sub1'] },
+            '/administrativo/Materias': { key: '3', open: ['sub1'] },
+            '/administrativo/CrearDocentes': { key: '4', open: ['sub2'] },
+            '/administrativo/IngresarAlumnos': { key: '5', open: ['sub3'] },
+            '/administrativo/VisualizaciónAlumnosInscritos': { key: '6', open: ['sub3'] },
+            '/administrativo/TodosAlum': { key: '7', open: ['sub3'] },
+            '/administrativo/ActualizarDatosAlumnos': { key: '8', open: ['sub3'] },
+            '/administrativo/ReinscribirAlumXAdmin': { key: '9', open: ['sub3'] },
+            '/administrativo/AlumnosEgresados': { key: '10', open: ['sub3'] },
+            '/administrativo/alumnos-baja': { key: '11', open: ['sub3'] },
+            '/administrativo/MejoresPromediosXAdmin': { key: '12', open: ['sub4'] },
+            '/administrativo/EstadisticasGeneralXAdmin': { key: '13', open: ['sub4'] },
+            '/administrativo/EstadisticasGrupalXAdmin': { key: '14', open: ['sub4'] },
+            '/administrativo/EstadisticasIndividualXAdmin': { key: '15', open: ['sub4'] },
+            '/administrativo/Usuarios': { key: '16', open: ['sub5'] },
+            '/administrativo/PerfilUADM': { key: '17', open: ['sub5'] },
+        };
+
+        const matchedRoute = Object.keys(pathToKeyMap).find((path) =>
+            location.pathname.includes(path)
+        );
+
+        if (matchedRoute) {
+            const { key, open } = pathToKeyMap[matchedRoute];
+            setSelectedKey(key);
+            setOpenKeys(open);
         } else {
             setSelectedKey('home');
-            setOpenKeys([]); // Cierra todos los submenús
+            setOpenKeys([]);
         }
     }, [location]);
 
     const onOpenChange = (keys) => {
         const latestOpenKey = keys.find((key) => openKeys.indexOf(key) === -1);
-        if (latestOpenKey) {
-            setOpenKeys([latestOpenKey]); // Solo permite un menú abierto
-        } else {
-            setOpenKeys([]);
-        }
+        setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
     };
 
     const toggleSidebar = () => {
-        // Cambiamos el estado de `collapsed` y lo guardamos en `localStorage`
         setCollapsed((prevState) => {
             const newCollapsedState = !prevState;
-            localStorage.setItem('sidebarCollapsed', newCollapsedState); // Almacena en localStorage
+            localStorage.setItem('sidebarCollapsed', newCollapsedState);
             return newCollapsedState;
         });
     };
 
     const CerrarSesión = () => {
-        BorrarCookies();
-        localStorage.removeItem('idUsuario'); // Elimina solo el ID del usuario, ajusta 'userId' al nombre correcto
-        navigate('/Home'); // Redirige al home
-    };
-
-    const BorrarCookies = () => {
-        // Borra la cookie del token o cualquier cookie relevante
-        Cookies.remove('token'); // Si la cookie tiene un nombre diferente, cámbialo aquí
-        // Si la cookie tiene un dominio o ruta específicos, inclúyelos como parámetros
-        // Cookies.remove('token', { path: '/', domain: 'your-domain.com' });
+        Cookies.remove('token');
+        localStorage.removeItem('idUsuario');
+        localStorage.removeItem('rol');
+        navigate('/Home');
     };
 
     return (
@@ -166,7 +128,7 @@ function SIDEBARADMIN({ children }) {
                 }}
                 className="scrollbar-hide"
             >
-                <style jsx>
+                <style>
                     {`
                     .scrollbar-hide::-webkit-scrollbar {
                         display: none;
@@ -188,15 +150,11 @@ function SIDEBARADMIN({ children }) {
 
                 <Menu
                     selectedKeys={[selectedKey]}
-                    openKeys={openKeys} // Controlamos qué submenús están abiertos
-                    onOpenChange={onOpenChange} // Cambia el estado al abrir/cerrar submenús
+                    openKeys={openKeys}
+                    onOpenChange={onOpenChange}
                     mode="inline"
                     inlineCollapsed={collapsed}
                     items={itemsSidebar(CerrarSesión)}
-                    style={{
-                        '--antd-selected-bg': 'rgba(125, 4, 48, 0.5)', // Guinda bajito con transparencia
-                        '--antd-highlight-color': '#7d0430', // Guinda fuerte para el texto
-                    }}
                 />
             </div>
 
@@ -224,14 +182,6 @@ function SIDEBARADMIN({ children }) {
 
                         <img src={logotelesecundaria763} alt="Logo" style={{ height: '40px', marginRight: '10px' }} />
                         <span style={{ fontSize: '18px', fontWeight: 'bold', color: '#333' }}>Telesecundaria 763</span>
-                    </div>
-
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <Avatar size={40} icon={<UserOutlined />} />
-                        <div style={{ marginLeft: '10px', textAlign: 'right' }}>
-                            <p style={{ margin: 0, fontWeight: 'bold', color: '#333' }}>Juan Perez</p>
-                            <p style={{ margin: 0, color: '#888' }}>Administrador</p>
-                        </div>
                     </div>
                 </div>
 

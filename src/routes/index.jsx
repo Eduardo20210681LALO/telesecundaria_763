@@ -1,16 +1,15 @@
 import { createBrowserRouter } from "react-router-dom";
 import { EnviarMensaje } from "../views/RecuperacionContraseñas/EnviarMensaje";
-import React from 'react'
+import React from 'react';
 import Home from "../views/Home";
 import Login from "../views/Login";
 import NotFound from "../views/NotFound";
 import Layout from "./Layout";
-import ProtectedRoute from "../views/ProtectedRoute";
-import Registro from "../views/Registro";//**** */
+import Registro from "../views/Registro";
 import TerminosCondiciones from "../views/TerminCondiCookies/TerminosCondiciones";
 import TerminosCookies from "../views/TerminCondiCookies/TerminosCookies";
 import QuienesSomos from "../views/TerminCondiCookies/QuienesSomos";
-import Nav2 from "../components/Nav2";//**** */
+import Nav2 from "../components/Nav2";
 import ActualizaciónDeContraseña from "../views/RecuperacionContraseñas/ActualizaciónDeContraseña";
 import EnviarCorreo from "../views/RecuperacionContraseñas/EnviarCorreo";
 import EnviarCorreoTelefono from "../views/RecuperacionContraseñas/EnviarCorreoTelefono";
@@ -65,308 +64,95 @@ import PerfilUDRT from "../views/Inicio/Directivos/Ajustes/PerfilUDRT";
 import EstadisticasGrupalDocent from "../views/Inicio/Docentes/EstadisticasDocent/EstadisticasGrupalDocent";
 import EstadisticasIndivDocent from "../views/Inicio/Docentes/EstadisticasDocent/EstadisticasIndivDocent";
 
-export const router = createBrowserRouter ([
+import { ProtectedRouteAdministrativo } from "../views/ProtectedRoute";
+import { ProtectedRouteDirectivo } from "../views/ProtectedRoute";
+import { ProtectedRouteDocente } from "../views/ProtectedRoute";
+
+export const router = createBrowserRouter([
   {
-  path:'/',
-  element: <Layout/>,
-  errorElement: <NotFound/>,
-    
-  children: [
-    {
-      index: true,
-      element: <Home />,
-    },
-    {
-      path: "/home",
-      element: <Home/>,
-    },
-    {
-      path: "/Login",
-      element: <Login/>,
-    },
-    {
-      path: "/TerminosCondiciones",
-      element: <TerminosCondiciones />,
-    },
-    {
-      path: "/TerminosCookies",
-      element: <TerminosCookies />,
-    },
-    {
-      path: "/QuienesSomos",
-      element: <QuienesSomos />,
-    },
-    {
-      path: "/Registro",
-      element: <Registro />,
-    },
-    {
-      path:'/Nav2',
-      element: <Nav2/>
-    },
-    {
-      path:'/EnviarCorreo',
-      element: <EnviarCorreo/>
-    },
-    {
-      path:'/EnviarMensaje',
-      element: <EnviarMensaje/>
-    },
-    {
-      path:'/EnviarCorreoTelefono',
-      element: <EnviarCorreoTelefono/>
-    },
-    {
-      path:'/NotServe',
-      element: <NotServe/>
-    },
-    {
-      path:'/ActualizaciónDeContraseña',
-      element: <ActualizaciónDeContraseña/>
-    },
-    {
-      path:'/PruebasDiseño',
-      element: <PruebasDiseño/>
-    },
+    path: '/',
+    element: <Layout />,
+    errorElement: <NotFound />,
+    children: [
+      { index: true, element: <Home /> },
+      { path: "/home", element: <Home /> },
+      { path: "/Login", element: <Login /> },
+      { path: "/Registro", element: <Registro /> },
+      { path: "/TerminosCondiciones", element: <TerminosCondiciones /> },
+      { path: "/TerminosCookies", element: <TerminosCookies /> },
+      { path: "/QuienesSomos", element: <QuienesSomos /> },
+      { path: '/Nav2', element: <Nav2 /> },
+      { path: '/EnviarCorreo', element: <EnviarCorreo /> },
+      { path: '/EnviarMensaje', element: <EnviarMensaje /> },
+      { path: '/EnviarCorreoTelefono', element: <EnviarCorreoTelefono /> },
+      { path: '/NotServe', element: <NotServe /> },
+      { path: '/ActualizaciónDeContraseña', element: <ActualizaciónDeContraseña /> },
+      { path: '/PruebasDiseño', element: <PruebasDiseño /> },
+      { path: '/PruebasDiseño2', element: <PruebasDiseño2 /> },
 
-    {
-      path:'/PruebasDiseño2',
-      element: <PruebasDiseño2/>
-    },
+      // Rutas protegidas para Directivo
+      {
+        path: "/directivo",
+        element: <ProtectedRouteDirectivo />,
+        children: [
+          { path: "HomeDirect", element: <HomeDirect /> },
+          { path: "PerfilUDRT", element: <PerfilUDRT /> },
+          { path: "PerfilDirectivos", element: <PerfilDirectivos /> },
+          { path: "EditarPerfil3", element: <EditarPerfil3 /> },
+          { path: "EstadisticasGeneral", element: <EstadisticasGeneral /> },
+          { path: "GraficasGrupal", element: <GraficasGrupal /> },
+          { path: "RolesYPrivilegios", element: <RolesYPrivilegios /> },
+          { path: "MejoresPromedios", element: <MejoresPromedios /> },
+          { path: "EstadisticasIndiv", element: <EstadisticasIndiv /> },
+          { path: "AprovechamientoPMaterias", element: <AprovechamientoPMaterias /> },
+          { path: "TdosUsuarios", element: <TdosUsuarios /> }
+        ]
+      },
 
-    {
-      path: "/",
-      element: <ProtectedRoute />,
-      children:[
-        {
-          index: true,
-          element: <Home/>
-        },
+      // Rutas protegidas para Docente
+      {
+        path: "/docente",
+        element: <ProtectedRouteDocente />,
+        children: [
+          { path: "HomeDocentes", element: <HomeDocentes /> },
+          { path: "PerfilUD", element: <PerfilUD /> },
+          { path: "EditarPerfil2", element: <EditarPerfil2 /> },
+          { path: "VisualizarAlumnosDDocente", element: <VisualizarAlumnosDDocente /> },
+          { path: "CapturaCalificacionesAlum", element: <CapturaCalificacionesAlum /> },
+          { path: "VisualizarCapturaCalificaciones", element: <VisualizarCapturaCalificaciones /> },
+          { path: "EstadisticasGrupalDocent", element: <EstadisticasGrupalDocent /> },
+          { path: "EstadisticasIndivDocent", element: <EstadisticasIndivDocent /> }
+        ]
+      },
 
-        //SIDEBARS DE LOS TRES TIPOS DE USUARIOS
-        {
-          path:'/SIDEBARDIRECT',
-          element: <SIDEBARDIRECT/>
-        },
-        {
-          path:'/SIDEBARADMIN',
-          element: <SIDEBARADMIN/>
-        },
-        {
-          path:'/SIDEBARDOCENT',
-          element: <SIDEBARDOCENT/>
-        },
-
-
-        //************************************************** */
-        //RUTAS DE LA PARTE DE DIRECTIVO
-        {
-          path:'/HomeDirect',
-          element: <HomeDirect/>
-        },
-        {
-          path:'/PerfilUDRT',
-          element: <PerfilUDRT/>
-        },
-        {
-          path:'/PerfilDirectivos',
-          element: <PerfilDirectivos/>
-        },
-        {
-          path:'/EditarPerfil3',
-          element: <EditarPerfil3/>
-        },
-        {
-          path:'/EstadisticasGeneral',
-          element: <EstadisticasGeneral/>
-        },
-        {
-          path:'/GraficasGrupal',
-          element: <GraficasGrupal/>
-        },
-        {
-          path:'/RolesYPrivilegios',
-          element: <RolesYPrivilegios/>
-        },
-        {
-          path:'/MejoresPromedios',
-          element: <MejoresPromedios/>
-        },
-        {
-          path:'/EstadisticasIndiv',
-          element: <EstadisticasIndiv/>
-        },
-        {
-          path:'/AprovechamientoPMaterias',
-          element: <AprovechamientoPMaterias/>
-        },
-        {
-          path:'/TdosUsuarios',
-          element: <TdosUsuarios/>
-        },
-
-        
-
-        // ********************************************
-
-
-        //********************************************** */
-        // RUTAS DE LA PARTE DE DOCENTE
-        {
-          path:'/HomeDocentes',
-          element: <HomeDocentes/>
-        },
-        {
-          path:'/PerfilUD',
-          element: <PerfilUD/>
-        },
-        {
-          path:'/EditarPerfil2',
-          element: <EditarPerfil2/>
-        },
-        {
-          path:'/VisualizarAlumnosDDocente',
-          element: <VisualizarAlumnosDDocente/>
-        },
-        {
-          path:'/CapturaCalificacionesAlum',
-          element: <CapturaCalificacionesAlum/>
-        },
-
-        {
-          path:'/VisualizarCapturaCalificaciones',
-          element: <VisualizarCapturaCalificaciones/>
-        },
-
-        {
-          path:'/EstadisticasGrupalDocent',
-          element: <EstadisticasGrupalDocent/>
-        },
-
-        {
-          path:'/EstadisticasIndivDocent',
-          element: <EstadisticasIndivDocent/>
-        },
-
-        //******************************************************* */
-
-
-        //********************************************************** */
-        // RUTAS DE LA PARTE DE ADMINISTRATIVO
-
-        {
-          path:'/Prueba2',
-          element: <Prueba2/>
-        },
-
-        {
-          path:'/HomeAdmin',
-          element: <HomeAdmin/>
-        },
-        {
-          path:'/PerfilUADM',
-          element: <PerfilUADM/>
-        },
-        {
-          path:'/EditarPerfil',
-          element: <EditarPerfil/>
-        },
-        {
-          path:'/Periodos',
-          element: <Periodos/>
-        },
-        {
-          path:'/CrearGradoYgrupo',
-          element: <CrearGradoYgrupo/>
-        },
-        {
-          path:'/Materias',
-          element: <Materias/>
-        },
-        {
-          path:'/IngresarAlumnos',
-          element: <IngresarAlumnos/>
-        },
-        {
-          path:'/InfoEscuela',
-          element: <InfoEscuela/>
-        },
-        {
-          path:'/Usuarios',
-          element: <Usuarios/>
-        },
-
-        {
-          path:'/DashboardDocentes',
-          element: <DashboardDocentes/>
-        },
-        {
-          path:'/DashboardAdministrativos',
-          element: <DashboardAdministrativos/>
-        },
-        {
-          path:'/NavDocentes',
-          element: <NavDocentes/>
-        },
-        {
-          path:'/NavAdministrativos',
-          element: <NavAdministrativos/>
-        },
-        {
-          path:'/VisualizaciónAlumnosInscritos',
-          element: <VisualizaciónAlumnosInscritos/>
-        },
-        {
-          path:'/TodosAlum',
-          element: <TodosAlum/>
-        },
-        {
-          path:'/CrearDocentes',
-          element: <CrearDocentes/>
-        },
-        {
-          path:'/ActualizarDatosAlumnos',
-          element: <ActualizarDatosAlumnos/>
-        },
-        
-        {
-          path:'/EstadisticasGeneralXAdmin',
-          element: <EstadisticasGeneralXAdmin/>
-        },
-        {
-          path:'/EstadisticasGrupalXAdmin',
-          element: <EstadisticasGrupalXAdmin/>
-        },
-        {
-          path:'/EstadisticasIndividualXAdmin',
-          element: <EstadisticasIndividualXAdmin/>
-        },
-        {
-          path:'/MejoresPromediosXAdmin',
-          element: <MejoresPromediosXAdmin/>
-        },
-
-        {
-          path:'/ReinscribirAlumXAdmin',
-          element: <ReinscribirAlumXAdmin/>
-        },
-
-        {
-          path:'/AlumnosEgresados',
-          element: <AlumnosEgresados/>
-        },
-
-
-
-
-
-        //DR EFREN
-        {
-          path:'/Clasificacion',
-          element: <Clasificacion/>
-        },
-      ]
-    }
-  ]
+      // Rutas protegidas para Administrativo
+      {
+        path: "/administrativo",
+        element: <ProtectedRouteAdministrativo />,
+        children: [
+          { path: "HomeAdmin", element: <HomeAdmin /> },
+          { path: "PerfilUADM", element: <PerfilUADM /> },
+          { path: "EditarPerfil", element: <EditarPerfil /> },
+          { path: "Periodos", element: <Periodos /> },
+          { path: "CrearGradoYgrupo", element: <CrearGradoYgrupo /> },
+          { path: "Materias", element: <Materias /> },
+          { path: "IngresarAlumnos", element: <IngresarAlumnos /> },
+          { path: "InfoEscuela", element: <InfoEscuela /> },
+          { path: "Usuarios", element: <Usuarios /> },
+          { path: "DashboardDocentes", element: <DashboardDocentes /> },
+          { path: "DashboardAdministrativos", element: <DashboardAdministrativos /> },
+          { path: "VisualizaciónAlumnosInscritos", element: <VisualizaciónAlumnosInscritos /> },
+          { path: "TodosAlum", element: <TodosAlum /> },
+          { path: "CrearDocentes", element: <CrearDocentes /> },
+          { path: "ActualizarDatosAlumnos", element: <ActualizarDatosAlumnos /> },
+          { path: "EstadisticasGeneralXAdmin", element: <EstadisticasGeneralXAdmin /> },
+          { path: "EstadisticasGrupalXAdmin", element: <EstadisticasGrupalXAdmin /> },
+          { path: "EstadisticasIndividualXAdmin", element: <EstadisticasIndividualXAdmin /> },
+          { path: "MejoresPromediosXAdmin", element: <MejoresPromediosXAdmin /> },
+          { path: "ReinscribirAlumXAdmin", element: <ReinscribirAlumXAdmin /> },
+          { path: "AlumnosEgresados", element: <AlumnosEgresados /> }
+        ]
+      }
+    ]
   }
 ]);

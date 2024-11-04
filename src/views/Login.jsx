@@ -5,22 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import Nav2 from '../components/Nav2';
 import Cookies from 'js-cookie';
-import BreadCrumb from './BreadCrumbView';
 import { message } from 'antd';
-//import { toast } from 'react-hot-toast';
-// ActivarEstadoUsuario.php
-//DisableAccount.php
-//
-
-/*
-  git init
-
-  git add .
-
-  git commit -m "Version 11.4"
-
-  git push -u origin main
-*/ 
 
 function Login() {
   const navigate = useNavigate();
@@ -33,7 +18,7 @@ function Login() {
   const [tiempoRestante, setTiempoRestante] = useState(0);
 
   const INTENTOS_MAXIMOS = 5;
-  const TIEMPO_BLOQUEO = 30; // en segundos
+  const TIEMPO_BLOQUEO = 30;
 
   useEffect(() => {
     const intentosFallidos = parseInt(localStorage.getItem('intentosFallidos')) || 0;
@@ -78,108 +63,103 @@ function Login() {
     setMostrarOpciones(!mostrarOpciones);
   };
 
-  const generateToken = () => {
-    return Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2);//se
+
+
+
+
+
+
+
+
+
+// Función para generar un token único
+const generateToken = () => {
+  return Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2);
+};
+
+// Función para guardar el token con un identificador único para cada usuario
+const generarToken = (id_usuario) => {
+  const token = generateToken();
+  // Guardar el token en una cookie con un identificador único basado en el id_usuario
+  Cookies.set(`token_${id_usuario}`, token, { expires: 7 });
+  // Guardar el id_usuario en localStorage como referencia del usuario autenticado
+  localStorage.setItem('idUsuario', id_usuario);
+};
+
+// Verificar el rol del usuario y navegar a la ruta correspondiente
+const VerificarRolUsuario = (id_usuario, id_rolUsuario) => {
+  const roles = {
+    1: { nombre: 'Directivo', rol: 'directivo', ruta: 'HomeDirect' },
+    2: { nombre: 'Administrativo', rol: 'administrativo', ruta: 'HomeAdmin' },
+    3: { nombre: 'Docente', rol: 'docente', ruta: 'HomeDocentes' }
   };
 
-  const generarToken = (id_usuario) => {
-    const token = generateToken();
-    Cookies.set('token', token, { expires: 7 });
+  const rolInfo = roles[id_rolUsuario];
+  if (rolInfo) {
+    message.success(`Bienvenido ${rolInfo.nombre}`);
+    generarToken(id_usuario); // Generar y guardar el token para este usuario específico
+    localStorage.setItem('rol', rolInfo.rol);
+    navigate(`/${rolInfo.rol}/${rolInfo.ruta}`);
+  } else {
+    message.info('Atención, aún no se le ha asignado un rol. Comuníquese con el administrador.');
+  }
+};
 
-    //se guardara el id del usuario el el localStorage
-    localStorage.setItem('idUsuario', id_usuario);
+// Verificar el estado del usuario y llamar a VerificarRolUsuario si el estado es activo
+const VerificarEstadoUsuario = (id_usuario, estadoUsuario, id_rolUsuario) => {
+  if (estadoUsuario === '3') {
+    message.info('Atención, su cuenta está bloqueada. Comuníquese con el administrador.');
+  } else if (estadoUsuario === '2') {
+    message.info('Atención, su cuenta está inactiva. Comuníquese con el administrador.');
+  } else if (estadoUsuario === '1') {
+    VerificarRolUsuario(id_usuario, id_rolUsuario);
+  }
+};
+
+// Función de login principal
+const FuncionLogin = async () => {
+  if (bloqueado) {
+    message.error('El botón está bloqueado. Por favor, espera.');
+    return;
   }
 
-  const VerificarRolUsuario = (id_usuario, id_rolUsuario) => {
-    id_rolUsuario = parseInt(id_rolUsuario);
+  try {
+    const response = await fetch('http://localhost/TeleSecundaria763/InicioXUsuario/login.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
 
-    if (id_rolUsuario === 1 && parseInt(usuario) === id_rolUsuario) {
-      message.success('Bienvenido Directivo')
-      console.log('Usuario con rol de Directivo');
-      generarToken(id_usuario)
-      navigate('/HomeDirect');
-
-    } else if (id_rolUsuario === 2 && parseInt(usuario) === id_rolUsuario) {
-      message.success('Bienvenido Administrativo')
-      console.log('Usuario con rol de Administrativo');
-      generarToken(id_usuario)
-      //navigate('/HomeAdministrativos');
-      navigate('/HomeAdmin');
-
-    } else if (id_rolUsuario === 3 && parseInt(usuario) === id_rolUsuario) {
-      message.success('Bienvenido Docente')
-      console.log('Usuario con rol de Docente');
-      generarToken(id_usuario)
-      navigate('/HomeDocentes');
-
-    } else if (id_rolUsuario === 4 && parseInt(usuario) === id_rolUsuario) {
-      message.info('Atención, aún no se le ha asignado un rol. Comuníquese con el administrador.')
-
+    const data = await response.json();
+    if (response.ok && data.success) {
+      VerificarEstadoUsuario(data.id_usuario, data.id_estatus, data.id_rol);
+      localStorage.removeItem('intentosFallidos');
     } else {
-      message.error('Datos incorrectos, el rol seleccionado no coincide con el rol del usuario.');
-    }
-  };
-  
-  const VerificarEstadoUsuario = (id_usuario, estadoUsuario, id_rolUsuario) => {
-    if (estadoUsuario === '3') {
-      message.info('Atencion, Su cuenta está bloqueada, comuníquese con el administrador.');
-    } else if (estadoUsuario === '2') {
-      message.info('Atención, su cuenta está inactiva, por favor comuníquese con el administrador.');
-    } else if (estadoUsuario === '1') {
-      VerificarRolUsuario(id_usuario, id_rolUsuario);
-    }
-  };
+      const intentosFallidos = parseInt(localStorage.getItem('intentosFallidos')) || 0;
+      const nuevosIntentos = intentosFallidos + 1;
+      localStorage.setItem('intentosFallidos', nuevosIntentos);
 
-  const FuncionLogin = async () => {
-    if (bloqueado) {
-      message.error('El botón está bloqueado. Por favor, espera.');
-      return;
-    }
-
-    try {
-      const response = await fetch('http://localhost/TeleSecundaria763/InicioXUsuario/login.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          password
-        })
-      });
-  
-      const data = await response.json();
-      console.log('Respuesta JSON recibida:', data);
-  
-      if (response.ok) {
-        const { success, id_usuario, vch_correo_usuario, id_rol, id_estatus, messages } = data;
-        console.log(success, id_usuario, vch_correo_usuario, id_rol, id_estatus, messages);
-  
-        if (success) {
-          VerificarEstadoUsuario(id_usuario, id_estatus, id_rol);
-        } else {
-          const intentosFallidos = parseInt(localStorage.getItem('intentosFallidos')) || 0;
-          const nuevosIntentos = intentosFallidos + 1;
-
-          if (nuevosIntentos >= INTENTOS_MAXIMOS) {
-            message.info('Ha superado el número máximo de intentos. El botón ha sido bloqueado.');
-            bloquearBoton();
-          } else {
-            localStorage.setItem('intentosFallidos', nuevosIntentos);
-            const intentosRestantes = INTENTOS_MAXIMOS - nuevosIntentos;
-            message.error('Datos incorrectos, verifique nuevamente ...');
-            message.warning(`Le quedan ${intentosRestantes} intento(s)`);
-          }
-        }
+      if (nuevosIntentos >= INTENTOS_MAXIMOS) {
+        bloquearBoton();
       } else {
-        message.warning('Error al procesar la solicitud, intente nuevamente.');
+        message.warning(`Datos incorrectos. Te quedan ${INTENTOS_MAXIMOS - nuevosIntentos} intentos.`);
       }
-    } catch (error) {
-      console.error('Error en el catch:', error);
-      navigate('/NotServe');
     }
-  };
-  
+  } catch (error) {
+    console.error('Error en el catch:', error);
+    navigate('/NotServe');
+  }
+};
+
+
+
+
+
+
+
+
+
+
   const Validacion = async (e) => {
     e.preventDefault();
     if (!usuario) {
@@ -197,16 +177,11 @@ function Login() {
     await FuncionLogin();
   };
 
-  const toggleMostrarContrasenia = () => { // mostrar contraseña
+  const toggleMostrarContrasenia = () => {
     setMostrarContrasenia(!mostrarContrasenia);
   };
 
-  const handleUsuarioChange = (e) => {
-    const tipoUsuario = e.target.value;
-    setUsuario(tipoUsuario);
-  };
-
-  const handleUsuarioChange1 = (e) => { //funcion para recuperar contraseñas
+  const handleUsuarioChange1 = (e) => {
     const opcion_Rec = e.target.value;
     if (opcion_Rec === '1') {
       navigate('/EnviarMensaje');
@@ -217,12 +192,8 @@ function Login() {
     }
   };
 
-  /*const generateToken = () => { // funcion para que se genere el token
-    return Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2);//se
-  };*/
-
   const handleMouseLeave = () => {
-    setMostrarOpciones(false); // Cierra el select cuando el mouse sale
+    setMostrarOpciones(false);
   };
 
   return (
