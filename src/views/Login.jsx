@@ -107,14 +107,24 @@ const VerificarRolUsuario = (id_usuario, id_rolUsuario) => {
 
 // Verificar el estado del usuario y llamar a VerificarRolUsuario si el estado es activo
 const VerificarEstadoUsuario = (id_usuario, estadoUsuario, id_rolUsuario) => {
-  if (estadoUsuario === '3') {
-    message.info('Atención, su cuenta está bloqueada. Comuníquese con el administrador.');
-  } else if (estadoUsuario === '2') {
-    message.info('Atención, su cuenta está inactiva. Comuníquese con el administrador.');
-  } else if (estadoUsuario === '1') {
-    VerificarRolUsuario(id_usuario, id_rolUsuario);
-  }
+    if (estadoUsuario === '3') {
+        message.info('Atención, su cuenta está bloqueada. Comuníquese con el administrador.');
+    } else if (estadoUsuario === '2') {
+        message.info('Atención, su cuenta está inactiva. Comuníquese con el administrador.');
+    } else if (estadoUsuario === '1') {
+        VerificarRolUsuario(id_usuario, id_rolUsuario);
+    }
 };
+
+
+
+
+
+
+
+
+
+
 
 // Función de login principal
 const FuncionLogin = async () => {
@@ -131,6 +141,8 @@ const FuncionLogin = async () => {
     });
 
     const data = await response.json();
+
+    
     if (response.ok && data.success) {
       VerificarEstadoUsuario(data.id_usuario, data.id_estatus, data.id_rol);
       localStorage.removeItem('intentosFallidos');

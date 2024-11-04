@@ -8,13 +8,13 @@ importScripts('https://www.gstatic.com/firebasejs/10.12.1/firebase-messaging-com
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyCJgXEVRF9Kku6zK0DUqg15JkLylAzOKgo",
-  authDomain: "notificaciones-5e417.firebaseapp.com",
-  projectId: "notificaciones-5e417",
-  storageBucket: "notificaciones-5e417.appspot.com",
-  messagingSenderId: "978484214496",
-  appId: "1:978484214496:web:f869d2d9ab4745a10dae85",
-  measurementId: "G-RDQCGEV699"
+  apiKey: "AIzaSyBI_2rP-bv4VsOji3FXsx8hW6Jf6vNP0qA",
+  authDomain: "notificacionespushr.firebaseapp.com",
+  projectId: "notificacionespushr",
+  storageBucket: "notificacionespushr.firebasestorage.app",
+  messagingSenderId: "413086554130",
+  appId: "1:413086554130:web:960ff1710cb3d1dd7f20cb",
+  measurementId: "G-EC5YSVDER0"
 };
 
 // Initialize Firebase

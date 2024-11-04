@@ -33,9 +33,27 @@ const manifestForPlugin = {
     start_url: '/',
     orientation: 'portrait',
   },
+
+  
   workbox: {
     maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // Aumenta el límite a 5 MiB
+    runtimeCaching: [
+      {
+        // Configura el caché para un archivo específico
+        urlPattern: ({ url }) => url.pathname.endsWith('/UsuarioGeneral/datosUsuario.php'), // Cambia 'tu-archivo.js' por el nombre de tu archivo
+        handler: 'CacheFirst', // Estrategia de CacheFirst
+        options: {
+          cacheName: 'cache-especifico', // Nombre del caché
+          expiration: {
+            maxEntries: 10, // Número máximo de archivos en caché
+            maxAgeSeconds: 7 * 24 * 60 * 60, // Tiempo máximo en caché (7 días en este ejemplo)
+          },
+        },
+      },
+    ],
   },
+
+
 };
 
 export default defineConfig({
