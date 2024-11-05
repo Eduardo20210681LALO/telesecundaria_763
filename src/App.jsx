@@ -23,6 +23,8 @@ function App() {
       });
     };
 
+
+    
     const handleOnline = () => {
       console.log('Modo Online detectado');
       toast.success('Estás en línea', {
