@@ -24,8 +24,6 @@ import BreadCrumb from "./BreadCrumbView";
 
 
 
-
-
 function Home() {
   return (
     <div>
