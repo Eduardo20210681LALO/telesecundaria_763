@@ -18,22 +18,22 @@ function VisualizarCapturaCalificaciones() {
   const docenteId = localStorage.getItem('idUsuario'); // Asumimos que el ID del docente está almacenado en localStorage
 
   useEffect(() => {
-    axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php')
+    axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php')   //  http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php
       .then(res => setPeriodos(Array.isArray(res.data) ? res.data : []))
       .catch(err => console.error('Error al obtener periodos:', err));
 
-    axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php')
+    axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php')   //  http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php
       .then(res => setGrados(Array.isArray(res.data) ? res.data : []))
       .catch(err => console.error('Error al obtener grados:', err));
 
-    axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php')
+    axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php')   //   http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php'
       .then(res => setGrupos(Array.isArray(res.data) ? res.data : []))
       .catch(err => console.error('Error al obtener grupos:', err));
   }, []);
 
   const fetchStudents = () => {
     if (selectedPeriodo && selectedGrado && selectedGrupo && docenteId) {
-      axios.get(`http://localhost/TeleSecundaria763/Docentes/TraerAlumnosPorDocente.php?periodo=${selectedPeriodo}&grado=${selectedGrado}&grupo=${selectedGrupo}&docenteId=${docenteId}`)
+      axios.get(`https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Docentes/TraerAlumnosPorDocente.php?periodo=${selectedPeriodo}&grado=${selectedGrado}&grupo=${selectedGrupo}&docenteId=${docenteId}`)    //  http://localhost/TeleSecundaria763/Docentes/TraerAlumnosPorDocente.php?periodo=${selectedPeriodo}&grado=${selectedGrado}&grupo=${selectedGrupo}&docenteId=${docenteId}
         .then(res => {
           console.log('Datos de alumnos recibidos:', res.data);
           setStudentsData(Array.isArray(res.data.alumnos) ? res.data.alumnos : []);
@@ -55,11 +55,11 @@ function VisualizarCapturaCalificaciones() {
     fetchCalificaciones(student.vchCurpAlumno, selectedPeriodo, selectedGrado, selectedGrupo);
   };
 
-  const fetchCalificaciones = (matricula, periodo, grado, grupo) => {
-    axios.get(`http://localhost/TeleSecundaria763/Docentes/ObtenerCalificaciones.php?matricula=${matricula}&periodo=${periodo}&grado=${grado}&grupo=${grupo}`)
+  const fetchCalificaciones = (matricula, periodo, grado, grupo) => { 
+    axios.get(`https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Docentes/ObtenerCalificaciones.php?matricula=${matricula}&periodo=${periodo}&grado=${grado}&grupo=${grupo}`)  //    http://localhost/TeleSecundaria763/Docentes/ObtenerCalificaciones.php?matricula=${matricula}&periodo=${periodo}&grado=${grado}&grupo=${grupo}
       .then(response => {
         const data = response.data;
-        console.log('Datos de calificaciones recibidos:', data);  // Log para verificar los datos recibidos
+        console.log('Datos de calificaciones recibidos:', data);
         if (data.success) {
           setCalificaciones(Array.isArray(data.calificaciones) ? data.calificaciones : []);
         } else {

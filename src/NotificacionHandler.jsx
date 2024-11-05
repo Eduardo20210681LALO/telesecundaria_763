@@ -4,11 +4,8 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { messaging } from './firebase.jsx';
 
-
-
-const NotificacionHandler = () => {
-  const usuario = 48;
-  const apiUrl = 'http://localhost/TeleSecundaria763/Docentes/InsertarCalificacionesFinales.php';
+const NotificacionHandler = () => { 
+  const apiUrl = 'https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Docentes/InsertarCalificacionesFinales.php';   //    http://localhost/TeleSecundaria763/Docentes/InsertarCalificacionesFinales.php
   
   const requestPermission = async () => {
     try {
@@ -20,7 +17,7 @@ const NotificacionHandler = () => {
             console.log('Registration successful, scope is:', registration.scope);
           }).catch(function(err) {
             console.log('Service worker registration failed, error:', err);
-          });
+          })
       }
 
         const permission = await Notification.requestPermission();
@@ -49,7 +46,7 @@ const NotificacionHandler = () => {
             } catch (error) {
               console.error('Error 500', error);
               setTimeout(() => {
-                alert('¡Ay caramba! Encontramos un pequeño obstáculo en el camino, pero estamos trabajando para superarlo. Gracias por tu paciencia mientras solucionamos este problemita.');
+                alert('Ups, algo salio mal');
               }, 2000);
             }
           }

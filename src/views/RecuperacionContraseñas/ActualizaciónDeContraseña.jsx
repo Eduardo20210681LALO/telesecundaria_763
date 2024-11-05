@@ -73,8 +73,8 @@ function ActualizaciónDeContraseña() {
             contrasenia: contrasenia
         };
         try {
-            console.log(datos);
-            const response = await fetch('http://localhost/TeleSecundaria763/actualizaContraUsuario.php', {//   https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/actualizaContraUsuario.php
+            console.log(datos);  
+            const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/actualizaContraUsuario.php', {   //  'http://localhost/TeleSecundaria763/actualizaContraUsuario.php
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

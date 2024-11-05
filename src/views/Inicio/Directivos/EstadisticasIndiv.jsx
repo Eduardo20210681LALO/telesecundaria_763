@@ -27,23 +27,23 @@ function EstadisticasIndiv() {
     const [selectedGrupo, setSelectedGrupo] = useState(null);
     const [selectedAlumno, setSelectedAlumno] = useState(null);
 
-    useEffect(() => {
-        axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php')
+    useEffect(() => {  
+        axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php')  //    http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php
             .then(response => setPeriodos(response.data))
             .catch(error => message.error('Error al obtener los periodos'));
 
-        axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php')
+        axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php')    //      http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php
             .then(response => setGrados(response.data))
             .catch(error => message.error('Error al obtener los grados'));
 
-        axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php')
+        axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php')    //      http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php
             .then(response => setGrupos(response.data))
             .catch(error => message.error('Error al obtener los grupos'));
     }, []);
 
     useEffect(() => {
         if (selectedPeriodo && selectedGrado && selectedGrupo) {
-            axios.get('http://localhost/TeleSecundaria763/Directivos/ObtenerAlumnosPorGrupo.php', {
+            axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Directivos/ObtenerAlumnosPorGrupo.php', {   //  http://localhost/TeleSecundaria763/Directivos/ObtenerAlumnosPorGrupo.php
                 params: {
                     periodo: selectedPeriodo,
                     grado: selectedGrado,
@@ -78,7 +78,7 @@ function EstadisticasIndiv() {
         setLoading(true);
         setError(null);
 
-        axios.get('http://localhost/TeleSecundaria763/Directivos/ObtenerCalificacionesAlumno.php', {
+        axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Directivos/ObtenerCalificacionesAlumno.php', {  //  http://localhost/TeleSecundaria763/Directivos/ObtenerCalificacionesAlumno.php
             params: {
                 periodo: selectedPeriodo,
                 grado: selectedGrado,
@@ -99,7 +99,7 @@ function EstadisticasIndiv() {
                 setLoading(false);
             });
 
-        axios.get('http://localhost/TeleSecundaria763/Directivos/ObtenerPromediosGenerales.php', {
+        axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Directivos/ObtenerPromediosGenerales.php', {  //   http://localhost/TeleSecundaria763/Directivos/ObtenerPromediosGenerales.php
             params: {
                 alumno: selectedAlumno,
                 periodo: selectedPeriodo,

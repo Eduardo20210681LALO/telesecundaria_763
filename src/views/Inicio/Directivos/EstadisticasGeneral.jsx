@@ -25,10 +25,10 @@ function EstadisticasGeneral() {
     useEffect(() => {
         const fetchInitialData = async () => {
             try {
-                const [periodosRes, gradosRes, gruposRes] = await Promise.all([
-                    axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php'),
-                    axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php'),
-                    axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php'),
+                const [periodosRes, gradosRes, gruposRes] = await Promise.all([  
+                    axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php'),  //    http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php
+                    axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php'),   //     http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php
+                    axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php'),   //     http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php
                 ]);
                 setPeriodos(periodosRes.data);
                 setGrados(gradosRes.data);
@@ -50,7 +50,7 @@ function EstadisticasGeneral() {
         setError(null);
 
         try {
-            const response = await axios.get('http://localhost/TeleSecundaria763/Directivos/ObtenerEstadisticasGenerales.php', {
+            const response = await axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Directivos/ObtenerEstadisticasGenerales.php', {   //    http://localhost/TeleSecundaria763/Directivos/ObtenerEstadisticasGenerales.php
                 params: {
                     periodo: selectedPeriodo,
                     grado: selectedGrado,

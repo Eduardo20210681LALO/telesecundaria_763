@@ -6,7 +6,7 @@ import axios from 'axios';
 
 const { Title } = Typography;
 
-const Materias = () => {
+const Materias = () => { 
     const [inputs, setInputs] = useState({ clave: '', nombre: '', grado: '' });
     const [materias, setMaterias] = useState([]);
     const [editMateriaId, setEditMateriaId] = useState(null);
@@ -41,7 +41,7 @@ const Materias = () => {
             return;
         }
 
-        axios.post('http://localhost/TeleSecundaria763/Materias/CreateMaterias.php', inputs)
+        axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Materias/CreateMaterias.php', inputs)   //  http://localhost/TeleSecundaria763/Materias/CreateMaterias.php
             .then(function (response) {
                 message.success('Materia creada con éxito');
                 getMaterias();
@@ -54,7 +54,7 @@ const Materias = () => {
     };
 
     const getMaterias = () => {
-        axios.post('http://localhost/TeleSecundaria763/Materias/ListMaterias.php', { grado: selectedGrado })
+        axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Materias/ListMaterias.php', { grado: selectedGrado })  //   http://localhost/TeleSecundaria763/Materias/ListMaterias.php
             .then(function (response) {
                 if (Array.isArray(response.data)) {
                     setMaterias(response.data);
@@ -72,7 +72,7 @@ const Materias = () => {
 
     const deleteMateria = (id) => {
         const data = { id: id };
-        fetch('http://localhost/TeleSecundaria763/Materias/EliminarMateria.php', {
+        fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Materias/EliminarMateria.php', {  //  http://localhost/TeleSecundaria763/Materias/EliminarMateria.php
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
@@ -104,7 +104,7 @@ const Materias = () => {
     };
 
     const getMateria = (materiaId) => {
-        axios.post('http://localhost/TeleSecundaria763/Materias/TraerDatosDeLaMateria.php', { id: materiaId })
+        axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Materias/TraerDatosDeLaMateria.php', { id: materiaId })   // http://localhost/TeleSecundaria763/Materias/TraerDatosDeLaMateria.php
             .then(function (response) {
                 const materiaData = response.data.materia;
                 setEditNombre(materiaData.vchNomMateria);
@@ -135,7 +135,7 @@ const Materias = () => {
             grado: editGrado
         };
 
-        fetch('http://localhost/TeleSecundaria763/Materias/UpdateMateria.php', {
+        fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Materias/UpdateMateria.php', {   //  http://localhost/TeleSecundaria763/Materias/UpdateMateria.php
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)

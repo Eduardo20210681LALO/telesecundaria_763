@@ -11,19 +11,19 @@ function TodosAlum() {
     const [selectedGrado, setSelectedGrado] = useState('');
     const [selectedGrupo, setSelectedGrupo] = useState('');
 
-    useEffect(() => {
+    useEffect(() => { 
         // Obtener periodos, grados y grupos al montar el componente
-        axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php').then(res => {
+        axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php').then(res => {  //    http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php
             console.log('Periodos:', res.data);
             setPeriodos(res.data);
         }).catch(err => console.error('Error al obtener periodos:', err));  
 
-        axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php').then(res => {
+        axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php').then(res => {    //   http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php
             console.log('Grados:', res.data);
             setGrados(res.data);
         }).catch(err => console.error('Error al obtener grados:', err));
 
-        axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php').then(res => {
+        axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php').then(res => {    //     http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php
             console.log('Grupos:', res.data);
             setGrupos(res.data);
         }).catch(err => console.error('Error al obtener grupos:', err));
@@ -33,7 +33,7 @@ function TodosAlum() {
         // Obtener alumnos cuando cambian el periodo, grado o grupo seleccionados
         if (selectedPeriodo && selectedGrado && selectedGrupo) {
             console.log('Datos a mandar', { selectedGrado, selectedGrupo, selectedPeriodo });
-            axios.get(`http://localhost/TeleSecundaria763/AdminAlumnos/TraerAlumnos.php?periodo=${selectedPeriodo}&grado=${selectedGrado}&grupo=${selectedGrupo}`)
+            axios.get(`https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/TraerAlumnos.php?periodo=${selectedPeriodo}&grado=${selectedGrado}&grupo=${selectedGrupo}`)   //     http://localhost/TeleSecundaria763/AdminAlumnos/TraerAlumnos.php?periodo=${selectedPeriodo}&grado=${selectedGrado}&grupo=${selectedGrupo}
                 .then(res => {
                     console.log('Alumnos:', res.data);
                     setAlumnos(res.data);

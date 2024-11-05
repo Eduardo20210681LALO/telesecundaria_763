@@ -26,7 +26,7 @@ function PerfilUDRT() {
 
     useEffect(() => {
         const data = { idUsuario: idUsuario };
-        const url = 'http://localhost/TeleSecundaria763/UsuarioGeneral/datosUsuario.php';
+        const url = 'https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/UsuarioGeneral/datosUsuario.php';  //  http://localhost/TeleSecundaria763/UsuarioGeneral/datosUsuario.php
         const options = {
             method: 'POST',
             headers: {
@@ -134,7 +134,7 @@ function PerfilUDRT() {
             telefono,
             nuevaContraseña,
         };
-        const url = 'http://localhost/TeleSecundaria763/UsuarioGeneral/actualizarDatosUsuario.php';
+        const url = 'https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/UsuarioGeneral/actualizarDatosUsuario.php';   //   http://localhost/TeleSecundaria763/UsuarioGeneral/actualizarDatosUsuario.php
         const options = {
             method: 'POST',
             headers: {

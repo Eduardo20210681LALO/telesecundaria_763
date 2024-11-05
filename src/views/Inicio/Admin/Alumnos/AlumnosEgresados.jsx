@@ -12,23 +12,23 @@ function EgresarAlumnos() {
     const [selectedAlumnos, setSelectedAlumnos] = useState([]);
     const [showModal, setShowModal] = useState(false);
 
-    // Obtener periodos, grados y grupos al montar el componente
+    // Obtener periodos, grados y grupos al montar el componente   https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763
     useEffect(() => {
-        fetch('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php')
+        fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php')   //  http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php
             .then(response => response.json())
             .then(data => {
                 setPeriodos(data);
             })
             .catch(err => console.error('Error al obtener periodos:', err));
 
-        fetch('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php') // Obtener grados dinámicamente
+        fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php') //  http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php
             .then(response => response.json())
             .then(data => {
                 setGrados(data);
             })
             .catch(err => console.error('Error al obtener grados:', err));
 
-        fetch('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php')
+        fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php')   //   http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php
             .then(response => response.json())
             .then(data => {
                 setGrupos(data);
@@ -39,7 +39,7 @@ function EgresarAlumnos() {
     // Obtener alumnos del grado y el grupo seleccionado
     useEffect(() => {
         if (selectedPeriodo && selectedGrado && selectedGrupo) {
-            fetch(`http://localhost/TeleSecundaria763/AdminAlumnos/TraerAlumnos.php?periodo=${selectedPeriodo}&grado=${selectedGrado}&grupo=${selectedGrupo}`)
+            fetch(`https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/TraerAlumnos.php?periodo=${selectedPeriodo}&grado=${selectedGrado}&grupo=${selectedGrupo}`)  //   http://localhost/TeleSecundaria763/AdminAlumnos/TraerAlumnos.php?periodo=${selectedPeriodo}&grado=${selectedGrado}&grupo=${selectedGrupo}
                 .then(response => response.json())
                 .then(data => {
                     setAlumnos(data);
@@ -70,7 +70,7 @@ function EgresarAlumnos() {
 
     // Confirmar egreso de los alumnos seleccionados
     const handleConfirmEgresar = () => {
-        fetch('http://localhost/TeleSecundaria763/AdminAlumnos/RegistrarAlumnosEgresados.php', {
+        fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/RegistrarAlumnosEgresados.php', {  //  http://localhost/TeleSecundaria763/AdminAlumnos/RegistrarAlumnosEgresados.php
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

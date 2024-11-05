@@ -21,21 +21,21 @@ function ReinscribirAlumXAdmin() {
     const [nuevoGrupo, setNuevoGrupo] = useState('');
     const [nuevoDocente, setNuevoDocente] = useState('');
 
-    // Obtener periodos, grados, grupos y docentes al montar el componente
+    // Obtener periodos, grados, grupos y docentes al montar el componente 
     useEffect(() => {
-        axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php').then(res => {
+        axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php').then(res => {  //  http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php
             setPeriodos(res.data);
         }).catch(err => console.error('Error al obtener periodos:', err));
 
-        axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php').then(res => {
+        axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php').then(res => {  //   http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php
             setGrados(res.data);
         }).catch(err => console.error('Error al obtener grados:', err));
 
-        axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php').then(res => {
+        axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php').then(res => {   //   http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php
             setGrupos(res.data);
         }).catch(err => console.error('Error al obtener grupos:', err));
 
-        axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerDocentes.php').then(res => {
+        axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerDocentes.php').then(res => {   // http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerDocentes.php
             setDocentes(res.data);
         }).catch(err => console.error('Error al obtener docentes:', err));
     }, []);
@@ -43,7 +43,7 @@ function ReinscribirAlumXAdmin() {
     // Obtener alumnos cuando cambian el periodo, grado o grupo seleccionados
     useEffect(() => {
         if (selectedPeriodo && selectedGrado && selectedGrupo) {
-            axios.get(`http://localhost/TeleSecundaria763/AdminAlumnos/TraerAlumnos.php?periodo=${selectedPeriodo}&grado=${selectedGrado}&grupo=${selectedGrupo}`)
+            axios.get(`https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/TraerAlumnos.php?periodo=${selectedPeriodo}&grado=${selectedGrado}&grupo=${selectedGrupo}`)    //   http://localhost/TeleSecundaria763/AdminAlumnos/TraerAlumnos.php?periodo=${selectedPeriodo}&grado=${selectedGrado}&grupo=${selectedGrupo}
                 .then(res => {
                     setAlumnos(res.data);
                     setSelectedAlumnos([]); // Limpiar selección previa
@@ -90,7 +90,7 @@ function ReinscribirAlumXAdmin() {
         }
 
         // Llamada a la API para reinscribir a los alumnos seleccionados
-        axios.post('http://localhost/TeleSecundaria763/AdminAlumnos/ReinscribirAlumnos.php', {
+        axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ReinscribirAlumnos.php', {   //   http://localhost/TeleSecundaria763/AdminAlumnos/ReinscribirAlumnos.php
             alumnos: selectedAlumnos,
             nuevoGrado,
             nuevoGrupo,

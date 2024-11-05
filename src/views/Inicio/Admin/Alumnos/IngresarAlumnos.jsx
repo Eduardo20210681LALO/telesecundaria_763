@@ -108,9 +108,9 @@ function IngresarAlumnos() {
             students: inputMethod === 'manual' ? [manualData] : studentsData
         };
 
-        const endpoint = inputMethod === 'manual'
-            ? 'http://localhost/TeleSecundaria763/AdminAlumnos/InsertarAlumnosManual.php'
-            : 'http://localhost/TeleSecundaria763/AdminAlumnos/InsertarAlumnosDesdeExcel.php';
+        const endpoint = inputMethod === 'manual'   
+            ? 'https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/InsertarAlumnosManual.php'   //   http://localhost/TeleSecundaria763/AdminAlumnos/InsertarAlumnosManual.php
+            : 'https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/InsertarAlumnosDesdeExcel.php';   //   http://localhost/TeleSecundaria763/AdminAlumnos/InsertarAlumnosDesdeExcel.php
 
         console.log('Estos datos se enviarán', dataToSend);
 

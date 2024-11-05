@@ -6,6 +6,8 @@ import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import Nav2 from '../components/Nav2';
 import Cookies from 'js-cookie';
 import { message } from 'antd';
+import { getToken } from 'firebase/messaging';
+import { messaging } from '../firebase'; // Asegúrate de importar la configuración de Firebase
 
 function Login() {
   const navigate = useNavigate();
@@ -41,7 +43,6 @@ function Login() {
     } else if (bloqueado && tiempoRestante <= 0) {
       desbloquearBoton();
     }
-
     return () => clearInterval(timer);
   }, [bloqueado, tiempoRestante]);
 
@@ -63,109 +64,114 @@ function Login() {
     setMostrarOpciones(!mostrarOpciones);
   };
 
-
-
-
-
-
-
-
-
-
-// Función para generar un token único
-const generateToken = () => {
-  return Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2);
-};
-
-// Función para guardar el token con un identificador único para cada usuario
-const generarToken = (id_usuario) => {
-  const token = generateToken();
-  // Guardar el token en una cookie con un identificador único basado en el id_usuario
-  Cookies.set(`token_${id_usuario}`, token, { expires: 7 });
-  // Guardar el id_usuario en localStorage como referencia del usuario autenticado
-  localStorage.setItem('idUsuario', id_usuario);
-};
-
-// Verificar el rol del usuario y navegar a la ruta correspondiente
-const VerificarRolUsuario = (id_usuario, id_rolUsuario) => {
-  const roles = {
-    1: { nombre: 'Directivo', rol: 'directivo', ruta: 'HomeDirect' },
-    2: { nombre: 'Administrativo', rol: 'administrativo', ruta: 'HomeAdmin' },
-    3: { nombre: 'Docente', rol: 'docente', ruta: 'HomeDocentes' }
+  // Función para generar un token único de sesión
+  const generateToken = () => {
+    return Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2);
   };
 
-  const rolInfo = roles[id_rolUsuario];
-  if (rolInfo) {
-    message.success(`Bienvenido ${rolInfo.nombre}`);
-    generarToken(id_usuario); // Generar y guardar el token para este usuario específico
-    localStorage.setItem('rol', rolInfo.rol);
-    navigate(`/${rolInfo.rol}/${rolInfo.ruta}`);
-  } else {
-    message.info('Atención, aún no se le ha asignado un rol. Comuníquese con el administrador.');
-  }
-};
+  const generarToken = (id_usuario) => {
+    const token = generateToken();
+    Cookies.set(`token_${id_usuario}`, token, { expires: 7 });
+    localStorage.setItem('idUsuario', id_usuario);
+  };
 
-// Verificar el estado del usuario y llamar a VerificarRolUsuario si el estado es activo
-const VerificarEstadoUsuario = (id_usuario, estadoUsuario, id_rolUsuario) => {
-    if (estadoUsuario === '3') {
-        message.info('Atención, su cuenta está bloqueada. Comuníquese con el administrador.');
-    } else if (estadoUsuario === '2') {
-        message.info('Atención, su cuenta está inactiva. Comuníquese con el administrador.');
-    } else if (estadoUsuario === '1') {
-        VerificarRolUsuario(id_usuario, id_rolUsuario);
-    }
-};
+  const VerificarRolUsuario = async (id_usuario, id_rolUsuario) => {
+    const roles = {
+      1: { nombre: 'Directivo', rol: 'directivo', ruta: 'HomeDirect' },
+      2: { nombre: 'Administrativo', rol: 'administrativo', ruta: 'HomeAdmin' },
+      3: { nombre: 'Docente', rol: 'docente', ruta: 'HomeDocentes' }
+    };
 
+    const rolInfo = roles[id_rolUsuario];
+    const id_rolUsuarioDOS = id_rolUsuario
+    console.log('Rol identificado:', rolInfo);
 
+    if (rolInfo) {
+      console.log(`Bienvenido ${rolInfo.nombre}`);
+      generarToken(id_usuario); // Generar token de sesión para el usuario
+      localStorage.setItem('rol', rolInfo.rol);
 
+      if (id_rolUsuarioDOS === '2') { // Verificación adicional para administradores
+        try {
+          console.log('Intentando obtener el token de Firebase para usuario administrativo...');
+          const firebaseToken = await getToken(messaging, { vapidKey: 'BDAEbYvoVXa80RVcHFD0Y3DmRjpltzapP-PO9qlPdJ_JGv8Shk4yaSR8GSMd7Ch_Su-7_vSMTP656YjjFO6aNEU' });
+          console.log('Token de Firebase obtenido:', firebaseToken);
 
+          if (firebaseToken) {
+            console.log('Enviando el token al backend...');
+            const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminUsuarios/GuardarToken.php', { // http://localhost/TeleSecundaria763/AdminUsuarios/GuardarToken.php
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                id_usuario: id_usuario,
+                token: firebaseToken,
+                rol: rolInfo.rol
+              })
+            });
+            
+            const responseData = await response.json();
+            console.log('Respuesta del backend:', responseData);
 
-
-
-
-
-
-
-// Función de login principal
-const FuncionLogin = async () => {
-  if (bloqueado) {
-    message.error('El botón está bloqueado. Por favor, espera.');
-    return;
-  }
-
-  try {
-    const response = await fetch('http://localhost/TeleSecundaria763/InicioXUsuario/login.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
-
-    const data = await response.json();
-
-    
-    if (response.ok && data.success) {
-      VerificarEstadoUsuario(data.id_usuario, data.id_estatus, data.id_rol);
-      localStorage.removeItem('intentosFallidos');
-    } else {
-      const intentosFallidos = parseInt(localStorage.getItem('intentosFallidos')) || 0;
-      const nuevosIntentos = intentosFallidos + 1;
-      localStorage.setItem('intentosFallidos', nuevosIntentos);
-
-      if (nuevosIntentos >= INTENTOS_MAXIMOS) {
-        bloquearBoton();
-      } else {
-        message.warning(`Datos incorrectos. Te quedan ${INTENTOS_MAXIMOS - nuevosIntentos} intentos.`);
+            if (!responseData.success) {
+              console.error('Error al guardar el token en la base de datos:', responseData.message);
+            }
+          }
+        } catch (error) {
+          console.error('Error al obtener el token de Firebase:', error);
+        }
       }
+      navigate(`/${rolInfo.rol}/${rolInfo.ruta}`); // Redirige después de guardar token de Firebase
+    } else {
+      message.info('Atención, aún no se le ha asignado un rol. Comuníquese con el administrador.');
     }
-  } catch (error) {
-    console.error('Error en el catch:', error);
-    navigate('/NotServe');
-  }
-};
+  };
 
+  const VerificarEstadoUsuario = (id_usuario, estadoUsuario, id_rolUsuario) => {
+    if (estadoUsuario === '3') {
+      message.info('Atención, su cuenta está bloqueada. Comuníquese con el administrador.');
+    } else if (estadoUsuario === '2') {
+      message.info('Atención, su cuenta está inactiva. Comuníquese con el administrador.');
+    } else if (estadoUsuario === '1') {
+      VerificarRolUsuario(id_usuario, id_rolUsuario);
+    }
+  };
 
+  const FuncionLogin = async () => {
+    if (bloqueado) {
+      message.error('El botón está bloqueado. Por favor, espera.');
+      return;
+    }
 
+    try {
+      const response = await fetch('https://telesecundaria763.host8b.me/Telesecundaria/Web_Services/TeleSecundaria763/InicioXUsuario/login.php', { //  http://localhost/TeleSecundaria763/InicioXUsuario/login.php
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
 
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        VerificarEstadoUsuario(data.id_usuario, data.id_estatus, data.id_rol);
+        localStorage.removeItem('intentosFallidos');
+      } else {
+        const intentosFallidos = parseInt(localStorage.getItem('intentosFallidos')) || 0;
+        const nuevosIntentos = intentosFallidos + 1;
+        localStorage.setItem('intentosFallidos', nuevosIntentos);
+
+        if (nuevosIntentos >= INTENTOS_MAXIMOS) {
+          bloquearBoton();
+        } else {
+          message.warning(`Datos incorrectos. Te quedan ${INTENTOS_MAXIMOS - nuevosIntentos} intentos.`);
+        }
+      }
+    } catch (error) {
+      console.error('Error en el catch:', error);
+      navigate('/NotServe');
+    }
+  };
 
 
 
@@ -217,7 +223,7 @@ const FuncionLogin = async () => {
           {/* Formulario */}
           <div className="flex flex-col w-full md:w-1/2 p-6">
             <div className="flex flex-col justify-center mb-8">
-              <h1 className="text-2xl sm:text-3xl text-center font-bold">Inicio de Sesión</h1>
+              <h1 className="text-2xl sm:text-3xl text-center font-bold">Inicio de Sesión popo</h1>
               <div className="w-full mt-4">
                 <form className="w-full" onSubmit={Validacion}>
                   <div className="mb-3">

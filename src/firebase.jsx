@@ -10,7 +10,7 @@ const firebaseConfigPushNotifications  = {
     messagingSenderId: "413086554130",
     appId: "1:413086554130:web:960ff1710cb3d1dd7f20cb",
     measurementId: "G-EC5YSVDER0"
-  };
+};
 
 // Inicializa Firebase
 const pushNotificationsApp = initializeApp(firebaseConfigPushNotifications, "pushNotificationsApp");

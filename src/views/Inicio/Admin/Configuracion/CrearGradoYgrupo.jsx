@@ -33,7 +33,7 @@ function CrearGradoYgrupo() {
     };
 
     const crearNuevoGrado = () => {
-        axios.post('http://localhost/TeleSecundaria763/crearGrado.php', { vchGrado: nuevoGrado }) 
+        axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/crearGrado.php', { vchGrado: nuevoGrado })   //   http://localhost/TeleSecundaria763/crearGrado.php
             .then(function(response){
                 console.log(response.data);
                 getTraerGrados();
@@ -49,7 +49,7 @@ function CrearGradoYgrupo() {
     }, []);
 
     function getTraerGrados() {
-        axios.get('http://localhost/TeleSecundaria763/listarGrados.php')
+        axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/listarGrados.php')  //  http://localhost/TeleSecundaria763/listarGrados.php
             .then(function(response) {
                 setGrados(response.data);
             });
@@ -58,7 +58,7 @@ function CrearGradoYgrupo() {
     const deleteGrado = (intClvGrado) => {
         const data = { intClvGrado: intClvGrado };
 
-        fetch('http://localhost/TeleSecundaria763/eliminarGrado.php', {
+        fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/eliminarGrado.php', {   //   http://localhost/TeleSecundaria763/eliminarGrado.php
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
@@ -89,7 +89,7 @@ function CrearGradoYgrupo() {
     };
 
     const getGradoActualizado = (idGradoAct) => {
-        axios.post('http://localhost/TeleSecundaria763/traerDatoDelGrado.php', { intClvGrado: idGradoAct })
+        axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/traerDatoDelGrado.php', { intClvGrado: idGradoAct })   //   http://localhost/TeleSecundaria763/traerDatoDelGrado.php
             .then(function(response) {
                 const datoGrado = response.data.grado[0];
                 seteditadovchGrado(datoGrado.vchGrado);
@@ -105,7 +105,7 @@ function CrearGradoYgrupo() {
             intClvGrado: idGradoAct,
             vchGrado: editadovchGrado
         };
-        fetch('http://localhost/TeleSecundaria763/actualizarDatoGrado.php', {
+        fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/actualizarDatoGrado.php', {  // http://localhost/TeleSecundaria763/actualizarDatoGrado.php
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
@@ -140,7 +140,7 @@ function CrearGradoYgrupo() {
     };
 
     const crearNuevoGrupo = () => {
-        axios.post('http://localhost/TeleSecundaria763/crearGrupo.php', { vchGrupo: nuevoGrupo })
+        axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/crearGrupo.php', { vchGrupo: nuevoGrupo })   //  http://localhost/TeleSecundaria763/crearGrupo.php
             .then(function(response){
                 console.log(response.data);
                 getTraerGrupos();
@@ -156,7 +156,7 @@ function CrearGradoYgrupo() {
     }, []);
 
     function getTraerGrupos() {
-        axios.get('http://localhost/TeleSecundaria763/listarGrupos.php')
+        axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/listarGrupos.php')  //   http://localhost/TeleSecundaria763/listarGrupos.php
             .then(function(response) {
                 setGrupos(response.data);
             }
@@ -166,7 +166,7 @@ function CrearGradoYgrupo() {
     const deleteGrupo = (intClvGrupo) => {
         const data = { intClvGrupo: intClvGrupo };
 
-        fetch('http://localhost/TeleSecundaria763/eliminarGrupo.php', {
+        fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/eliminarGrupo.php', {  //   http://localhost/TeleSecundaria763/eliminarGrupo.php
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
@@ -197,7 +197,7 @@ function CrearGradoYgrupo() {
     };
 
     const getGrupoActualizado = (idGrupoAct) => {
-        axios.post('http://localhost/TeleSecundaria763/traerDatoDelGrupo.php', { intClvGrupo: idGrupoAct })
+        axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/traerDatoDelGrupo.php', { intClvGrupo: idGrupoAct })   // http://localhost/TeleSecundaria763/traerDatoDelGrupo.php
             .then(function(response) {
                 const datoGrupo = response.data.grupo[0];
                 seteditadovchGrupo(datoGrupo.vchGrupo);
@@ -214,7 +214,7 @@ function CrearGradoYgrupo() {
             intClvGrupo: idGrupoAct,
             vchGrupo: editadovchGrupo
         };
-        fetch('http://localhost/TeleSecundaria763/actualizarDatosGrupo.php', {
+        fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/actualizarDatosGrupo.php', {   //  http://localhost/TeleSecundaria763/actualizarDatosGrupo.php
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)

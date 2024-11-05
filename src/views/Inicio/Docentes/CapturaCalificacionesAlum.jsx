@@ -54,25 +54,19 @@ function CapturaCalificacionesAlum () {
       setGrupo(additionalData.GRUPO);
       setTrimestre(additionalData.TRIMESTRE);
 
-      console.log("Datos adicionales:", additionalData);
-
       const startIndex = jsonData.findIndex(row => row.includes('CURP'));
 
       const materiaRow = jsonData[startIndex];
       const endIndex = materiaRow.findIndex(header => header.toLowerCase() === 'calificacion trimestre');
-      const headers = materiaRow.slice(2, endIndex); // Excluding CURP and Nombre del Alumno
+      const headers = materiaRow.slice(2, endIndex);
       setMaterias(headers);
-
-      console.log("Materias:", headers);
 
       const filteredData = jsonData.slice(startIndex + 1).map(row => ({
         claveAlumno: row[0] || null,
         nombreCompleto: row[1] || null,
-        calificaciones: row.slice(2, endIndex), // Adjust the range for the calificaciones
-        calificacionTrimestre: row[endIndex] || null // Ensure to get "CALIFICACION TRIMESTRE"
+        calificaciones: row.slice(2, endIndex),
+        calificacionTrimestre: row[endIndex] || null
       })).filter(student => student.claveAlumno && student.nombreCompleto && student.calificaciones.length === headers.length);
-
-      console.log("Datos de estudiantes filtrados:", filteredData);
 
       setStudentsData(filteredData);
       setSelectedFile(file);
@@ -97,11 +91,8 @@ function CapturaCalificacionesAlum () {
       }))
     };
 
-    console.log('Datos que se enviarán:', dataToSend);
-
-    axios.post('http://localhost/TeleSecundaria763/Docentes/InsertarCalificacionesSegundo.php', dataToSend)
+    axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Docentes/InsertarCalificacionesSegundo.php', dataToSend)  // http://localhost/TeleSecundaria763/Docentes/InsertarCalificacionesSegundo.php
       .then(response => {
-        console.log(response.data);
         if (response.data.success) {
           message.success('Datos guardados en la base de datos correctamente.');
           saveFinalGradesToDatabase();
@@ -125,13 +116,11 @@ function CapturaCalificacionesAlum () {
       }))
     };
 
-    console.log('Datos que se enviarán para calificaciones finales:', finalGradesToSend);
-
-    axios.post('http://localhost/TeleSecundaria763/Docentes/InsertarCalificacionesFinales.php', finalGradesToSend)
+    axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Docentes/InsertarCalificacionesFinales.php', finalGradesToSend)   //    http://localhost/TeleSecundaria763/Docentes/InsertarCalificacionesFinales.php
       .then(response => {
-        console.log(response.data);
         if (response.data.success) {
           message.success('Promedio general guardado correctamente.');
+          notifyAdmins();  // Llamar a la función para notificar a los administradores
         } else {
           message.error(response.data.message);
         }
@@ -143,10 +132,51 @@ function CapturaCalificacionesAlum () {
       });
   };
 
+  // Función para recuperar los tokens de los administradores y enviar la notificación
+  const notifyAdmins = async () => {
+    try {
+      // Recuperar los tokens de los administradores desde el backend
+      const response = await axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminUsuarios/GetAdminTokens.php');    //  http://localhost/TeleSecundaria763/AdminUsuarios/GetAdminTokens.php
+      const tokens = response.data.tokens; // Suponiendo que el backend devuelve un array de tokens
+
+      // Enviar la notificación a todos los tokens
+      for (const token of tokens) {
+        await sendPushNotification(token, 'Nuevas calificaciones insertadas.');
+      }
+      
+      console.log('Notificaciones enviadas a los administradores.');
+    } catch (error) {
+      console.error('Error al recuperar los tokens de los administradores o enviar notificación:', error);
+    }
+  };
+
+  // Función para enviar la notificación push
+  const sendPushNotification = async (token, message) => {
+    const payload = {
+      notification: {
+        title: 'Notificación de Calificaciones',
+        body: message,
+        icon: 'icon-url', // Cambia esto por la URL de tu ícono de notificación
+      },
+    };
+
+    try {
+      await axios.post('https://fcm.googleapis.com/fcm/send', payload, {
+        headers: {
+          'Authorization': `key=YOUR_SERVER_KEY`, // Reemplaza con tu clave de servidor
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log(`Notificación enviada a ${token}`);
+    } catch (error) {
+      console.error(`Error al enviar notificación a ${token}:`, error);
+    }
+  };
+
+
   return (
     <SIDEBARDOCENT>
         <div className="flex justify-center w-full mx-auto mt-10">
-            {/* Bloque de Información de Usuario */}
             <main className="flex-grow flex justify-center items-center">
                 <div className="bg-white dark:bg-gray-800 shadow-md sm:rounded-lg overflow-hidden p-8 w-full max-w-6xl mx-auto">
                     <h2 className="text-3xl font-semibold mb-8 text-center text-gray-700 dark:text-gray-300">Carga de Calificaciones de Alumnos</h2>
@@ -206,8 +236,7 @@ function CapturaCalificacionesAlum () {
             </main>
         </div>
     </SIDEBARDOCENT>
-);
-
+  );
 }
 
 export default CapturaCalificacionesAlum;

@@ -10,8 +10,6 @@ function getItem(label, key, icon, children) {
     return { key, icon, children, label };
 }
 
-
-
 // Menú específico para el rol de directivo
 const itemsSidebar = (CerrarSesion) => [
     getItem(<Link to="/directivo/HomeDirect">Inicio</Link>, 'home', <HomeOutlined />),
