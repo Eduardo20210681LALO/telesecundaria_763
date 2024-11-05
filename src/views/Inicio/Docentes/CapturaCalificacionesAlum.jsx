@@ -120,7 +120,7 @@ function CapturaCalificacionesAlum () {
       .then(response => {
         if (response.data.success) {
           message.success('Promedio general guardado correctamente.');
-          notifyAdmins();  // Llamar a la función para notificar a los administradores
+          notifyAdmins();
         } else {
           message.error(response.data.message);
         }

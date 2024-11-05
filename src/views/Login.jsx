@@ -143,24 +143,31 @@ function Login() {
       message.error('El botón está bloqueado. Por favor, espera.');
       return;
     }
-
+  
     try {
-      const response = await fetch('https://telesecundaria763.host8b.me/Telesecundaria/Web_Services/TeleSecundaria763/InicioXUsuario/login.php', { //  http://localhost/TeleSecundaria763/InicioXUsuario/login.php
+      const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/InicioXUsuario/login.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
-
-      const data = await response.json();
-
-      if (response.ok && data.success) {
+  
+      if (!response.ok) {
+        // Si el servidor respondió con un código de error, muestra el mensaje de error y redirige
+        console.error(`Error en la respuesta: ${response.status} ${response.statusText}`);
+        navigate('/NotServe');
+        return;
+      }
+  
+      const data = await response.json(); // Procesa la respuesta como JSON solo si fue exitosa
+  
+      if (data.success) {
         VerificarEstadoUsuario(data.id_usuario, data.id_estatus, data.id_rol);
         localStorage.removeItem('intentosFallidos');
       } else {
         const intentosFallidos = parseInt(localStorage.getItem('intentosFallidos')) || 0;
         const nuevosIntentos = intentosFallidos + 1;
         localStorage.setItem('intentosFallidos', nuevosIntentos);
-
+  
         if (nuevosIntentos >= INTENTOS_MAXIMOS) {
           bloquearBoton();
         } else {
@@ -172,6 +179,7 @@ function Login() {
       navigate('/NotServe');
     }
   };
+  
 
 
 
