@@ -261,7 +261,7 @@ function Periodos() {
                 style={{
                     display: 'flex',
                     flexDirection: 'column',
-                    minHeight: 'calc(100vh - 60px)', 
+                    minHeight: 'calc(100vh - 60px)',
                     padding: '20px',
                 }}
             >

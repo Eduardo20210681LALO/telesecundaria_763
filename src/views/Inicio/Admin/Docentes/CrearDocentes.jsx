@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Breadcrumb, Typography, Input, Card, Button, message } from 'antd'; // Importamos los componentes de Ant Design
+import { Typography, Input, Card, Button, message } from 'antd'; // Importamos los componentes de Ant Design
 import SIDEBARADMIN from '../../../../components/SIDEBARADMIN';
 import BreadcrumbAdmin from '../BreadcrumbAdmin';
 import axios from 'axios';
@@ -210,6 +210,10 @@ function CrearDocentes() {
                     flexDirection: 'column',
                     minHeight: 'calc(100vh - 60px)', // Ajusta para que ocupe todo el espacio restante
                     padding: '20px',
+                    
+                    maxWidth: 'calc(200vw - 100px)',
+                    boxSizing: 'border-box',
+                    width: '100%', // Limita el ancho al 100% de la pantalla
                 }}
             >
                 <BreadcrumbAdmin />
