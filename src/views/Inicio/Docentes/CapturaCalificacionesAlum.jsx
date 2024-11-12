@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
 import axios from 'axios';
-import { FileInput, Label } from "flowbite-react";
-import { Button } from "flowbite-react";
-import { message } from 'antd';
+
+import { Descriptions, Typography, Card, message, Upload, Button, Table } from 'antd'; // Importamos los componentes de Ant Design
+import { UploadOutlined } from '@ant-design/icons'; // Icono de Ant Design
 import SIDEBARDOCENT from '../../../components/SIDEBARDOCENT';
+import BreadcrumDocent from './BreadcrumDocent';
+
+const { Title } = Typography;
 
 function CapturaCalificacionesAlum () {
   const [studentsData, setStudentsData] = useState([]);
@@ -14,227 +17,358 @@ function CapturaCalificacionesAlum () {
   const [grupo, setGrupo] = useState('');
   const [trimestre, setTrimestre] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
+  const idUsuario = localStorage.getItem('idUsuario');
 
   const closeModal = () => {
-    setStudentsData([]);
-    setMaterias([]);
-    setPeriodo('');
-    setGrado('');
-    setGrupo('');
-    setTrimestre('');
-    setSelectedFile(null);
+      setStudentsData([]);
+      setMaterias([]);
+      setPeriodo('');
+      setGrado('');
+      setGrupo('');
+      setTrimestre('');
+      setSelectedFile(null);
   };
 
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.onload = (evt) => {
-      const data = evt.target.result;
-      const workbook = XLSX.read(data, { type: 'binary' });
-      const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+  const handleFileUpload = (file) => {
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+          const data = evt.target.result;
+          const workbook = XLSX.read(data, { type: 'binary' });
+          const sheet = workbook.Sheets[workbook.SheetNames[0]];
+          const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-      const findValue = (data, searchValue) => {
-        for (let i = 0; i < data.length; i++) {
-          if (data[i][0] && data[i][0].toString().toLowerCase().includes(searchValue.toLowerCase())) {
-            return data[i][1];
-          }
-        }
-        return '';
+          const findValue = (data, searchValue) => {
+              for (let i = 0; i < data.length; i++) {
+                  if (data[i][0] && data[i][0].toString().toLowerCase().includes(searchValue.toLowerCase())) {
+                      return data[i][1];
+                  }
+              }
+              return '';
+          };
+
+          const additionalData = {
+              PERIODO: findValue(jsonData, 'PERIODO'),
+              GRADO: findValue(jsonData, 'GRADO'),
+              GRUPO: findValue(jsonData, 'GRUPO'),
+              TRIMESTRE: findValue(jsonData, 'TRIMESTRE')
+          };
+          setPeriodo(additionalData.PERIODO);
+          setGrado(additionalData.GRADO);
+          setGrupo(additionalData.GRUPO);
+          setTrimestre(additionalData.TRIMESTRE);
+
+          console.log("Datos adicionales:", additionalData);
+
+          const startIndex = jsonData.findIndex(row => row.includes('CURP'));
+
+          const materiaRow = jsonData[startIndex];
+          const endIndex = materiaRow.findIndex(header => header.toLowerCase() === 'calificacion trimestre');
+          const headers = materiaRow.slice(2, endIndex); // Excluye CURP y Nombre del Alumno
+          setMaterias(headers);
+
+          console.log("Materias:", headers);
+
+          const filteredData = jsonData.slice(startIndex + 1).map(row => ({
+              claveAlumno: row[0] || null,
+              nombreCompleto: row[1] || null,
+              calificaciones: row.slice(2, endIndex), // Ajustar el rango para las calificaciones
+              calificacionTrimestre: row[endIndex] || null // Obtener "CALIFICACION TRIMESTRE"
+          })).filter(student => student.claveAlumno && student.nombreCompleto && student.calificaciones.length === headers.length);
+
+          console.log("Datos de estudiantes filtrados:", filteredData);
+
+          setStudentsData(filteredData);
+          setSelectedFile(file);
       };
-
-      const additionalData = {
-        PERIODO: findValue(jsonData, 'PERIODO'),
-        GRADO: findValue(jsonData, 'GRADO'),
-        GRUPO: findValue(jsonData, 'GRUPO'),
-        TRIMESTRE: findValue(jsonData, 'TRIMESTRE')
-      };
-      setPeriodo(additionalData.PERIODO);
-      setGrado(additionalData.GRADO);
-      setGrupo(additionalData.GRUPO);
-      setTrimestre(additionalData.TRIMESTRE);
-
-      const startIndex = jsonData.findIndex(row => row.includes('CURP'));
-
-      const materiaRow = jsonData[startIndex];
-      const endIndex = materiaRow.findIndex(header => header.toLowerCase() === 'calificacion trimestre');
-      const headers = materiaRow.slice(2, endIndex);
-      setMaterias(headers);
-
-      const filteredData = jsonData.slice(startIndex + 1).map(row => ({
-        claveAlumno: row[0] || null,
-        nombreCompleto: row[1] || null,
-        calificaciones: row.slice(2, endIndex),
-        calificacionTrimestre: row[endIndex] || null
-      })).filter(student => student.claveAlumno && student.nombreCompleto && student.calificaciones.length === headers.length);
-
-      setStudentsData(filteredData);
-      setSelectedFile(file);
-    };
-    reader.readAsBinaryString(file);
+      reader.readAsBinaryString(file);
   };
 
   const saveGradesToDatabase = () => {
-    if (studentsData.length === 0) {
-      message.error('No hay datos válidos para guardar.');
-      return;
-    }
+      if (studentsData.length === 0) {
+          message.error('No hay datos válidos para guardar.');
+          return;
+      }
 
-    const dataToSend = {
-      Periodo: periodo,
-      Grado: grado,
-      Grupo: grupo,
-      Trimestre: trimestre,
-      students: studentsData.map(student => ({
-        ClaveAlumno: student.claveAlumno,
-        Calificaciones: Object.fromEntries(materias.map((materia, index) => [materia, student.calificaciones[index]]))
-      }))
-    };
+      const dataToSend = {
+          Periodo: periodo,
+          Grado: grado,
+          Grupo: grupo,
+          Trimestre: trimestre,
+          students: studentsData.map(student => ({
+              ClaveAlumno: student.claveAlumno,
+              Calificaciones: Object.fromEntries(materias.map((materia, index) => [materia, student.calificaciones[index]]))
+          }))
+      };
 
-    axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Docentes/InsertarCalificacionesSegundo.php', dataToSend)  // http://localhost/TeleSecundaria763/Docentes/InsertarCalificacionesSegundo.php
-      .then(response => {
-        if (response.data.success) {
-          message.success('Datos guardados en la base de datos correctamente.');
-          saveFinalGradesToDatabase();
-        } else {
-          message.error(response.data.message);
-        }
-      })
-      .catch(error => {
-        console.error('Error al guardar los datos:', error);
-        message.warning('Hubo un error al intentar guardar los datos en la base de datos.');
-      });
+      console.log('Datos que se enviarán:', dataToSend);
+
+      axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Docentes/InsertarCalificacionesSegundo.php', dataToSend)
+          .then(response => {
+              console.log(response.data);
+              if (response.data.success) {
+                  message.success('Datos guardados en la base de datos correctamente.');
+                  saveFinalGradesToDatabase();
+              } else {
+                  message.error(response.data.message);
+              }
+          })
+          .catch(error => {
+              console.error('Error al guardar los datos:', error);
+              message.warning('Hubo un error al intentar guardar los datos en la base de datos.');
+          });
   };
 
   const saveFinalGradesToDatabase = () => {
-    const finalGradesToSend = {
-      Periodo: periodo,
-      Trimestre: trimestre,
-      students: studentsData.map(student => ({
-        ClaveAlumno: student.claveAlumno,
-        Calificacion: student.calificacionTrimestre
-      }))
-    };
+      const finalGradesToSend = {
+          Periodo: periodo,
+          Trimestre: trimestre,
+          students: studentsData.map(student => ({
+              ClaveAlumno: student.claveAlumno,
+              Calificacion: student.calificacionTrimestre
+          }))
+      };
 
-    axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Docentes/InsertarCalificacionesFinales.php', finalGradesToSend)   //    http://localhost/TeleSecundaria763/Docentes/InsertarCalificacionesFinales.php
-      .then(response => {
-        if (response.data.success) {
-          message.success('Promedio general guardado correctamente.');
-          notifyAdmins();
-        } else {
-          message.error(response.data.message);
-        }
-        closeModal();
-      })
-      .catch(error => {
-        console.error('Error al guardar el promedio general:', error);
-        message.warning('Hubo un error al intentar guardar el promedio general en la base de datos.');
-      });
+      console.log('Datos que se enviarán para calificaciones finales:', finalGradesToSend);
+
+      axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Docentes/InsertarCalificacionesFinales.php', finalGradesToSend)
+          .then(response => {
+              if (response.data.success) {
+              message.success('Promedio general guardado correctamente.');
+              notifyAdmins();
+              } else {
+              message.error(response.data.message);
+              }
+              closeModal();
+          })
+          .catch(error => {
+              console.error('Error al guardar el promedio general:', error);
+              message.warning('Hubo un error al intentar guardar el promedio general en la base de datos.');
+          });
   };
 
-  // Función para recuperar los tokens de los administradores y enviar la notificación
   const notifyAdmins = async () => {
-    try {
-      // Recuperar los tokens de los administradores desde el backend
-      const response = await axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminUsuarios/GetAdminTokens.php');    //  http://localhost/TeleSecundaria763/AdminUsuarios/GetAdminTokens.php
-      const tokens = response.data.tokens; // Suponiendo que el backend devuelve un array de tokens
-
-      // Enviar la notificación a todos los tokens
-      for (const token of tokens) {
-        await sendPushNotification(token, 'Nuevas calificaciones insertadas.');
-      }
-      
+      try {
+          await axios.post('https://firebase-notify.vercel.app/sendNotification', {
+              idDocente: idUsuario, // ID del docente
+              mensaje: `El docente con ID ${idDocente} ha insertado nuevas calificaciones.`,
+          });
       console.log('Notificaciones enviadas a los administradores.');
-    } catch (error) {
-      console.error('Error al recuperar los tokens de los administradores o enviar notificación:', error);
-    }
+      } catch (error) {
+          console.error('Error al enviar notificación a los administradores:', error);
+      }
   };
 
-  // Función para enviar la notificación push
-  const sendPushNotification = async (token, message) => {
-    const payload = {
-      notification: {
-        title: 'Notificación de Calificaciones',
-        body: message,
-        icon: 'icon-url', // Cambia esto por la URL de tu ícono de notificación
+  // Props para el componente Upload
+  const uploadProps = {
+      name: 'file',
+      accept: '.xlsx, .xls', // Solo aceptar archivos Excel
+      beforeUpload: (file) => {
+          handleFileUpload(file); // Llamar la función de manejo de archivo
+          return false; // Evita la subida automática por defecto
       },
-    };
-
-    try {
-      await axios.post('https://fcm.googleapis.com/fcm/send', payload, {
-        headers: {
-          'Authorization': `key=YOUR_SERVER_KEY`, // Reemplaza con tu clave de servidor
-          'Content-Type': 'application/json',
-        },
-      });
-      console.log(`Notificación enviada a ${token}`);
-    } catch (error) {
-      console.error(`Error al enviar notificación a ${token}:`, error);
-    }
+      onChange(info) {
+          if (info.file.status !== 'uploading') {
+              console.log(info.file, info.fileList);
+          }
+          if (info.file.status === 'done') {
+              message.success(`${info.file.name} fue cargado exitosamente`);
+          } else if (info.file.status === 'error') {
+              message.error(`${info.file.name} falló en la carga.`);
+          }
+      }
   };
+
+  // Configurar las columnas de la tabla
+  const columns = [
+      {
+          title: 'Clave Alumno',
+          dataIndex: 'claveAlumno',
+          key: 'claveAlumno',
+      },
+      {
+          title: 'Nombre Completo',
+          dataIndex: 'nombreCompleto',
+          key: 'nombreCompleto',
+      },
+      // Generar dinámicamente columnas para las materias
+      ...materias.map((materia, index) => ({
+          title: materia,
+          dataIndex: ['calificaciones', index], // Acceder a las calificaciones por índice
+          key: `materia-${index}`,
+      })),
+      {
+          title: 'Calificación Trimestre',
+          dataIndex: 'calificacionTrimestre',
+          key: 'calificacionTrimestre',
+      },
+  ];
+
+  // Crear los datos de la tabla
+  const dataSource = studentsData.map((student, index) => ({
+      key: index,
+      claveAlumno: student.claveAlumno,
+      nombreCompleto: student.nombreCompleto,
+      calificaciones: student.calificaciones, // Lista de calificaciones para cada materia
+      calificacionTrimestre: student.calificacionTrimestre,
+  }));
+
+  // Estilos personalizados para compactar la tabla
+  const compactTableStyle = {
+      fontSize: '12px', // Tamaño de texto más pequeño
+      padding: '4px 8px', // Reducir el padding de las celdas
+  };
+
+  
 
 
   return (
     <SIDEBARDOCENT>
-        <div className="flex justify-center w-full mx-auto mt-10">
-            <main className="flex-grow flex justify-center items-center">
-                <div className="bg-white dark:bg-gray-800 shadow-md sm:rounded-lg overflow-hidden p-8 w-full max-w-6xl mx-auto">
-                    <h2 className="text-3xl font-semibold mb-8 text-center text-gray-700 dark:text-gray-300">Carga de Calificaciones de Alumnos</h2>
-                    <div className='container'>
-                        <div className="mb-8">
-                            <Label htmlFor="multiple-file-upload" value="Cargar Archivo Excel" />
-                            <FileInput type="file" onChange={handleFileUpload} />
-                            {selectedFile && <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">Archivo seleccionado: {selectedFile.name}</p>}
-                        </div>
+            {/* Contenedor principal con padding */}
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    minHeight: 'calc(100vh - 60px)', // Ajusta para que ocupe todo el espacio restante
+                    padding: '20px',
+                }}
+            >
+                <BreadcrumDocent />
 
-                        <div className="mb-8">
-                            <Label htmlFor="remember">Datos del Período</Label>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
-                                <div className="text-gray-700 dark:text-gray-300">Periodo: {periodo}</div>
-                                <div className="text-gray-700 dark:text-gray-300">Grado: {grado}</div>
-                                <div className="text-gray-700 dark:text-gray-300">Grupo: {grupo}</div>
-                                <div className="text-gray-700 dark:text-gray-300">Trimestre: {trimestre}</div>
+                {/* Título de la vista */}
+                <Title level={2}>Captura de Calificaciones por Excel</Title>
+
+                {/* Contenedor para el contenido principal */}
+                <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                    <Card
+                        style={{
+                            background: '#fff',
+                            padding: '20px',
+                            flexGrow: 1, // Hace que el card se extienda para ocupar el espacio disponible
+                            overflowY: 'auto', // Permite hacer scroll si el contenido es demasiado grande
+                        }}
+                    >
+                        <div style={{ width: '100%', padding: '20px' }}>
+                            {/* Título y botón de carga */}
+                            <Title level={4} style={{ color: 'black', marginBottom: '20px' }}>
+                                Por favor, seleccione el archivo de Excel que contiene las calificaciones para su carga.
+                            </Title>
+
+                            {/* Botón de Carga de Archivos Excel con Ant Design */}
+                            <div style={{ marginBottom: '20px' }}>
+                                <Upload {...uploadProps}>
+                                    <Button icon={<UploadOutlined />}>
+                                        Cargar archivo Excel
+                                    </Button>
+                                </Upload>
+                                {selectedFile && (
+                                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                                        Archivo seleccionado: {selectedFile.name}
+                                    </p>
+                                )}
+                            </div>
+
+                            {/* Mostrar datos del archivo Excel cargado */}
+                            <div className="mb-8">
+                                <Title level={4} style={{ color: 'black', marginBottom: '20px' }}>
+                                    Datos requeridos: Trimestre, Periodo, Grado y Grupo.
+                                </Title>
+
+                                <Descriptions bordered column={4}>
+                                    <Descriptions.Item label="Periodo">{periodo}</Descriptions.Item>
+                                    <Descriptions.Item label="Trimestre">{trimestre}</Descriptions.Item>
+                                    <Descriptions.Item label="Grado">{grado}</Descriptions.Item>
+                                    <Descriptions.Item label="Grupo">{grupo}</Descriptions.Item>
+                                </Descriptions>
+                            </div>
+
+                            {/* Tabla de alumnos y calificaciones usando Ant Design Table */}
+                            <div className="mb-8">
+                                <Title level={4} style={{ color: 'black', marginBottom: '20px' }}>
+                                    Visualización de Alumnos y sus Calificaciones.
+                                </Title>
+
+                                {/* Aplicar el estilo compacto a la tabla */}
+                                <Table
+                                    columns={columns}
+                                    dataSource={dataSource}
+                                    pagination={false}
+                                    scroll={{ x: '100%', y: 400 }}  // Habilitar scroll horizontal y vertical
+                                    size="small" // Hacer la tabla más compacta
+                                    style={compactTableStyle} // Aplicar estilo personalizado
+                                />
+                            </div>
+
+                            {/* Botones de acción */}
+                            <div className="flex justify-end space-x-4 mt-4">
+                              
+
+                                <div style={{ textAlign: 'center', marginTop: '10px' }}>
+                                    <Button
+                                        onClick={saveGradesToDatabase}
+                                        type="primary"
+                                        style={{
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            backgroundColor: 'var(--first-color)',
+                                            borderColor: 'transparent',
+                                            color: '#fff',
+                                            padding: '10px 20px',
+                                            borderRadius: '8px',
+                                            fontSize: '16px',
+                                            fontWeight: 'bold',
+                                            height: '40px',
+                                            width: '400px',
+                                            cursor: 'pointer',
+                                            transition: 'background-color 0.3s ease'
+                                        }}
+                                        onMouseOver={(event) => {
+                                            event.currentTarget.style.backgroundColor = 'black';
+                                        }}
+                                        onMouseOut={(event) => {
+                                            event.currentTarget.style.backgroundColor = 'var(--first-color)';
+                                        }}
+                                    >
+                                        Guardar Calificaciones
+                                    </Button>
+                                </div>
+
+                                <div style={{ textAlign: 'center', marginTop: '10px' }}>
+                                    <Button
+                                        onClick={closeModal}
+                                        type="danger"
+                                        style={{
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            backgroundColor: '#142f8f', // Cambiado a rojo
+                                            borderColor: 'transparent',
+                                            color: '#fff',
+                                            padding: '10px 20px',
+                                            borderRadius: '8px',
+                                            fontSize: '16px',
+                                            fontWeight: 'bold',
+                                            height: '40px',
+                                            width: '400px',
+                                            cursor: 'pointer',
+                                            transition: 'background-color 0.3s ease'
+                                        }}
+                                        onMouseOver={(event) => {
+                                            event.currentTarget.style.backgroundColor = 'black';
+                                        }}
+                                        onMouseOut={(event) => {
+                                            event.currentTarget.style.backgroundColor = '#142f8f'; // Cambiado a rojo
+                                        }}
+                                    >
+                                        Cancelar Captura
+                                    </Button>
+                                </div>
+                                
                             </div>
                         </div>
-
-                        <div className="mb-8">
-                            <Label htmlFor="remember">Lista de Alumnos y Calificaciones</Label>
-                            <div className="overflow-x-auto mt-4">
-                                <table className="min-w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                        <tr>
-                                            <th className="px-6 py-3">Clave Alumno</th>
-                                            <th className="px-6 py-3">Nombre Completo</th>
-                                            {materias.map((materia, index) => (
-                                                <th className="px-6 py-3" key={index}>{materia}</th>
-                                            ))}
-                                            <th className="px-6 py-3">Calificación Trimestre</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {studentsData.map((student, index) => (
-                                            <tr key={index} className="border-b dark:border-gray-900">
-                                                <td className="px-6 py-4">{student.claveAlumno}</td>
-                                                <td className="px-6 py-4">{student.nombreCompleto}</td>
-                                                {student.calificaciones.map((calificacion, idx) => (
-                                                    <td className="px-6 py-4" key={idx}>{calificacion}</td>
-                                                ))}
-                                                <td className="px-6 py-4">{student.calificacionTrimestre}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div className="flex justify-between space-x-4">
-                            <Button color="success" className="w-full sm:w-auto" onClick={saveGradesToDatabase}>Guardar en la Base de Datos</Button>
-                            <Button color="failure" className="w-full sm:w-auto" onClick={closeModal}>Cancelar</Button>
-                        </div>
-                    </div>
+                    </Card>
                 </div>
-            </main>
-        </div>
+            </div>
     </SIDEBARDOCENT>
   );
 }

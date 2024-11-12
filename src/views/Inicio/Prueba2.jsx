@@ -16,6 +16,7 @@ function Prueba2() {
     const [grupo, setGrupo] = useState('');
     const [trimestre, setTrimestre] = useState('');
     const [selectedFile, setSelectedFile] = useState(null);
+    const idUsuario = localStorage.getItem('idUsuario');
 
     const closeModal = () => {
         setStudentsData([]);
@@ -100,7 +101,7 @@ function Prueba2() {
 
         console.log('Datos que se enviarán:', dataToSend);
 
-        axios.post('http://localhost/TeleSecundaria763/Docentes/InsertarCalificacionesSegundo.php', dataToSend)
+        axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Docentes/InsertarCalificacionesSegundo.php', dataToSend)
             .then(response => {
                 console.log(response.data);
                 if (response.data.success) {
@@ -128,13 +129,13 @@ function Prueba2() {
 
         console.log('Datos que se enviarán para calificaciones finales:', finalGradesToSend);
 
-        axios.post('http://localhost/TeleSecundaria763/Docentes/InsertarCalificacionesFinales.php', finalGradesToSend)
+        axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Docentes/InsertarCalificacionesFinales.php', finalGradesToSend)
             .then(response => {
-                console.log(response.data);
                 if (response.data.success) {
-                    message.success('Promedio general guardado correctamente.');
+                message.success('Promedio general guardado correctamente.');
+                notifyAdmins();
                 } else {
-                    message.error(response.data.message);
+                message.error(response.data.message);
                 }
                 closeModal();
             })
@@ -142,6 +143,18 @@ function Prueba2() {
                 console.error('Error al guardar el promedio general:', error);
                 message.warning('Hubo un error al intentar guardar el promedio general en la base de datos.');
             });
+    };
+
+    const notifyAdmins = async () => {
+        try {
+            await axios.post('https://firebase-notify.vercel.app/sendNotification', {
+                idDocente: idUsuario, // ID del docente
+                mensaje: `El docente con ID ${idDocente} ha insertado nuevas calificaciones.`,
+            });
+        console.log('Notificaciones enviadas a los administradores.');
+        } catch (error) {
+            console.error('Error al enviar notificación a los administradores:', error);
+        }
     };
 
     // Props para el componente Upload
@@ -283,12 +296,75 @@ function Prueba2() {
 
                             {/* Botones de acción */}
                             <div className="flex justify-end space-x-4 mt-4">
-                                <Button type="primary" onClick={saveGradesToDatabase}>
-                                    Guardar en la Base de Datos
-                                </Button>
-                                <Button type="danger" onClick={closeModal}>
-                                    Cancelar
-                                </Button>
+                              
+
+                                <div style={{ textAlign: 'center', marginTop: '10px' }}>
+                                    <Button
+                                        onClick={saveGradesToDatabase}
+                                        type="primary"
+                                        style={{
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            backgroundColor: 'var(--first-color)',
+                                            borderColor: 'transparent',
+                                            color: '#fff',
+                                            padding: '10px 20px',
+                                            borderRadius: '8px',
+                                            fontSize: '16px',
+                                            fontWeight: 'bold',
+                                            height: '40px',
+                                            width: '400px',
+                                            cursor: 'pointer',
+                                            transition: 'background-color 0.3s ease'
+                                        }}
+                                        onMouseOver={(event) => {
+                                            event.currentTarget.style.backgroundColor = 'black';
+                                        }}
+                                        onMouseOut={(event) => {
+                                            event.currentTarget.style.backgroundColor = 'var(--first-color)';
+                                        }}
+                                    >
+                                        Guardar Calificaciones
+                                    </Button>
+                                </div>
+
+                                <div style={{ textAlign: 'center', marginTop: '10px' }}>
+                                    <Button
+                                        onClick={closeModal}
+                                        type="danger"
+                                        style={{
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            backgroundColor: '#142f8f', // Cambiado a rojo
+                                            borderColor: 'transparent',
+                                            color: '#fff',
+                                            padding: '10px 20px',
+                                            borderRadius: '8px',
+                                            fontSize: '16px',
+                                            fontWeight: 'bold',
+                                            height: '40px',
+                                            width: '400px',
+                                            cursor: 'pointer',
+                                            transition: 'background-color 0.3s ease'
+                                        }}
+                                        onMouseOver={(event) => {
+                                            event.currentTarget.style.backgroundColor = 'black';
+                                        }}
+                                        onMouseOut={(event) => {
+                                            event.currentTarget.style.backgroundColor = '#142f8f'; // Cambiado a rojo
+                                        }}
+                                    >
+                                        Cancelar Captura
+                                    </Button>
+                                </div>
+
+
+
+                               
+
+
                             </div>
                         </div>
                     </Card>

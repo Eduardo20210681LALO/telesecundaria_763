@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Card, Input, Button, message, Avatar, Space, Tag } from 'antd';
-import { PhoneOutlined } from '@ant-design/icons'; // Íconos de Ant Design
+import { PhoneOutlined } from '@ant-design/icons';
 import SIDEBARDOCENT from '../../../../components/SIDEBARDOCENT';
 import BreadcrumDocent from '../BreadcrumDocent';
 
 const { Title } = Typography;
 
 function PerfilUD() {
-    const [datosUsuario, setDatosUsuario] = useState(null); // Solo para mostrar los datos
+    const [datosUsuario, setDatosUsuario] = useState(null);
     const [nombre, setNombre] = useState('');
     const [APaterno, setAPaterno] = useState('');
     const [AMaterno, setAMaterno] = useState('');
@@ -18,15 +18,27 @@ function PerfilUD() {
     const [idEstatus, setIdEstatus] = useState('');
     const [nuevaContraseña, setNuevaContraseña] = useState('');
     const [confirmarContraseña, setConfirmarContraseña] = useState('');
-    const [isUpdated, setIsUpdated] = useState(false);
     const [passwordError, setPasswordError] = useState('');
     const idUsuario = localStorage.getItem('idUsuario');
 
-
     useEffect(() => {
         const fetchData = async () => {
-            const data = { idUsuario: idUsuario }; 
-            const url = 'https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/UsuarioGeneral/datosUsuario.php';  //   http://localhost/TeleSecundaria763/UsuarioGeneral/datosUsuario.php
+            const apiUrl = 'https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/UsuarioGeneral/datosUsuario.php';
+            const cache = await caches.open('api-cache');
+            
+            // Primero intentar cargar datos desde el caché si está offline
+            const cachedResponse = await cache.match(apiUrl);
+            if (cachedResponse && !navigator.onLine) {
+                const cachedData = await cachedResponse.json();
+                setDatosUsuario(cachedData);
+                setIdRol(cachedData.idRol);
+                setIdEstatus(cachedData.idEstatus);
+                console.log('Cargando datos desde el caché.');
+                return;
+            }
+
+            // Si hay conexión, hacer la petición a la API y actualizar caché
+            const data = { idUsuario };
             const options = {
                 method: 'POST',
                 headers: {
@@ -36,11 +48,11 @@ function PerfilUD() {
             };
 
             try {
-                const response = await fetch(url, options);
+                const response = await fetch(apiUrl, options);
                 const result = await response.json();
 
                 if (result.success) {
-                    const usuario = {
+                    const usuarioData = {
                         nombre: result.vch_nombre,
                         APaterno: result.vch_APaterno,
                         AMaterno: result.vch_AMaterno,
@@ -50,41 +62,39 @@ function PerfilUD() {
                         idRol: result.id_rol,
                         idEstatus: result.id_estatus,
                     };
-                    setDatosUsuario(usuario);
-                    setIdRol(usuario.idRol);
-                    setIdEstatus(usuario.idEstatus);
+                    setDatosUsuario(usuarioData);
+                    setIdRol(usuarioData.idRol);
+                    setIdEstatus(usuarioData.idEstatus);
 
-                    // Guardar en localStorage
-                    localStorage.setItem('userData', JSON.stringify(usuario));
-                    console.log('Datos guardados en localStorage:', usuario); // Verificar que se guardan
+                    // Guardar en caché y en localStorage
+                    await cache.put(apiUrl, new Response(JSON.stringify(usuarioData)));
+                    localStorage.setItem('userData', JSON.stringify(usuarioData));
+                    console.log('Datos guardados en caché y localStorage:', usuarioData);
                 } else {
-                    console.log('Error: ', result.error);
-                    // Recuperar de localStorage si hay un error
-                    const cachedData = localStorage.getItem('userData');
-                    if (cachedData) {
-                        const parsedData = JSON.parse(cachedData);
-                        setDatosUsuario(parsedData);
-                        setIdRol(parsedData.idRol); // Asignar rol desde cache
-                        setIdEstatus(parsedData.idEstatus); // Asignar estatus desde cache
-                        console.log('Datos recuperados de localStorage:', parsedData); // Verificar recuperación
-                    }
+                    console.error('Error en la respuesta de la API:', result.error);
+                    loadCachedData();
                 }
             } catch (error) {
-                console.log('Error al hacer la petición de datos:', error);
-                // Recuperar de localStorage en caso de error
-                const cachedData = localStorage.getItem('userData');
-                if (cachedData) {
-                    const parsedData = JSON.parse(cachedData);
-                    setDatosUsuario(parsedData);
-                    setIdRol(parsedData.idRol); // Asignar rol desde cache
-                    setIdEstatus(parsedData.idEstatus); // Asignar estatus desde cache
-                    console.log('Datos recuperados de localStorage tras error:', parsedData); // Verificar recuperación tras error
-                }
+                console.error('Error en la petición:', error);
+                loadCachedData();
+            }
+        };
+
+        const loadCachedData = () => {
+            const cachedData = localStorage.getItem('userData');
+            if (cachedData) {
+                const parsedData = JSON.parse(cachedData);
+                setDatosUsuario(parsedData);
+                setIdRol(parsedData.idRol);
+                setIdEstatus(parsedData.idEstatus);
+                console.log('Datos recuperados de localStorage:', parsedData);
+            } else {
+                console.log('No hay datos disponibles en el caché.');
             }
         };
 
         fetchData();
-    }, [idUsuario, isUpdated]);
+    }, [idUsuario]);
 
     // Funciones de validación
     const validarNombreApellido = (valor) => /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/.test(valor) ? valor : '';
@@ -101,9 +111,10 @@ function PerfilUD() {
         }
 
         const data = { idUsuario, nombre, APaterno, AMaterno, correo, usuario, telefono };
+        const apiUrl = 'https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/UsuarioGeneral/actualizarDatosUsuario.php';
 
         try {
-            const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/UsuarioGeneral/actualizarDatosUsuario.php', {  //    http://localhost/TeleSecundaria763/UsuarioGeneral/actualizarDatosUsuario.php
+            const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data),
@@ -111,9 +122,12 @@ function PerfilUD() {
             const result = await response.json();
             if (result.success) {
                 message.success('Datos actualizados exitosamente');
-                // Actualizar cache
-                const cache = await caches.open('user-data-cache');
-                cache.put('/UsuarioGeneral/datosUsuario.php', new Response(JSON.stringify(data)));
+                
+                // Guardar la respuesta en el caché y en localStorage
+                const cache = await caches.open('api-cache');
+                await cache.put(apiUrl, new Response(JSON.stringify(data)));
+                localStorage.setItem('userData', JSON.stringify(data));
+                console.log('Datos de usuario actualizados y guardados en caché y localStorage:', data);
             } else {
                 message.error('Error al actualizar los datos');
             }

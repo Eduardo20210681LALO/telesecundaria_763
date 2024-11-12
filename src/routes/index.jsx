@@ -89,6 +89,7 @@ export const router = createBrowserRouter([
       { path: '/ActualizaciónDeContraseña', element: <ActualizaciónDeContraseña /> },
       { path: '/PruebasDiseño', element: <PruebasDiseño /> },
       { path: '/PruebasDiseño2', element: <PruebasDiseño2 /> },
+      { path: '/Prueba2', element: <Prueba2 /> },
 
       // Rutas protegidas para Directivo
       {
