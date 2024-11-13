@@ -25,12 +25,12 @@ function Home() {
   return (
     <div>
       <Nav/>
-  
+
       <main className="l-main" style={{ backgroundColor: '#F5F5F5' }}>
         <section className="home bd-grid" id="inicio">{/* HOME */}
           <div className="home__data">
             <h1 className="home__title" style={{ fontFamily: 'Roboto', fontWeight: 'bold', fontSize: '3.5rem' }}>
-              Bienvenido *<br />
+              Bienvenido Holaaa<br />
               Al portal<br />
               <span className="home__title-color">TeleSecundaria 763</span>
             </h1>
