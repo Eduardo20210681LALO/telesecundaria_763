@@ -109,6 +109,7 @@ function IngresarAlumnos() {
             });
     };
 
+
     const handleCapture = () => {
         const video = videoRef.current;
         const canvas = document.createElement('canvas');
@@ -116,17 +117,17 @@ function IngresarAlumnos() {
         canvas.height = video.videoHeight;
         const context = canvas.getContext('2d');
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const imageName = `foto_${Date.now()}.png`;
-        setCapturedImage(canvas.toDataURL('image/png'));
-        setImageName(imageName);
-        setIsCameraModalVisible(false); // Cierra el modal después de capturar la imagen
-        saveImageNameToDatabase(); // Llama a la función para guardar el nombre de la imagen
+        const imageName = `foto_${idUsuario}_${Date.now()}.png`;
+        setCapturedImage(canvas.toDataURL('image/png')); // Guarda la imagen en base64
+        setImageName(imageName); // Guarda el nombre de la imagen
+        setIsCameraModalVisible(false);
+        saveImageNameToDatabase();
 
-        // Detener la cámara después de capturar la imagen
         const stream = video.srcObject;
         const tracks = stream.getTracks();
-        tracks.forEach(track => track.stop());
+        tracks.forEach(track => track.stop()); // Detener la cámara
     };
+
 
 
     const saveToDatabase = async () => {
@@ -175,11 +176,14 @@ function IngresarAlumnos() {
     };
 
 
+
     const saveImageNameToDatabase = async () => {
         const data = {
             userId: idUsuario,
-            imageName: capturedImage, // La imagen en formato base64
-            accion: "Guardar imagen"
+            imageName: imageName, // Nombre de la imagen
+            imageData: capturedImage, // Imagen en formato base64
+            accion: "Guardar imagen",
+            path: "../assets/imagenes/" // Ruta en donde se guardará la imagen
         };
         try {
             const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Bitacoras/InsertarFotoBitacora.php', {
@@ -189,7 +193,7 @@ function IngresarAlumnos() {
                 },
                 body: JSON.stringify(data),
             });
-    
+
             if (response.ok) {
                 message.success('Nombre de la imagen guardado en la base de datos.');
             } else {
