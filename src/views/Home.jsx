@@ -8,6 +8,7 @@ import "slick-carousel/slick/slick-theme.css";
 
 import uno from '@/images/uno.png';
 
+
 import Imagen1 from '@/images/Imagen1.jpg';
 //import Imagen2 from '@/images/Imagen2.jpg';
 import Imagen3 from '@/images/Imagen3.jpeg';
