@@ -6,19 +6,19 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-import uno from '../images/uno.png'; // se usa
+import uno from '@/images/uno.png';
 
 // Importaciones de imágenes
-import Imagen1 from '../images/Imagen1.jpg';
-import Imagen2 from '../images/Imagen2.jpg';
-import Imagen3 from '../images/Imagen3.jpeg';
-import Imagen4 from '../images/Imagen4.jpeg';
-import Imagen5 from '../images/Imagen5.jpg';
-import Imagen6 from '../images/Imagen6.jpg';
+import Imagen1 from '@/images/Imagen1.jpg';
+import Imagen2 from '@/images/Imagen2.jpg';
+import Imagen3 from '@/images/Imagen3.jpeg';
+import Imagen4 from '@/images/Imagen4.jpeg';
+import Imagen5 from '@/images/Imagen5.jpg';
+import Imagen6 from '@/images/Imagen6.jpg';
 
-import work1 from '../images/work1.jpg';
-import work2 from '../images/work2.jpg';
-import work3 from '../images/work3.jpg';
+import work1 from '@/images/work1.jpg';
+import work2 from '@/images/work2.jpg';
+import work3 from '@/images/work3.jpg';
 
 import BreadCrumb from "./BreadCrumbView";
 
@@ -45,7 +45,7 @@ function Home() {
           </div>
 
           <div className="home__img" style={{ clipPath: 'ellipse(50% 50% at 50% 50%)', backgroundColor: '#7d0430', marginTop: '-60px' }}>
-            <img src={uno} alt="TeleSecundaria 763" />
+            <img src={uno} alt="uno" />
           </div>
         </section>
 

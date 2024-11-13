@@ -58,4 +58,9 @@ const manifestForPlugin = {
 
 export default defineConfig({
   plugins: [react(), VitePWA(manifestForPlugin)],
+  resolve: {
+    alias: {
+      '@': '/src',
+    },
+  },
 });
