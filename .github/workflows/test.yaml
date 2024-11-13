@@ -55,3 +55,16 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./dist 
           server-dir: /public_html/Telesecundaria
+
+      - name: Notificar despliegue exitoso
+        if: success()  # Solo se ejecuta si el despliegue fue exitoso
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.issues.createComment({
+              issue_number: context.payload.pull_request ? context.payload.pull_request.number : context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: "✅ Despliegue automático en Hostinger vía FTP completado exitosamente para el commit `${{ github.sha }}`."
+            })
