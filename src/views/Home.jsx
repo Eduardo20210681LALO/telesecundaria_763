@@ -8,9 +8,8 @@ import "slick-carousel/slick/slick-theme.css";
 
 import uno from '@/images/uno.png';
 
-// Importaciones de imágenes
 import Imagen1 from '@/images/Imagen1.jpg';
-import Imagen2 from '@/images/Imagen2.jpg';
+//import Imagen2 from '@/images/Imagen2.jpg';
 import Imagen3 from '@/images/Imagen3.jpeg';
 import Imagen4 from '@/images/Imagen4.jpeg';
 import Imagen5 from '@/images/Imagen5.jpg';
@@ -58,9 +57,13 @@ function Home() {
                   <div>
                     <img src={Imagen1} alt="Imagen 1" className="img-fluid rounded mx-auto d-block" style={{ width: 'auto', height: '300px' }} />
                   </div>
-                  <div>
-                    <img src={Imagen2} alt="Imagen 2" className="img-fluid rounded mx-auto d-block" style={{ width: 'auto', height: '300px' }} />
-                  </div>
+
+                  {
+                    /* <div>
+                        <img src={Imagen2} alt="Imagen 2" className="img-fluid rounded mx-auto d-block" style={{ width: 'auto', height: '300px' }} />
+                      </div> */
+                  }
+
                   <div>
                     <img src={Imagen3} alt="Imagen 3" className="img-fluid rounded mx-auto d-block" style={{ width: 'auto', height: '300px' }} />
                   </div>
