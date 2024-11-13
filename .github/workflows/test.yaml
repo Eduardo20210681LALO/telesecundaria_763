@@ -66,10 +66,11 @@ jobs:
                 issue_number: context.payload.pull_request.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                body: "✅ Despliegue automático en Hostinger vía FTP completado exitosamente para el commit `${{ github.sha }}`."
+                body: `✅ Despliegue automático en Hostinger vía FTP completado exitosamente para el commit ${github.sha}.`
               });
             } else {
               console.log("Despliegue exitoso :)");
+            }
 
 
-              
+
