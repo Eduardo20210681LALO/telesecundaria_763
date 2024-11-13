@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - development
+      - main
   pull_request:
     branches:
       - development
@@ -40,10 +41,17 @@ jobs:
         with:
           node-version: '16'
 
+      - name: Instalar dependencias
+        run: npm install
+
       - name: Construir la aplicación
         run: npm run build
 
-      - name: Desplegar a producción
-        run: |
-          # Aquí puedes agregar tu comando de despliegue para producción
-          # Ejemplo: npm run deploy
+      - name: Desplegar a producción en Hostinger vía FTP
+        uses: SamKirkland/FTP-Deploy-Action@4.0.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist 
+          server-dir: /public_html/Telesecundaria
