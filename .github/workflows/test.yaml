@@ -54,7 +54,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./dist/
-          server-dir: /public_html/Telesecundaria/
+          server-dir: /home/u316023526/domains/host8b.me/public_html/Telesecundaria/
 
       - name: Notificar despliegue exitoso
         if: success()  # Solo se ejecuta si el despliegue fue exitoso
