@@ -1,4 +1,4 @@
-name: CI/CD Test Workflow
+name: Flujo de trabajo de CI/CD de pruebas
 
 on:
   push:
@@ -13,18 +13,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out the repository
+      - name: Revisar el repositorio
         uses: actions/checkout@v2
 
-      - name: Set up Node.js
+      - name: Configurar Node.js
         uses: actions/setup-node@v2
         with:
           node-version: '16'
 
-      - name: Install dependencies
+      - name: Instalar dependencias
         run: npm install
 
-      - name: Build the application
+      - name: Construir la aplicación
         run: npm run build
 
   deploy:
@@ -32,18 +32,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out the repository
+      - name: Revisar el repositorio
         uses: actions/checkout@v2
 
-      - name: Set up Node.js
+      - name: Configurar Node.js
         uses: actions/setup-node@v2
         with:
           node-version: '16'
 
-      - name: Build the application
+      - name: Construir la aplicación
         run: npm run build
 
-      - name: Deploy to Production
+      - name: Desplegar a producción
         run: |
           # Aquí puedes agregar tu comando de despliegue para producción
           # Ejemplo: npm run deploy
