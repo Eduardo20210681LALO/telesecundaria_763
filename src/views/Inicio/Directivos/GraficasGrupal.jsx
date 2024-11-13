@@ -23,18 +23,18 @@ function GraficasGrupal() {
     // Inicializa los selectores como null para que los placeholders funcionen correctamente
     const [selectedPeriodo, setSelectedPeriodo] = useState(null);
     const [selectedGrado, setSelectedGrado] = useState(null);
-    const [selectedGrupo, setSelectedGrupo] = useState(null);
+    const [selectedGrupo, setSelectedGrupo] = useState(null); 
 
     useEffect(() => {
-        axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php')
+        axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php')  //    http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php
             .then(response => setPeriodos(response.data))
             .catch(error => message.error('Error al obtener los periodos'));
 
-        axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php')
+        axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php')   //  http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php
             .then(response => setGrados(response.data))
             .catch(error => message.error('Error al obtener los grados'));
 
-        axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php')
+        axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php')   //  http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php
             .then(response => setGrupos(response.data))
             .catch(error => message.error('Error al obtener los grupos'));
     }, []);
@@ -44,7 +44,7 @@ function GraficasGrupal() {
             setLoading(true);
             setError(null);
 
-            axios.get('http://localhost/TeleSecundaria763/Directivos/ObtenerCalificacionesGrupo.php', {
+            axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Directivos/ObtenerCalificacionesGrupo.php', {   //  http://localhost/TeleSecundaria763/Directivos/ObtenerCalificacionesGrupo.php
                 params: {
                     periodo: selectedPeriodo,
                     grado: selectedGrado,

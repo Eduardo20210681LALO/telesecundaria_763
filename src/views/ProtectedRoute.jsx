@@ -1,28 +1,28 @@
-import { Navigate, Outlet } from "react-router-dom"
+// ProtectedRoute.jsx
+import { Navigate, Outlet } from "react-router-dom";
 import Cookies from 'js-cookie';
 
-const generateRandomToken = (length) => {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let token = '';
-  for (let i = 0; i < length; i++) {
-    token += characters.charAt(Math.floor(Math.random() * characters.length));
+const ProtectedRoute = ({ requiredRole }) => {
+  const idUsuario = localStorage.getItem('idUsuario'); // Obtén el ID del usuario actual
+  const token = idUsuario ? Cookies.get(`token_${idUsuario}`) : null; // Obtén el token específico del usuario
+  const rol = localStorage.getItem('rol'); // Rol del usuario
+
+  // Verifica si el token existe
+  if (!token) {
+    return <Navigate to="/Login" replace />;
   }
-  return token;
+
+  // Verifica si el rol requerido coincide con el rol del usuario
+  if (requiredRole && rol !== requiredRole) {
+    return <Navigate to="/NotFound" replace />;
+  }
+
+  return <Outlet />;
 };
 
-const ProtectedRoute = () => {
-  let token = Cookies.get('token');
-
-  //!No descomentar
-  // if (!token) {
-  //    console.log('Generado')
-  //    token = generateRandomToken(32);
-  //    const expirationDays = 7;
-  //    const expirationDate = new Date();
-  //    expirationDate.setDate(expirationDate.getDate() + expirationDays);
-  //    Cookies.set('token', token, { expires: expirationDate });
-  // }
-  return token ? <Outlet /> : <Navigate to="/NotFound" replace />;
-}
+// Rutas protegidas específicas para cada rol
+export const ProtectedRouteDirectivo = () => <ProtectedRoute requiredRole="directivo" />;
+export const ProtectedRouteAdministrativo = () => <ProtectedRoute requiredRole="administrativo" />;
+export const ProtectedRouteDocente = () => <ProtectedRoute requiredRole="docente" />;
 
 export default ProtectedRoute;

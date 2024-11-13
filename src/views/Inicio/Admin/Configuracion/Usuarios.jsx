@@ -17,9 +17,9 @@ function Usuarios() {
         fetchUsuarios();
     }, [tipoUsuario]);
 
-    const fetchUsuarios = async () => {
+    const fetchUsuarios = async () => {    
         try {
-            const response = await axios.post('http://localhost/TeleSecundaria763/AdminUsuarios/TraerUsuarios.php', { tipoUsuario });
+            const response = await axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminUsuarios/TraerUsuarios.php', { tipoUsuario });   //   http://localhost/TeleSecundaria763/AdminUsuarios/TraerUsuarios.php
             if (Array.isArray(response.data)) {
                 setUsuarios(response.data);
             } else {
@@ -48,7 +48,7 @@ function Usuarios() {
 
     const handleUpdate = async (values) => {
         try {
-            const response = await axios.post('http://localhost/TeleSecundaria763/AdminUsuarios/ActualizarUsuario.php', { id_usuario: selectedUsuario.id_usuario, ...values });
+            const response = await axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminUsuarios/ActualizarUsuario.php', { id_usuario: selectedUsuario.id_usuario, ...values });   // http://localhost/TeleSecundaria763/AdminUsuarios/ActualizarUsuario.php
             if (response.data.success) {
                 message.success('Usuario actualizado exitosamente');
                 fetchUsuarios();
@@ -65,7 +65,7 @@ function Usuarios() {
 
     const handleDelete = async (id_usuario) => {
         try {
-            const response = await axios.post('http://localhost/TeleSecundaria763/AdminUsuarios/EliminarUsuario.php', { id_usuario });
+            const response = await axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminUsuarios/EliminarUsuario.php', { id_usuario });   //    http://localhost/TeleSecundaria763/AdminUsuarios/EliminarUsuario.php
             if (response.data.success) {
                 message.success('Usuario eliminado exitosamente');
                 fetchUsuarios();

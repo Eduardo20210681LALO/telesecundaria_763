@@ -33,11 +33,34 @@ const manifestForPlugin = {
     start_url: '/',
     orientation: 'portrait',
   },
+  
   workbox: {
-    maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // Aumenta el límite a 5 MiB
+    maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // Límite aumentado a 10 MiB
+    cleanupOutdatedCaches: true, // Limpia cachés antiguas automáticamente
+    runtimeCaching: [
+      {
+        urlPattern: 'https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/UsuarioGeneral/datosUsuario.php',
+        handler: 'NetworkFirst', // Intenta obtener de la red primero y, si falla, usa el caché
+        options: {
+          cacheName: 'user-data-cache',
+          expiration: {
+            maxEntries: 10,
+            maxAgeSeconds: 7 * 24 * 60 * 60, // 7 días
+          },
+          cacheableResponse: {
+            statuses: [0, 200], // Solo almacena respuestas con códigos 0 y 200
+          },
+        },
+      },
+    ],
   },
 };
 
 export default defineConfig({
   plugins: [react(), VitePWA(manifestForPlugin)],
+  resolve: {
+    alias: {
+      '@': '/src',
+    },
+  },
 });

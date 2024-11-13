@@ -18,15 +18,15 @@ function ActualizarDatosAlumnos() {
     const [currentAlumno, setCurrentAlumno] = useState(null);
 
     useEffect(() => {
-        axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php')
+        axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php')  //  http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php
             .then(response => setPeriodos(response.data))
             .catch(error => message.error('Error al obtener los periodos'));
 
-        axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php')
+        axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php')  //   http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php
             .then(response => setGrados(response.data))
             .catch(error => message.error('Error al obtener los grados'));
 
-        axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php')
+        axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php')  //   http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php
             .then(response => setGrupos(response.data))
             .catch(error => message.error('Error al obtener los grupos'));
     }, []);
@@ -34,7 +34,7 @@ function ActualizarDatosAlumnos() {
     const fetchAlumnos = () => {
         if (selectedPeriodo && selectedGrado && selectedGrupo) {
             setLoading(true);
-            axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerAlumnos.php', {
+            axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerAlumnos.php', {   //  http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerAlumnos.php
                 params: { periodo: selectedPeriodo, grado: selectedGrado, grupo: selectedGrupo }
             })
                 .then(response => {
@@ -56,7 +56,7 @@ function ActualizarDatosAlumnos() {
     };
 
     const handleDelete = (curp) => {
-        axios.post('http://localhost/TeleSecundaria763/AdminAlumnos/EliminarAlumno.php', { vchCurpAlumno: curp })
+        axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/EliminarAlumno.php', { vchCurpAlumno: curp })  //  http://localhost/TeleSecundaria763/AdminAlumnos/EliminarAlumno.php
             .then(response => {
                 message.success('Alumno eliminado correctamente');
                 fetchAlumnos();
@@ -75,7 +75,7 @@ function ActualizarDatosAlumnos() {
     };
 
     const handleFormSubmit = (values) => {
-        axios.post('http://localhost/TeleSecundaria763/AdminAlumnos/ActualizarAlumno.php', { ...values, vchCurpAlumno: currentAlumno.vchCurpAlumno })
+        axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ActualizarAlumno.php', { ...values, vchCurpAlumno: currentAlumno.vchCurpAlumno })   // http://localhost/TeleSecundaria763/AdminAlumnos/ActualizarAlumno.php
             .then(response => {
                 message.success('Alumno actualizado correctamente');
                 fetchAlumnos();

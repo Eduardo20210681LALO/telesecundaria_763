@@ -1,79 +1,95 @@
-import React, { useState } from 'react';
-import { Descriptions, Typography, Card, message, Upload, Button, Table } from 'antd'; // Importamos los componentes de Ant Design
-import { UploadOutlined } from '@ant-design/icons'; // Icono de Ant Design
+import React, { useState, useEffect, useRef } from 'react';
+import { Typography, Card, message, DatePicker, Button, Input, Select, Radio, Modal } from 'antd';
 import * as XLSX from 'xlsx';
 import axios from 'axios';
-import SIDEBARDOCENT from '../../components/SIDEBARDOCENT';
-import BreadcrumDocent from '../../views/Inicio/Docentes/BreadcrumDocent';
+
+import SIDEBARADMIN from '../../components/SIDEBARADMIN';
+import BreadcrumbAdmin from './Admin/BreadcrumbAdmin';
 
 const { Title } = Typography;
+const { Option } = Select;
 
 function Prueba2() {
     const [studentsData, setStudentsData] = useState([]);
-    const [materias, setMaterias] = useState([]);
-    const [periodo, setPeriodo] = useState('');
-    const [grado, setGrado] = useState('');
-    const [grupo, setGrupo] = useState('');
-    const [trimestre, setTrimestre] = useState('');
     const [selectedFile, setSelectedFile] = useState(null);
+    const [inputMethod, setInputMethod] = useState('manual');
+    const [isCameraModalVisible, setIsCameraModalVisible] = useState(false);
+    const videoRef = useRef(null);
+    const [capturedImage, setCapturedImage] = useState(null);
+    const [imageName, setImageName] = useState("");
+    const idUsuario = localStorage.getItem('idUsuario'); // Obtener el ID del usuario desde localStorage
+
+    const [manualData, setManualData] = useState({
+        CURP: '',
+        'APELLIDO PATERNO': '',
+        'APELLIDO MATERNO': '',
+        NOMBRE: '',
+        'FECHA NAC': '',
+        'SEXO DEL ALUMNO': '',
+        'NOMBRE DEL TUTOR': '',
+        ESTADO: '',
+        MUNICIPIO: '',
+        LOCALIDAD: '',
+        CALLE: '',
+        'CODIGO POSTAL': '',
+        'TELEFONO TUTOR': '',
+    });
+
+    const headers = ["CURP", "APELLIDO PATERNO", "APELLIDO MATERNO", "NOMBRE", "FECHA NAC", "SEXO DEL ALUMNO", "NOMBRE DEL TUTOR", "ESTADO", "MUNICIPIO", "LOCALIDAD", "CALLE", "CODIGO POSTAL", "TELEFONO TUTOR"];
 
     const closeModal = () => {
         setStudentsData([]);
-        setMaterias([]);
-        setPeriodo('');
-        setGrado('');
-        setGrupo('');
-        setTrimestre('');
         setSelectedFile(null);
+        setManualData({
+            CURP: '',
+            'APELLIDO PATERNO': '',
+            'APELLIDO MATERNO': '',
+            NOMBRE: '',
+            'FECHA NAC': '',
+            'SEXO DEL ALUMNO': '',
+            'NOMBRE DEL TUTOR': '',
+            ESTADO: '',
+            MUNICIPIO: '',
+            LOCALIDAD: '',
+            CALLE: '',
+            'CODIGO POSTAL': '',
+            'TELEFONO TUTOR': ''
+        });
+        setImageName("");
     };
 
-    const handleFileUpload = (file) => {
+    const handleFileUpload = (e) => {
+        const file = e.target.files[0];
+        if (!file) {
+            message.error('No se ha seleccionado ningún archivo.');
+            return;
+        }
+        if (!file.name.endsWith('.xlsx')) {
+            message.error('Solo se permiten archivos Excel (.xlsx)');
+            return;
+        }
+
         const reader = new FileReader();
         reader.onload = (evt) => {
             const data = evt.target.result;
             const workbook = XLSX.read(data, { type: 'binary' });
             const sheet = workbook.Sheets[workbook.SheetNames[0]];
-            const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+            const jsonData = XLSX.utils.sheet_to_json(sheet, { header: headers });
 
-            const findValue = (data, searchValue) => {
-                for (let i = 0; i < data.length; i++) {
-                    if (data[i][0] && data[i][0].toString().toLowerCase().includes(searchValue.toLowerCase())) {
-                        return data[i][1];
-                    }
+            const filteredData = jsonData.slice(1).map(row => {
+                let student = {};
+                headers.forEach(header => {
+                    student[header] = row[header] || '';
+                });
+
+                if (student["FECHA NAC"]) {
+                    const excelDate = student["FECHA NAC"];
+                    const date = new Date((excelDate - (25567 + 2)) * 86400 * 1000);
+                    student["FECHA NAC"] = !isNaN(date.getTime()) ? date.toISOString().split('T')[0] : '';
                 }
-                return '';
-            };
 
-            const additionalData = {
-                PERIODO: findValue(jsonData, 'PERIODO'),
-                GRADO: findValue(jsonData, 'GRADO'),
-                GRUPO: findValue(jsonData, 'GRUPO'),
-                TRIMESTRE: findValue(jsonData, 'TRIMESTRE')
-            };
-            setPeriodo(additionalData.PERIODO);
-            setGrado(additionalData.GRADO);
-            setGrupo(additionalData.GRUPO);
-            setTrimestre(additionalData.TRIMESTRE);
-
-            console.log("Datos adicionales:", additionalData);
-
-            const startIndex = jsonData.findIndex(row => row.includes('CURP'));
-
-            const materiaRow = jsonData[startIndex];
-            const endIndex = materiaRow.findIndex(header => header.toLowerCase() === 'calificacion trimestre');
-            const headers = materiaRow.slice(2, endIndex); // Excluye CURP y Nombre del Alumno
-            setMaterias(headers);
-
-            console.log("Materias:", headers);
-
-            const filteredData = jsonData.slice(startIndex + 1).map(row => ({
-                claveAlumno: row[0] || null,
-                nombreCompleto: row[1] || null,
-                calificaciones: row.slice(2, endIndex), // Ajustar el rango para las calificaciones
-                calificacionTrimestre: row[endIndex] || null // Obtener "CALIFICACION TRIMESTRE"
-            })).filter(student => student.claveAlumno && student.nombreCompleto && student.calificaciones.length === headers.length);
-
-            console.log("Datos de estudiantes filtrados:", filteredData);
+                return student;
+            }).filter(student => student["CURP"] && student["CURP"] !== 'CURP');
 
             setStudentsData(filteredData);
             setSelectedFile(file);
@@ -81,220 +97,226 @@ function Prueba2() {
         reader.readAsBinaryString(file);
     };
 
-    const saveGradesToDatabase = () => {
-        if (studentsData.length === 0) {
-            message.error('No hay datos válidos para guardar.');
-            return;
-        }
 
-        const dataToSend = {
-            Periodo: periodo,
-            Grado: grado,
-            Grupo: grupo,
-            Trimestre: trimestre,
-            students: studentsData.map(student => ({
-                ClaveAlumno: student.claveAlumno,
-                Calificaciones: Object.fromEntries(materias.map((materia, index) => [materia, student.calificaciones[index]]))
-            }))
-        };
-
-        console.log('Datos que se enviarán:', dataToSend);
-
-        axios.post('http://localhost/TeleSecundaria763/Docentes/InsertarCalificacionesSegundo.php', dataToSend)
-            .then(response => {
-                console.log(response.data);
-                if (response.data.success) {
-                    message.success('Datos guardados en la base de datos correctamente.');
-                    saveFinalGradesToDatabase();
-                } else {
-                    message.error(response.data.message);
+    const startCamera = () => {
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                if (videoRef.current) {
+                    videoRef.current.srcObject = stream;
                 }
             })
             .catch(error => {
-                console.error('Error al guardar los datos:', error);
-                message.warning('Hubo un error al intentar guardar los datos en la base de datos.');
+                console.error("Error al acceder a la cámara:", error);
             });
     };
 
-    const saveFinalGradesToDatabase = () => {
-        const finalGradesToSend = {
-            Periodo: periodo,
-            Trimestre: trimestre,
-            students: studentsData.map(student => ({
-                ClaveAlumno: student.claveAlumno,
-                Calificacion: student.calificacionTrimestre
-            }))
-        };
+    const handleCapture = () => {
+        const video = videoRef.current;
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const imageName = `foto_${Date.now()}.png`;
+        setCapturedImage(canvas.toDataURL('image/png'));
+        setImageName(imageName);
+        setIsCameraModalVisible(false); // Cierra el modal después de capturar la imagen
+        saveImageNameToDatabase(); // Llama a la función para guardar el nombre de la imagen
 
-        console.log('Datos que se enviarán para calificaciones finales:', finalGradesToSend);
+        // Detener la cámara después de capturar la imagen
+        const stream = video.srcObject;
+        const tracks = stream.getTracks();
+        tracks.forEach(track => track.stop());
+    };
 
-        axios.post('http://localhost/TeleSecundaria763/Docentes/InsertarCalificacionesFinales.php', finalGradesToSend)
-            .then(response => {
-                console.log(response.data);
-                if (response.data.success) {
-                    message.success('Promedio general guardado correctamente.');
-                } else {
-                    message.error(response.data.message);
+    const saveToDatabase = async () => {
+        if (inputMethod === 'manual') {
+            for (const key in manualData) {
+                if (!manualData[key]) {
+                    message.warning(`Por favor, complete el campo: ${key}`);
+                    return;
                 }
-                closeModal();
-            })
-            .catch(error => {
-                console.error('Error al guardar el promedio general:', error);
-                message.warning('Hubo un error al intentar guardar el promedio general en la base de datos.');
-            });
+            }
+        }
+    
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+    
+                const dataToSend = {
+                    students: inputMethod === 'manual' ? [manualData] : studentsData,
+                    location: { latitude, longitude },
+                    userId: idUsuario,
+                };
+    
+                const endpoint = inputMethod === 'manual'
+                    ? 'https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/InsertarAlumnosManual.php'
+                    : 'https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/InsertarAlumnosDesdeExcel.php';
+    
+                try {
+                    const response = await axios.post(endpoint, dataToSend);
+                    if (response.data.error) {
+                        message.error('Hubo un error al intentar guardar los datos en la base de datos.');
+                    } else {
+                        message.success('Datos guardados en la base de datos correctamente.');
+                        setIsCameraModalVisible(true); // Abre el modal de la cámara
+                        startCamera(); // Inicia la cámara al abrir el modal
+                        closeModal();
+                    }
+                } catch (error) {
+                    message.error('Hubo un error al intentar guardar los datos en la base de datos.');
+                }
+            },
+            (error) => {
+                message.error('No se pudo obtener la ubicación. Verifique los permisos.');
+            }
+        );
     };
 
-    // Props para el componente Upload
-    const uploadProps = {
-        name: 'file',
-        accept: '.xlsx, .xls', // Solo aceptar archivos Excel
-        beforeUpload: (file) => {
-            handleFileUpload(file); // Llamar la función de manejo de archivo
-            return false; // Evita la subida automática por defecto
-        },
-        onChange(info) {
-            if (info.file.status !== 'uploading') {
-                console.log(info.file, info.fileList);
+    const saveImageNameToDatabase = async () => {
+        const data = {
+            userId: idUsuario,
+            imageName: capturedImage, // La imagen en formato base64
+            accion: "Guardar imagen"
+        };
+        try {
+            const response = await fetch('http://localhost/TeleSecundaria763/Bitacoras/InsertarFotoBitacora.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+    
+            if (response.ok) {
+                message.success('Nombre de la imagen guardado en la base de datos.');
+            } else {
+                message.error('Hubo un error al guardar el nombre de la imagen en la base de datos.');
             }
-            if (info.file.status === 'done') {
-                message.success(`${info.file.name} fue cargado exitosamente`);
-            } else if (info.file.status === 'error') {
-                message.error(`${info.file.name} falló en la carga.`);
-            }
+        } catch (error) {
+            message.error('Hubo un error al guardar el nombre de la imagen en la base de datos.');
         }
     };
 
-    // Configurar las columnas de la tabla
-    const columns = [
-        {
-            title: 'Clave Alumno',
-            dataIndex: 'claveAlumno',
-            key: 'claveAlumno',
-        },
-        {
-            title: 'Nombre Completo',
-            dataIndex: 'nombreCompleto',
-            key: 'nombreCompleto',
-        },
-        // Generar dinámicamente columnas para las materias
-        ...materias.map((materia, index) => ({
-            title: materia,
-            dataIndex: ['calificaciones', index], // Acceder a las calificaciones por índice
-            key: `materia-${index}`,
-        })),
-        {
-            title: 'Calificación Trimestre',
-            dataIndex: 'calificacionTrimestre',
-            key: 'calificacionTrimestre',
-        },
-    ];
+    const handleManualChange = (e) => {
+        const { name, value } = e.target;
+        setManualData({ ...manualData, [name]: value });
+    };
 
-    // Crear los datos de la tabla
-    const dataSource = studentsData.map((student, index) => ({
-        key: index,
-        claveAlumno: student.claveAlumno,
-        nombreCompleto: student.nombreCompleto,
-        calificaciones: student.calificaciones, // Lista de calificaciones para cada materia
-        calificacionTrimestre: student.calificacionTrimestre,
-    }));
+    const handleDateChange = (date, dateString) => {
+        setManualData({ ...manualData, 'FECHA NAC': dateString });
+    };
 
-    // Estilos personalizados para compactar la tabla
-    const compactTableStyle = {
-        fontSize: '12px', // Tamaño de texto más pequeño
-        padding: '4px 8px', // Reducir el padding de las celdas
+    const handleSelectChange = (value) => {
+        setManualData({ ...manualData, 'SEXO DEL ALUMNO': value });
     };
 
     return (
-        <SIDEBARDOCENT>
-            {/* Contenedor principal con padding */}
-            <div
-                style={{
+        <SIDEBARADMIN>
+            <div style={{
                     display: 'flex',
                     flexDirection: 'column',
-                    minHeight: 'calc(100vh - 60px)', // Ajusta para que ocupe todo el espacio restante
+                    minHeight: 'calc(100vh - 60px)',
                     padding: '20px',
-                }}
-            >
-                <BreadcrumDocent />
-
-                {/* Título de la vista */}
-                <Title level={2}>Captura de Calificaciones por Excel</Title>
-
-                {/* Contenedor para el contenido principal */}
+                    maxWidth: 'calc(200vw - 100px)',
+                    boxSizing: 'border-box',
+                    width: '100%',
+                }}>
+                <BreadcrumbAdmin />
+                <Title level={2}>Ingresar Nuevos Alumnos</Title>
                 <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                    <Card
-                        style={{
-                            background: '#fff',
-                            padding: '20px',
-                            flexGrow: 1, // Hace que el card se extienda para ocupar el espacio disponible
-                            overflowY: 'auto', // Permite hacer scroll si el contenido es demasiado grande
-                        }}
-                    >
-                        <div style={{ width: '100%', padding: '20px' }}>
-                            {/* Título y botón de carga */}
-                            <Title level={4} style={{ color: 'black', marginBottom: '20px' }}>
-                                Por favor, seleccione el archivo de Excel que contiene las calificaciones para su carga.
-                            </Title>
+                    <Card style={{ background: '#fff', padding: '20px', flexGrow: 1, overflowY: 'auto' }}>
+                        <Title level={4} className="mb-4">Ingrese los datos del Alumno</Title>
+                        <Radio.Group onChange={(e) => setInputMethod(e.target.value)} value={inputMethod} className="mb-4">
+                            <Radio value='manual'>Ingreso Manual</Radio>
+                            <Radio value='excel'>Carga desde Excel</Radio>
+                        </Radio.Group>
 
-                            {/* Botón de Carga de Archivos Excel con Ant Design */}
-                            <div style={{ marginBottom: '20px' }}>
-                                <Upload {...uploadProps}>
-                                    <Button icon={<UploadOutlined />}>
-                                        Cargar archivo Excel
-                                    </Button>
-                                </Upload>
-                                {selectedFile && (
-                                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                                        Archivo seleccionado: {selectedFile.name}
-                                    </p>
-                                )}
+                        {inputMethod === 'manual' && (
+                            <form className="flex flex-col w-full">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                    {headers.slice(0, 13).map(header => (
+                                        <div key={header}>
+                                            <label htmlFor={header} className="block mb-1">{header.replace(/_/g, ' ')}</label>
+                                            {header === "FECHA NAC" ? (
+                                                <DatePicker
+                                                    id={header}
+                                                    onChange={handleDateChange}
+                                                    className="w-full"
+                                                    placeholder="Seleccione la fecha de nacimiento"
+                                                />
+                                            ) : header === "SEXO DEL ALUMNO" ? (
+                                                <Select
+                                                    id={header}
+                                                    onChange={handleSelectChange}
+                                                    className="w-full"
+                                                    placeholder="Seleccione el sexo del alumno"
+                                                >
+                                                    <Option value="MASCULINO">Masculino</Option>
+                                                    <Option value="FEMENINO">Femenino</Option>
+                                                </Select>
+                                            ) : (
+                                                <Input
+                                                    type="text"
+                                                    id={header}
+                                                    name={header}
+                                                    value={manualData[header]}
+                                                    onChange={handleManualChange}
+                                                    className="w-full p-2 rounded border border-gray-300"
+                                                    placeholder={`Ingrese ${header.replace(/_/g, ' ').toLowerCase()}`}
+                                                />
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </form>
+                        )}
+
+                        {inputMethod === 'excel' && (
+                            <div className="mb-4">
+                                <label htmlFor="multiple-file-upload" className="block mb-2">Cargar Archivo Excel</label>
+                                <input type="file" onChange={handleFileUpload} />
+                                {selectedFile && <p>Archivo seleccionado: {selectedFile.name}</p>}
+                                
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                                    {studentsData.map((student, index) => (
+                                        <Card key={index} title={`Alumno ${index + 1}`} bordered={true}>
+                                            {headers.map(header => (
+                                                <p key={header}>
+                                                    <strong>{header.replace(/_/g, ' ')}:</strong> {student[header] || 'N/A'}
+                                                </p>
+                                            ))}
+                                        </Card>
+                                    ))}
+                                </div>
                             </div>
+                        )}
 
-                            {/* Mostrar datos del archivo Excel cargado */}
-                            <div className="mb-8">
-                                <Title level={4} style={{ color: 'black', marginBottom: '20px' }}>
-                                    Datos requeridos: Trimestre, Periodo, Grado y Grupo.
-                                </Title>
-
-                                <Descriptions bordered column={4}>
-                                    <Descriptions.Item label="Periodo">{periodo}</Descriptions.Item>
-                                    <Descriptions.Item label="Trimestre">{trimestre}</Descriptions.Item>
-                                    <Descriptions.Item label="Grado">{grado}</Descriptions.Item>
-                                    <Descriptions.Item label="Grupo">{grupo}</Descriptions.Item>
-                                </Descriptions>
-                            </div>
-
-                            {/* Tabla de alumnos y calificaciones usando Ant Design Table */}
-                            <div className="mb-8">
-                                <Title level={4} style={{ color: 'black', marginBottom: '20px' }}>
-                                    Visualización de Alumnos y sus Calificaciones.
-                                </Title>
-
-                                {/* Aplicar el estilo compacto a la tabla */}
-                                <Table
-                                    columns={columns}
-                                    dataSource={dataSource}
-                                    pagination={false}
-                                    scroll={{ x: '100%', y: 400 }}  // Habilitar scroll horizontal y vertical
-                                    size="small" // Hacer la tabla más compacta
-                                    style={compactTableStyle} // Aplicar estilo personalizado
-                                />
-                            </div>
-
-                            {/* Botones de acción */}
-                            <div className="flex justify-end space-x-4 mt-4">
-                                <Button type="primary" onClick={saveGradesToDatabase}>
-                                    Guardar en la Base de Datos
-                                </Button>
-                                <Button type="danger" onClick={closeModal}>
-                                    Cancelar
-                                </Button>
-                            </div>
+                        <div className="flex justify-center mt-4 space-x-4">
+                            <Button onClick={saveToDatabase} type="primary">Guardar Datos De Alumnos</Button>
+                            <Button onClick={closeModal} type="default">Cancelar Captura de Datos</Button>
                         </div>
                     </Card>
                 </div>
+
+                {/* Modal de cámara */}
+                <Modal
+                    title="Captura de Imagen"
+                    visible={isCameraModalVisible}
+                    onCancel={() => setIsCameraModalVisible(false)}
+                    footer={null}
+                    afterClose={() => {
+                        const stream = videoRef.current?.srcObject;
+                        const tracks = stream?.getTracks();
+                        tracks?.forEach(track => track.stop());
+                    }}
+                >
+                    <video ref={videoRef} autoPlay style={{ width: '100%', height: 'auto', marginBottom: '20px' }} />
+                    <Button onClick={handleCapture} type="primary">Capturar evidencia de captura de alumnos por parte admin</Button>
+                </Modal>
             </div>
-        </SIDEBARDOCENT>
+        </SIDEBARADMIN>
     );
 }
 

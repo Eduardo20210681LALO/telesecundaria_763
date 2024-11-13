@@ -14,22 +14,22 @@ function VisualizarAlumnosDDocente() {
 
   useEffect(() => {
     // Obtener periodos, grados y grupos al montar el componente
-    axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php').then(res => {
+    axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php').then(res => {  //    http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php
       setPeriodos(res.data);
     }).catch(err => console.error('Error al obtener periodos:', err));
 
-    axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php').then(res => {
+    axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php').then(res => {    //    http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php
       setGrados(res.data);
     }).catch(err => console.error('Error al obtener grados:', err));
 
-    axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php').then(res => {
+    axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php').then(res => {   //     http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php
       setGrupos(res.data);
     }).catch(err => console.error('Error al obtener grupos:', err));
   }, []);
 
   useEffect(() => {
     if (selectedPeriodo && selectedGrado && selectedGrupo && docenteId) {
-        axios.get(`http://localhost/TeleSecundaria763/Docentes/TraerAlumnosPorDocente.php?periodo=${selectedPeriodo}&grado=${selectedGrado}&grupo=${selectedGrupo}&docenteId=${docenteId}`)
+        axios.get(`https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Docentes/TraerAlumnosPorDocente.php?periodo=${selectedPeriodo}&grado=${selectedGrado}&grupo=${selectedGrupo}&docenteId=${docenteId}`)  //   http://localhost/TeleSecundaria763/Docentes/TraerAlumnosPorDocente.php?periodo=${selectedPeriodo}&grado=${selectedGrado}&grupo=${selectedGrupo}&docenteId=${docenteId}
             .then(res => {
                 console.log('Datos de alumnos:', res.data); // Verifica aquí los datos recibidos
                 if (res.data.success) {

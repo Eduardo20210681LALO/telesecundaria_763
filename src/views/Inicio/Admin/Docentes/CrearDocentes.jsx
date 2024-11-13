@@ -1,31 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { Breadcrumb, Typography, Input, Card, Button, message } from 'antd'; // Importamos los componentes de Ant Design
+import { Typography, Input, Card, Button, message } from 'antd'; // Importamos los componentes de Ant Design
 import SIDEBARADMIN from '../../../../components/SIDEBARADMIN';
 import BreadcrumbAdmin from '../BreadcrumbAdmin';
 import axios from 'axios';
 
 const { Title } = Typography;
 
-//FUNCIONES PARA OBTENER LOS DATOS DE LOS DOCENTES **************************
+//FUNCIONES PARA OBTENER LOS DATOS DE LOS DOCENTES ************************** 
 const getDocentes = () => {
-    return axios.get('http://localhost/TeleSecundaria763/AdminDocentes/ListDocentes.php');
+    return axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminDocentes/ListDocentes.php');   //    http://localhost/TeleSecundaria763/AdminDocentes/ListDocentes.php
 };
 
 const getGrados = () => {
-    return axios.get('http://localhost/TeleSecundaria763/AdminDocentes/ListGrados.php');
+    return axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminDocentes/ListGrados.php');   //   http://localhost/TeleSecundaria763/AdminDocentes/ListGrados.php
 };
 
 const getGrupos = () => {
-    return axios.get('http://localhost/TeleSecundaria763/AdminDocentes/ListGrupos.php');
+    return axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminDocentes/ListGrupos.php');   //   http://localhost/TeleSecundaria763/AdminDocentes/ListGrupos.php
 };
 
 const getPeriodos = () => {
-    return axios.get('http://localhost/TeleSecundaria763/AdminDocentes/ListPeriodos.php');
+    return axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminDocentes/ListPeriodos.php');   //   http://localhost/TeleSecundaria763/AdminDocentes/ListPeriodos.php
 };
 
 // Función para asignar grado y grupo a un docente
 const assignGradoGrupo = (docenteId, gradoId, grupoId, periodoId) => {
-    return axios.post('http://localhost/TeleSecundaria763/AdminDocentes/AssignGradoGrupo.php', {
+    return axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminDocentes/AssignGradoGrupo.php', {   //  http://localhost/TeleSecundaria763/AdminDocentes/AssignGradoGrupo.php
         docenteId,
         gradoId,
         grupoId,
@@ -174,7 +174,7 @@ function CrearDocentes() {
 
         // Aquí se hace la solicitud
         try {
-            const response = await fetch('http://localhost/TeleSecundaria763/AdminDocentes/CrearDocenteXVista.php', {
+            const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminDocentes/CrearDocenteXVista.php', {   //  http://localhost/TeleSecundaria763/AdminDocentes/CrearDocenteXVista.php
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -210,6 +210,10 @@ function CrearDocentes() {
                     flexDirection: 'column',
                     minHeight: 'calc(100vh - 60px)', // Ajusta para que ocupe todo el espacio restante
                     padding: '20px',
+                    
+                    maxWidth: 'calc(200vw - 100px)',
+                    boxSizing: 'border-box',
+                    width: '100%', // Limita el ancho al 100% de la pantalla
                 }}
             >
                 <BreadcrumbAdmin />

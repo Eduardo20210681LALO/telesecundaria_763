@@ -14,11 +14,11 @@ function EditarPerfil2() {
     const [confirmarContraseña, setConfirmarContraseña] = useState('');
     const [isUpdated, setIsUpdated] = useState(false); // Estado adicional para disparar el useEffect
 
-    const idUsuario = localStorage.getItem('idUsuario');
+    const idUsuario = localStorage.getItem('idUsuario');  
 
     useEffect(() => {
         const data = { idUsuario: idUsuario };
-        const url = 'http://localhost/TeleSecundaria763/UsuarioGeneral/datosUsuario.php';
+        const url = 'https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/UsuarioGeneral/datosUsuario.php';   //   http://localhost/TeleSecundaria763/UsuarioGeneral/datosUsuario.php
         const options = {
             method: 'POST',
             headers: {
@@ -81,7 +81,7 @@ function EditarPerfil2() {
             telefono,
             nuevaContraseña
         };
-        const url = 'http://localhost/TeleSecundaria763/UsuarioGeneral/actualizarDatosUsuario.php';
+        const url = 'https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/UsuarioGeneral/actualizarDatosUsuario.php';  //  http://localhost/TeleSecundaria763/UsuarioGeneral/actualizarDatosUsuario.php
         const options = {
             method: 'POST',
             headers: {

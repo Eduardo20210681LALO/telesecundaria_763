@@ -1,12 +1,24 @@
 import React from "react";
 import { useLocation, Link } from "react-router-dom";
 import { Breadcrumb } from "antd";
-import { HomeOutlined, TeamOutlined, BarChartOutlined, SettingOutlined } from "@ant-design/icons";
+import { HomeOutlined, TeamOutlined, BarChartOutlined, SettingOutlined, UserOutlined } from "@ant-design/icons";
 
 function BreadcrumDocent() {
     const location = useLocation();
 
-    // Función para transformar el path en formato legible
+    // Mapping of route names to display-friendly names
+    const routeNameMapping = {
+        "HomeDocentes": "Inicio",
+        "docente": "Docente",
+        "CapturaCalificacionesAlum": "Captura de Calificaciones",
+        "VisualizarCapturaCalificaciones": "Visualizar Calificaciones",
+        "VisualizarAlumnosDDocente": "Visualizar Alumnos",
+        "EstadisticasGrupalDocent": "Estadísticas Grupales",
+        "EstadisticasIndivDocent": "Estadísticas Individuales",
+        "PerfilUD": "Perfil de Usuario"
+    };
+
+    // Fallback capitalization function
     const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
     const BreadCrumbView = () => {
@@ -16,46 +28,60 @@ function BreadcrumDocent() {
         return (
             <div>
                 <Breadcrumb>
-                    {/* Primer ítem: Inicio */}
+                    {/* First breadcrumb item: "Inicio" */}
                     <Breadcrumb.Item>
-                        <Link to="/HomeDocentes">
+                        <Link to="/docente/HomeDocentes">
                             <HomeOutlined />
-                            <span> Inicio</span>
+                            <span> {routeNameMapping["HomeDocentes"]}</span>
                         </Link>
                     </Breadcrumb.Item>
 
-                    {/* Mapeo de las rutas */}
+                    {/* Static "Docente" breadcrumb with an icon */}
+                    {pathnames[0] === "docente" && (
+                        <Breadcrumb.Item>
+                            <Link to="/docente/HomeDocentes">
+                                <UserOutlined />
+                                <span> {routeNameMapping["docente"]}</span>
+                            </Link>
+                        </Breadcrumb.Item>
+                    )}
+
+                    {/* Map through other path segments, skipping duplicate "docente" */}
                     {pathnames.map((name, index) => {
+                        if (name === "docente" && index > 0) return null; // Skip additional "Docente" entries
+
                         const routeTo = `/${pathnames.slice(0, index + 1).join("/")}`;
                         const isLast = index === pathnames.length - 1;
 
-                        // Definir íconos según el nombre de la ruta
+                        // Define icons for known route names
                         let icon;
                         if (
                             name === "CapturaCalificacionesAlum" || 
                             name === "VisualizarCapturaCalificaciones" || 
                             name === "VisualizarAlumnosDDocente"
                         ) {
-                            icon = <TeamOutlined />;  // Icono para rutas relacionadas con "Alumnos"
+                            icon = <TeamOutlined />;  // Icon for "Alumnos" related routes
                         } else if (
                             name === "EstadisticasGrupalDocent" || 
                             name === "EstadisticasIndivDocent"
                         ) {
-                            icon = <BarChartOutlined />;  // Icono para rutas relacionadas con "Estadísticas"
+                            icon = <BarChartOutlined />;  // Icon for "Estadísticas" related routes
                         } else if (name === "PerfilUD") {
-                            icon = <SettingOutlined />;  // Icono para la ruta del perfil de usuario
+                            icon = <SettingOutlined />;  // Icon for "Perfil" route
                         }
+
+                        const displayName = routeNameMapping[name] || capitalize(name);
 
                         return isLast ? (
                             <Breadcrumb.Item key={index}>
                                 {icon}
-                                <span> {capitalize(name)}</span>
+                                <span> {displayName}</span>
                             </Breadcrumb.Item>
                         ) : (
                             <Breadcrumb.Item key={index}>
                                 <Link to={routeTo}>
                                     {icon}
-                                    <span> {capitalize(name)}</span>
+                                    <span> {displayName}</span>
                                 </Link>
                             </Breadcrumb.Item>
                         );

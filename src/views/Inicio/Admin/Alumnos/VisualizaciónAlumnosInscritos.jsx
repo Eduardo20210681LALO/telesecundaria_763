@@ -23,8 +23,8 @@ function VisualizaciónAlumnosInscritos() {
         fetchDocentes();
     }, []);
 
-    const fetchAlumnosNoInscritos = () => {
-        axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerNuevosAlumnos.php')
+    const fetchAlumnosNoInscritos = () => {  
+        axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerNuevosAlumnos.php')  //   http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerNuevosAlumnos.php
             .then(response => {
                 setAlumnos(Array.isArray(response.data) ? response.data : []);
             })
@@ -34,7 +34,7 @@ function VisualizaciónAlumnosInscritos() {
     };
 
     const fetchGrados = () => {
-        axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php')
+        axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php')   //   http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php
             .then(response => {
                 setGrados(Array.isArray(response.data) ? response.data : []);
             })
@@ -44,7 +44,7 @@ function VisualizaciónAlumnosInscritos() {
     };
 
     const fetchGrupos = () => {
-        axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php')
+        axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php')   //  http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php
             .then(response => {
                 setGrupos(Array.isArray(response.data) ? response.data : []);
             })
@@ -54,7 +54,7 @@ function VisualizaciónAlumnosInscritos() {
     };
 
     const fetchPeriodos = () => {
-        axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php')
+        axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php')   //  http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php
             .then(response => {
                 setPeriodos(Array.isArray(response.data) ? response.data : []);
             })
@@ -64,7 +64,7 @@ function VisualizaciónAlumnosInscritos() {
     };
 
     const fetchDocentes = () => {
-        axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerDocentes.php')
+        axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerDocentes.php')   //    http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerDocentes.php
             .then(response => {
                 setDocentes(Array.isArray(response.data) ? response.data : []);
             })
@@ -83,7 +83,7 @@ function VisualizaciónAlumnosInscritos() {
 
     const handleOk = () => {
         form.validateFields().then(values => {
-            axios.post('http://localhost/TeleSecundaria763/AdminAlumnos/InscribirAlumnos.php', {
+            axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/InscribirAlumnos.php', {   //   http://localhost/TeleSecundaria763/AdminAlumnos/InscribirAlumnos.php
                 alumnos: selectedAlumnos,
                 gradoId: values.grado,
                 grupoId: values.grupo,

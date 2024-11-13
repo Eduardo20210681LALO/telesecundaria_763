@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { auth } from "../../components/Firebase";
+import { auth } from "../../components/Firebase.js";
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import Nav2 from "../../components/Nav2";
 import { message } from "antd";

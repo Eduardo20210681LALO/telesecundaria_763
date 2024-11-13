@@ -16,18 +16,18 @@ function MejoresPromedios() {
     const [selectedGrupo, setSelectedGrupo] = useState('');
     const [selectedTrimestre, setSelectedTrimestre] = useState('PromMateriaF');
     const [mejoresPromedios, setMejoresPromedios] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false); 
 
     useEffect(() => {
-        axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php')
+        axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php')   //   http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php
             .then(response => setPeriodos(response.data))
             .catch(error => message.error('Error al obtener los periodos'));
 
-        axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php')
+        axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php')   //  http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php
             .then(response => setGrados(response.data))
             .catch(error => message.error('Error al obtener los grados'));
 
-        axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php')
+        axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php')   //   http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php
             .then(response => setGrupos(response.data))
             .catch(error => message.error('Error al obtener los grupos'));
     }, []);
@@ -35,7 +35,7 @@ function MejoresPromedios() {
     const fetchMejoresPromedios = () => {
         if (selectedPeriodo && selectedGrado && selectedGrupo) {
             setLoading(true);
-            axios.get('http://localhost/TeleSecundaria763/Directivos/ObtenerMejoresPromedios.php', {
+            axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Directivos/ObtenerMejoresPromedios.php', {   //   http://localhost/TeleSecundaria763/Directivos/ObtenerMejoresPromedios.php
                 params: {
                     periodo: selectedPeriodo,
                     grado: selectedGrado,

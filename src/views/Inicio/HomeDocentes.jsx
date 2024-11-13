@@ -10,48 +10,66 @@ function HomeDocentes() {
     const idUsuario = localStorage.getItem('idUsuario');
 
     useEffect(() => {
-        const data = {
-            idUsuario: idUsuario
-        };
-        const url = 'http://localhost/TeleSecundaria763/UsuarioGeneral/datosUsuario.php';
-        const options = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        };
-        console.log('Realizando fetch con los siguientes datos:', data);
-        fetch(url, options)
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
+        const fetchData = async () => {
+            const cache = await caches.open('user-data-cache');
+            const cachedResponse = await cache.match('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/UsuarioGeneral/datosUsuario.php');
+            
+            if (cachedResponse && !navigator.onLine) {
+                const data = await cachedResponse.json();
+                console.log('Cargando datos desde la caché.');
+                setDatosUsuario(data);
+                return;
+            }
+
+            const data = { idUsuario };
+            const url = 'https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/UsuarioGeneral/datosUsuario.php';
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            };
+
+            try {
+                console.log('Realizando fetch con los siguientes datos:', data);
+                const response = await fetch(url, options);
+
+                if (!response.ok) throw new Error('Error en la respuesta de la red.');
+
+                const result = await response.clone().json();
+
+                if (result.success) {
                     const usuario = {
-                        nombre: data.vch_nombre,
-                        APAterno: data.vch_APaterno,
-                        AMAterno: data.vch_AMaterno,
-                        usuario: data.vch_usuario,
-                        correo: data.vch_correo
+                        nombre: result.vch_nombre,
+                        APAterno: result.vch_APaterno,
+                        AMAterno: result.vch_AMaterno,
+                        usuario: result.vch_usuario,
+                        correo: result.vch_correo,
                     };
                     setDatosUsuario(usuario);
-                    console.log('usuario', usuario);
+
+                    // Guardar en el caché
+                    await cache.put(url, new Response(JSON.stringify(usuario)));
+                    console.log('Datos guardados en caché:', usuario);
                 } else {
-                    console.log('Error: ', data.error);
+                    console.log('Error en la respuesta de la API:', result.error);
                 }
-            })
-            .catch(error => {
+            } catch (error) {
                 console.log('Error al hacer la petición de datos:', error);
-            });
+            }
+        };
+
+        fetchData();
     }, [idUsuario]);
 
     return (
         <SIDEBARDOCENT>
-            {/* Contenedor principal con padding */}
             <div
                 style={{
                     display: 'flex',
                     flexDirection: 'column',
-                    minHeight: 'calc(100vh - 60px)', // Ajusta para que ocupe todo el espacio restante
+                    minHeight: 'calc(100vh - 60px)',
                     padding: '20px',
                 }}
             >
@@ -64,20 +82,19 @@ function HomeDocentes() {
                         style={{
                             background: '#fff',
                             padding: '20px',
-                            flexGrow: 1, // Hace que el card se extienda para ocupar el espacio disponible
-                            overflowY: 'auto', // Permite hacer scroll si el contenido es demasiado grande
+                            flexGrow: 1,
+                            overflowY: 'auto',
                         }}
                     >
-                        {/* Sección de Bienvenida */}
                         <div
                             style={{
-                                backgroundColor: '#800000', // Color guinda
+                                backgroundColor: '#800000',
                                 color: 'white',
                                 borderRadius: '12px',
                                 padding: '65px',
                                 textAlign: 'center',
-                                marginBottom: '20px', // Reducimos el margen inferior
-                                marginTop: '5px', // Reducimos el margen superior
+                                marginBottom: '20px',
+                                marginTop: '5px',
                             }}
                         >
                             {datosUsuario ? (
@@ -102,7 +119,7 @@ function HomeDocentes() {
                                             color: '#fff',
                                             fontSize: '16px',
                                             marginTop: '20px',
-                                            fontStyle: 'italic', // Estilo cursivo para énfasis
+                                            fontStyle: 'italic',
                                         }}
                                     >
                                         El futuro académico de nuestros estudiantes está en tus manos. ¡Gracias por contribuir a su éxito!
@@ -123,4 +140,4 @@ function HomeDocentes() {
     );
 }
 
-export default HomeDocentes
+export default HomeDocentes;

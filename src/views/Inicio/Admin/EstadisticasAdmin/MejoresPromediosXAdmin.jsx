@@ -22,9 +22,9 @@ function MejoresPromediosXAdmin() {
     const fetchData = async () => {
         try {
             const [periodosResponse, gradosResponse, gruposResponse] = await Promise.all([
-                axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php'),
-                axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php'),
-                axios.get('http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php')
+                axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php'),  //  http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php
+                axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php'),   //  http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php
+                axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php')   //   http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php
             ]);
 
             if (Array.isArray(periodosResponse.data)) {
@@ -58,7 +58,7 @@ function MejoresPromediosXAdmin() {
     const fetchMejoresPromedios = () => {
         if (selectedPeriodo && selectedGrado && selectedGrupo) {
             setLoading(true);
-            axios.get('http://localhost/TeleSecundaria763/Directivos/ObtenerMejoresPromedios.php', {
+            axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Directivos/ObtenerMejoresPromedios.php', {   //   http://localhost/TeleSecundaria763/Directivos/ObtenerMejoresPromedios.php
                 params: {
                     periodo: selectedPeriodo,
                     grado: selectedGrado,

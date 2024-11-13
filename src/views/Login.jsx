@@ -5,22 +5,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import Nav2 from '../components/Nav2';
 import Cookies from 'js-cookie';
-import BreadCrumb from './BreadCrumbView';
 import { message } from 'antd';
-//import { toast } from 'react-hot-toast';
-// ActivarEstadoUsuario.php
-//DisableAccount.php
-//
-
-/*
-  git init
-
-  git add .
-
-  git commit -m "Version 11.4"
-
-  git push -u origin main
-*/ 
+import { getToken } from 'firebase/messaging';
+import { messaging } from '../firebase'; // Asegúrate de importar la configuración de Firebase
 
 function Login() {
   const navigate = useNavigate();
@@ -33,7 +20,7 @@ function Login() {
   const [tiempoRestante, setTiempoRestante] = useState(0);
 
   const INTENTOS_MAXIMOS = 5;
-  const TIEMPO_BLOQUEO = 30; // en segundos
+  const TIEMPO_BLOQUEO = 30;
 
   useEffect(() => {
     const intentosFallidos = parseInt(localStorage.getItem('intentosFallidos')) || 0;
@@ -56,7 +43,6 @@ function Login() {
     } else if (bloqueado && tiempoRestante <= 0) {
       desbloquearBoton();
     }
-
     return () => clearInterval(timer);
   }, [bloqueado, tiempoRestante]);
 
@@ -78,53 +64,75 @@ function Login() {
     setMostrarOpciones(!mostrarOpciones);
   };
 
+  // Función para generar un token único de sesión
   const generateToken = () => {
-    return Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2);//se
+    return Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2);
   };
 
   const generarToken = (id_usuario) => {
     const token = generateToken();
-    Cookies.set('token', token, { expires: 7 });
-
-    //se guardara el id del usuario el el localStorage
+    Cookies.set(`token_${id_usuario}`, token, { expires: 7 });
     localStorage.setItem('idUsuario', id_usuario);
-  }
+  };
 
-  const VerificarRolUsuario = (id_usuario, id_rolUsuario) => {
-    id_rolUsuario = parseInt(id_rolUsuario);
+  const VerificarRolUsuario = async (id_usuario, id_rolUsuario) => {
+    const roles = {
+      1: { nombre: 'Directivo', rol: 'directivo', ruta: 'HomeDirect' },
+      2: { nombre: 'Administrativo', rol: 'administrativo', ruta: 'HomeAdmin' },
+      3: { nombre: 'Docente', rol: 'docente', ruta: 'HomeDocentes' }
+    };
 
-    if (id_rolUsuario === 1 && parseInt(usuario) === id_rolUsuario) {
-      message.success('Bienvenido Directivo')
-      console.log('Usuario con rol de Directivo');
-      generarToken(id_usuario)
-      navigate('/HomeDirect');
+    const rolInfo = roles[id_rolUsuario];
+    const id_rolUsuarioDOS = id_rolUsuario
+    console.log('Rol identificado:', rolInfo);
 
-    } else if (id_rolUsuario === 2 && parseInt(usuario) === id_rolUsuario) {
-      message.success('Bienvenido Administrativo')
-      console.log('Usuario con rol de Administrativo');
-      generarToken(id_usuario)
-      //navigate('/HomeAdministrativos');
-      navigate('/HomeAdmin');
+    if (rolInfo) {
+      console.log(`Bienvenido ${rolInfo.nombre}`);
+      generarToken(id_usuario); // Generar token de sesión para el usuario
+      localStorage.setItem('rol', rolInfo.rol);
 
-    } else if (id_rolUsuario === 3 && parseInt(usuario) === id_rolUsuario) {
-      message.success('Bienvenido Docente')
-      console.log('Usuario con rol de Docente');
-      generarToken(id_usuario)
-      navigate('/HomeDocentes');
+      if (id_rolUsuarioDOS === '2') { // Verificación adicional para administradores
+        try {
+          console.log('Intentando obtener el token de Firebase para usuario administrativo...');
+          const firebaseToken = await getToken(messaging, { vapidKey: 'BDAEbYvoVXa80RVcHFD0Y3DmRjpltzapP-PO9qlPdJ_JGv8Shk4yaSR8GSMd7Ch_Su-7_vSMTP656YjjFO6aNEU' });
+          console.log('Token de Firebase obtenido:', firebaseToken);
 
-    } else if (id_rolUsuario === 4 && parseInt(usuario) === id_rolUsuario) {
-      message.info('Atención, aún no se le ha asignado un rol. Comuníquese con el administrador.')
+          if (firebaseToken) {
+            console.log('Enviando el token al backend...');
+            const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminUsuarios/GuardarToken.php', { // http://localhost/TeleSecundaria763/AdminUsuarios/GuardarToken.php
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                id_usuario: id_usuario,
+                token: firebaseToken,
+                rol: rolInfo.rol
+              })
+            });
+            
+            const responseData = await response.json();
+            console.log('Respuesta del backend:', responseData);
 
+            if (!responseData.success) {
+              console.error('Error al guardar el token en la base de datos:', responseData.message);
+            }
+          }
+        } catch (error) {
+          console.error('Error al obtener el token de Firebase:', error);
+        }
+      }
+      navigate(`/${rolInfo.rol}/${rolInfo.ruta}`); // Redirige después de guardar token de Firebase
     } else {
-      message.error('Datos incorrectos, el rol seleccionado no coincide con el rol del usuario.');
+      message.info('Atención, aún no se le ha asignado un rol. Comuníquese con el administrador.');
     }
   };
-  
+
   const VerificarEstadoUsuario = (id_usuario, estadoUsuario, id_rolUsuario) => {
     if (estadoUsuario === '3') {
-      message.info('Atencion, Su cuenta está bloqueada, comuníquese con el administrador.');
+      message.info('Atención, su cuenta está bloqueada. Comuníquese con el administrador.');
     } else if (estadoUsuario === '2') {
-      message.info('Atención, su cuenta está inactiva, por favor comuníquese con el administrador.');
+      message.info('Atención, su cuenta está inactiva. Comuníquese con el administrador.');
     } else if (estadoUsuario === '1') {
       VerificarRolUsuario(id_usuario, id_rolUsuario);
     }
@@ -135,44 +143,36 @@ function Login() {
       message.error('El botón está bloqueado. Por favor, espera.');
       return;
     }
-
+  
     try {
-      const response = await fetch('http://localhost/TeleSecundaria763/InicioXUsuario/login.php', {
+      const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/InicioXUsuario/login.php', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          password
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
       });
   
-      const data = await response.json();
-      console.log('Respuesta JSON recibida:', data);
+      if (!response.ok) {
+        // Si el servidor respondió con un código de error, muestra el mensaje de error y redirige
+        console.error(`Error en la respuesta: ${response.status} ${response.statusText}`);
+        navigate('/NotServe');
+        return;
+      }
   
-      if (response.ok) {
-        const { success, id_usuario, vch_correo_usuario, id_rol, id_estatus, messages } = data;
-        console.log(success, id_usuario, vch_correo_usuario, id_rol, id_estatus, messages);
+      const data = await response.json(); // Procesa la respuesta como JSON solo si fue exitosa
   
-        if (success) {
-          VerificarEstadoUsuario(id_usuario, id_estatus, id_rol);
-        } else {
-          const intentosFallidos = parseInt(localStorage.getItem('intentosFallidos')) || 0;
-          const nuevosIntentos = intentosFallidos + 1;
-
-          if (nuevosIntentos >= INTENTOS_MAXIMOS) {
-            message.info('Ha superado el número máximo de intentos. El botón ha sido bloqueado.');
-            bloquearBoton();
-          } else {
-            localStorage.setItem('intentosFallidos', nuevosIntentos);
-            const intentosRestantes = INTENTOS_MAXIMOS - nuevosIntentos;
-            message.error('Datos incorrectos, verifique nuevamente ...');
-            message.warning(`Le quedan ${intentosRestantes} intento(s)`);
-          }
-        }
+      if (data.success) {
+        VerificarEstadoUsuario(data.id_usuario, data.id_estatus, data.id_rol);
+        localStorage.removeItem('intentosFallidos');
       } else {
-        message.warning('Error al procesar la solicitud, intente nuevamente.');
+        const intentosFallidos = parseInt(localStorage.getItem('intentosFallidos')) || 0;
+        const nuevosIntentos = intentosFallidos + 1;
+        localStorage.setItem('intentosFallidos', nuevosIntentos);
+  
+        if (nuevosIntentos >= INTENTOS_MAXIMOS) {
+          bloquearBoton();
+        } else {
+          message.warning(`Datos incorrectos. Te quedan ${INTENTOS_MAXIMOS - nuevosIntentos} intentos.`);
+        }
       }
     } catch (error) {
       console.error('Error en el catch:', error);
@@ -180,6 +180,12 @@ function Login() {
     }
   };
   
+
+
+
+
+
+
   const Validacion = async (e) => {
     e.preventDefault();
     if (!usuario) {
@@ -197,16 +203,11 @@ function Login() {
     await FuncionLogin();
   };
 
-  const toggleMostrarContrasenia = () => { // mostrar contraseña
+  const toggleMostrarContrasenia = () => {
     setMostrarContrasenia(!mostrarContrasenia);
   };
 
-  const handleUsuarioChange = (e) => {
-    const tipoUsuario = e.target.value;
-    setUsuario(tipoUsuario);
-  };
-
-  const handleUsuarioChange1 = (e) => { //funcion para recuperar contraseñas
+  const handleUsuarioChange1 = (e) => {
     const opcion_Rec = e.target.value;
     if (opcion_Rec === '1') {
       navigate('/EnviarMensaje');
@@ -217,12 +218,8 @@ function Login() {
     }
   };
 
-  /*const generateToken = () => { // funcion para que se genere el token
-    return Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2);//se
-  };*/
-
   const handleMouseLeave = () => {
-    setMostrarOpciones(false); // Cierra el select cuando el mouse sale
+    setMostrarOpciones(false);
   };
 
   return (
@@ -234,7 +231,7 @@ function Login() {
           {/* Formulario */}
           <div className="flex flex-col w-full md:w-1/2 p-6">
             <div className="flex flex-col justify-center mb-8">
-              <h1 className="text-2xl sm:text-3xl text-center font-bold">Inicio de Sesión</h1>
+              <h1 className="text-2xl sm:text-3xl text-center font-bold">Inicio de Sesión popo</h1>
               <div className="w-full mt-4">
                 <form className="w-full" onSubmit={Validacion}>
                   <div className="mb-3">

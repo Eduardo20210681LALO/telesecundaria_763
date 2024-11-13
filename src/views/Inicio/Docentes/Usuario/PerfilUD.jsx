@@ -1,153 +1,133 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Card, Input, Button, message, Descriptions, Avatar, Space, Tag } from 'antd'; // Añadimos Tag
-import { MailOutlined, PhoneOutlined } from '@ant-design/icons'; // Íconos de Ant Design
+import { Typography, Card, Input, Button, message, Avatar, Space, Tag } from 'antd';
+import { PhoneOutlined } from '@ant-design/icons';
 import SIDEBARDOCENT from '../../../../components/SIDEBARDOCENT';
 import BreadcrumDocent from '../BreadcrumDocent';
 
 const { Title } = Typography;
 
 function PerfilUD() {
-    const [datosUsuario, setDatosUsuario] = useState(null); // Solo para mostrar los datos
-    const [nombre, setNombre] = useState(''); // Dejar vacío para actualización
-    const [APaterno, setAPaterno] = useState(''); // Dejar vacío para actualización
-    const [AMaterno, setAMaterno] = useState(''); // Dejar vacío para actualización
-    const [correo, setCorreo] = useState(''); // Dejar vacío para actualización
-    const [usuario, setUsuario] = useState(''); // Dejar vacío para actualización
-    const [telefono, setTelefono] = useState(''); // Dejar vacío para actualización
-    const [idRol, setIdRol] = useState(''); // ID Rol
-    const [idEstatus, setIdEstatus] = useState(''); // ID Estatus
+    const [datosUsuario, setDatosUsuario] = useState(null);
+    const [nombre, setNombre] = useState('');
+    const [APaterno, setAPaterno] = useState('');
+    const [AMaterno, setAMaterno] = useState('');
+    const [correo, setCorreo] = useState('');
+    const [usuario, setUsuario] = useState('');
+    const [telefono, setTelefono] = useState('');
+    const [idRol, setIdRol] = useState('');
+    const [idEstatus, setIdEstatus] = useState('');
     const [nuevaContraseña, setNuevaContraseña] = useState('');
     const [confirmarContraseña, setConfirmarContraseña] = useState('');
-    const [isUpdated, setIsUpdated] = useState(false);
-    const [passwordError, setPasswordError] = useState(''); // Estado para el mensaje de error de la contraseña
-
-
+    const [passwordError, setPasswordError] = useState('');
     const idUsuario = localStorage.getItem('idUsuario');
 
     useEffect(() => {
-        const data = { idUsuario: idUsuario };
-        const url = 'http://localhost/TeleSecundaria763/UsuarioGeneral/datosUsuario.php';
-        const options = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-        };
-        console.log('Realizando fetch con los siguientes datos:', data);
-        fetch(url, options)
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.success) {
-                    const usuario = {
-                        nombre: data.vch_nombre,
-                        APaterno: data.vch_APaterno,
-                        AMaterno: data.vch_AMaterno,
-                        correo: data.vch_correo,
-                        usuario: data.vch_usuario,
-                        telefono: data.vch_telefono,
-                        idRol: data.id_rol, // Agregamos idRol desde la respuesta
-                        idEstatus: data.id_estatus, // Agregamos idEstatus desde la respuesta
+        const fetchData = async () => {
+            const apiUrl = 'https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/UsuarioGeneral/datosUsuario.php';
+            const cache = await caches.open('api-cache');
+            
+            // Primero intentar cargar datos desde el caché si está offline
+            const cachedResponse = await cache.match(apiUrl);
+            if (cachedResponse && !navigator.onLine) {
+                const cachedData = await cachedResponse.json();
+                setDatosUsuario(cachedData);
+                setIdRol(cachedData.idRol);
+                setIdEstatus(cachedData.idEstatus);
+                console.log('Cargando datos desde el caché.');
+                return;
+            }
+
+            // Si hay conexión, hacer la petición a la API y actualizar caché
+            const data = { idUsuario };
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            };
+
+            try {
+                const response = await fetch(apiUrl, options);
+                const result = await response.json();
+
+                if (result.success) {
+                    const usuarioData = {
+                        nombre: result.vch_nombre,
+                        APaterno: result.vch_APaterno,
+                        AMaterno: result.vch_AMaterno,
+                        correo: result.vch_correo,
+                        usuario: result.vch_usuario,
+                        telefono: result.vch_telefono,
+                        idRol: result.id_rol,
+                        idEstatus: result.id_estatus,
                     };
-                    setDatosUsuario(usuario); // Solo para mostrar los datos
-                    setIdRol(usuario.idRol); // Actualizamos estado para idRol
-                    setIdEstatus(usuario.idEstatus); // Actualizamos estado para idEstatus
+                    setDatosUsuario(usuarioData);
+                    setIdRol(usuarioData.idRol);
+                    setIdEstatus(usuarioData.idEstatus);
+
+                    // Guardar en caché y en localStorage
+                    await cache.put(apiUrl, new Response(JSON.stringify(usuarioData)));
+                    localStorage.setItem('userData', JSON.stringify(usuarioData));
+                    console.log('Datos guardados en caché y localStorage:', usuarioData);
                 } else {
-                    console.log('Error: ', data.error);
+                    console.error('Error en la respuesta de la API:', result.error);
+                    loadCachedData();
                 }
-            })
-            .catch((error) => {
-                console.log('Error al hacer la petición de datos:', error);
-            });
-    }, [idUsuario, isUpdated]);
+            } catch (error) {
+                console.error('Error en la petición:', error);
+                loadCachedData();
+            }
+        };
 
-    // Función para validar nombre y apellidos
-    const validarNombreApellido = (valor) => {
-        // Permitir letras, espacios, acentos y comas
-        const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/;
-        if (regex.test(valor)) {
-            return valor;
-        } else {
-            return ''; // Devuelve vacío si no es válido
-        }
-    };
+        const loadCachedData = () => {
+            const cachedData = localStorage.getItem('userData');
+            if (cachedData) {
+                const parsedData = JSON.parse(cachedData);
+                setDatosUsuario(parsedData);
+                setIdRol(parsedData.idRol);
+                setIdEstatus(parsedData.idEstatus);
+                console.log('Datos recuperados de localStorage:', parsedData);
+            } else {
+                console.log('No hay datos disponibles en el caché.');
+            }
+        };
 
-    // Función para validar correo
-    const validarCorreo = (valor) => {
-        // Validar que tenga un formato de correo correcto
-        const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (regex.test(valor)) {
-            return valor;
-        } else {
-            return ''; // Devuelve vacío si no es válido
-        }
-    };
+        fetchData();
+    }, [idUsuario]);
 
-    // Función para validar usuario
-    const validarUsuario = (valor) => {
-        // Permitir letras, números, pero no espacios ni símbolos raros
-        const regex = /^[a-zA-Z0-9]*$/;
-        if (regex.test(valor)) {
-            return valor;
-        } else {
-            return ''; // Devuelve vacío si no es válido
-        }
-    };
+    // Funciones de validación
+    const validarNombreApellido = (valor) => /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/.test(valor) ? valor : '';
+    const validarCorreo = (valor) => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(valor) ? valor : '';
+    const validarUsuario = (valor) => /^[a-zA-Z0-9]*$/.test(valor) ? valor : '';
+    const validarContraseña = (valor) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$%&/!]).{8,}$/.test(valor);
 
-    // Función para validar la contraseña
-    const validarContraseña = (valor) => {
-        // Debe contener al menos una letra mayúscula, una minúscula, un número y un carácter especial entre #$%&/!
-        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$%&/!]).{8,}$/;
-        if (regex.test(valor)) {
-            return true;
-        } else {
-            return false; // Devuelve falso si no es válido
-        }
-    };
-
-    // Función para manejar el envío del formulario
     const handleUpdate = async (e) => {
         e.preventDefault();
 
-        if (!nombre || !APaterno || !AMaterno || !correo || !usuario || !telefono || !nuevaContraseña || !confirmarContraseña) {
+        if (!nombre || !APaterno || !AMaterno || !correo || !usuario || !telefono) {
             message.warning('Por favor, complete todos los campos antes de actualizar.');
             return;
         }
 
-        if (!validarContraseña(nuevaContraseña)) {
-            message.warning('La contraseña debe contener al menos una letra mayúscula, una minúscula, un número y un carácter especial (#$%&/!).');
-            return;
-        }
+        const data = { idUsuario, nombre, APaterno, AMaterno, correo, usuario, telefono };
+        const apiUrl = 'https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/UsuarioGeneral/actualizarDatosUsuario.php';
 
-        if (nuevaContraseña !== confirmarContraseña) {
-            message.warning('La nueva contraseña y la confirmación de contraseña no coinciden.');
-            return;
-        }
-
-        const data = {
-            idUsuario: idUsuario,
-            nombre,
-            APaterno,
-            AMaterno,
-            correo,
-            usuario,
-            telefono,
-            nuevaContraseña,
-        };
-        const url = 'http://localhost/TeleSecundaria763/UsuarioGeneral/actualizarDatosUsuario.php';
-        const options = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-        };
         try {
-            const response = await fetch(url, options);
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
             const result = await response.json();
             if (result.success) {
                 message.success('Datos actualizados exitosamente');
-                setIsUpdated(!isUpdated); // Cambia el estado para disparar el useEffect
+                
+                // Guardar la respuesta en el caché y en localStorage
+                const cache = await caches.open('api-cache');
+                await cache.put(apiUrl, new Response(JSON.stringify(data)));
+                localStorage.setItem('userData', JSON.stringify(data));
+                console.log('Datos de usuario actualizados y guardados en caché y localStorage:', data);
             } else {
                 message.error('Error al actualizar los datos');
             }
@@ -157,31 +137,22 @@ function PerfilUD() {
         }
     };
 
-    // Función para mostrar el tag correspondiente al rol
+    // Funciones para mostrar el tag correspondiente al rol y estado
     const renderRolTag = (idRol) => {
         switch (idRol) {
-            case '1':
-                return <Tag color="blue">Directivo</Tag>;
-            case '2':
-                return <Tag color="green">Administrativo</Tag>;
-            case '3':
-                return <Tag color="gold">Docente</Tag>;
-            default:
-                return <Tag color="red">Ninguno</Tag>;
+            case '1': return <Tag color="blue">Directivo</Tag>;
+            case '2': return <Tag color="green">Administrativo</Tag>;
+            case '3': return <Tag color="gold">Docente</Tag>;
+            default: return <Tag color="red">Ninguno</Tag>;
         }
     };
 
-    // Función para mostrar el tag correspondiente al estado de la cuenta
     const renderEstatusTag = (idEstatus) => {
         switch (idEstatus) {
-            case '1':
-                return <Tag color="green">Activo</Tag>;
-            case '2':
-                return <Tag color="orange">Inactivo</Tag>;
-            case '3':
-                return <Tag color="red">Bloqueado</Tag>;
-            default:
-                return <Tag color="gray">Desconocido</Tag>;
+            case '1': return <Tag color="green">Activo</Tag>;
+            case '2': return <Tag color="orange">Inactivo</Tag>;
+            case '3': return <Tag color="red">Bloqueado</Tag>;
+            default: return <Tag color="gray">Desconocido</Tag>;
         }
     };
 

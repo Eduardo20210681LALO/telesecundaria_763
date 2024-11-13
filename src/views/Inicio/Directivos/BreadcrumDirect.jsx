@@ -1,12 +1,35 @@
 import React from "react";
 import { useLocation, Link } from "react-router-dom";
 import { Breadcrumb } from "antd";
-import { HomeOutlined, BarChartOutlined, SettingOutlined, TeamOutlined, UserOutlined } from "@ant-design/icons";
+import { 
+    HomeOutlined, 
+    BarChartOutlined, 
+    SettingOutlined, 
+    TeamOutlined, 
+    UserOutlined 
+} from "@ant-design/icons";
 
 function BreadcrumDirect() {
     const location = useLocation();
 
-    // Función para transformar el path en formato legible
+    // Map route names to user-friendly display names
+    const routeNameMapping = {
+        "HomeDirect": "Inicio",
+        "directivo": "Directivo",
+        "MejoresPromedios": "Mejores Promedios",
+        "EstadisticasGeneral": "Estadísticas Generales",
+        "GraficasGrupal": "Gráficas Grupales",
+        "EstadisticasIndiv": "Estadísticas Individuales",
+        "Usuarios": "Usuarios",
+        "TdosUsuarios": "Todos los Usuarios",
+        "Alumnos": "Alumnos",
+        "TdosAlumnos": "Todos los Alumnos",
+        "VisualizarAlumnos": "Visualizar Alumnos",
+        "Perfil": "Perfil de Usuario",
+        "PerfilUDRT": "Perfil Directivo"
+    };
+
+    // Capitalize function as fallback for unmapped routes
     const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
     const BreadCrumbView = () => {
@@ -16,22 +39,39 @@ function BreadcrumDirect() {
         return (
             <div>
                 <Breadcrumb>
-                    {/* Primer ítem: Inicio */}
+                    {/* First breadcrumb item: "Inicio" */}
                     <Breadcrumb.Item>
-                        <Link to="/HomeDirect">
+                        <Link to="/directivo/HomeDirect">
                             <HomeOutlined />
-                            <span> Inicio</span>
+                            <span> {routeNameMapping["HomeDirect"]}</span>
                         </Link>
                     </Breadcrumb.Item>
 
-                    {/* Mapeo de las rutas */}
+                    {/* Static "Directivo" breadcrumb with an icon */}
+                    {pathnames[0] === "directivo" && (
+                        <Breadcrumb.Item>
+                            <Link to="/directivo/HomeDirect">
+                                <UserOutlined />
+                                <span> {routeNameMapping["directivo"]}</span>
+                            </Link>
+                        </Breadcrumb.Item>
+                    )}
+
+                    {/* Map through other path segments, ignoring duplicate "directivo" */}
                     {pathnames.map((name, index) => {
+                        if (name === "directivo" && index > 0) return null; // Skip additional "Directivo" entries
+
                         const routeTo = `/${pathnames.slice(0, index + 1).join("/")}`;
                         const isLast = index === pathnames.length - 1;
 
-                        // Definir íconos según el nombre de la ruta
+                        // Define icons for known route names
                         let icon;
-                        if (name === "MejoresPromedios" || name === "EstadisticasGeneral" || name === "GraficasGrupal" || name === "EstadisticasIndiv") {
+                        if (
+                            name === "MejoresPromedios" || 
+                            name === "EstadisticasGeneral" || 
+                            name === "GraficasGrupal" || 
+                            name === "EstadisticasIndiv"
+                        ) {
                             icon = <BarChartOutlined />;
                         } else if (name === "Usuarios" || name === "TdosUsuarios") {
                             icon = <SettingOutlined />;
@@ -41,16 +81,18 @@ function BreadcrumDirect() {
                             icon = <UserOutlined />;
                         }
 
+                        const displayName = routeNameMapping[name] || capitalize(name);
+
                         return isLast ? (
                             <Breadcrumb.Item key={index}>
                                 {icon}
-                                <span> {capitalize(name)}</span>
+                                <span> {displayName}</span>
                             </Breadcrumb.Item>
                         ) : (
                             <Breadcrumb.Item key={index}>
                                 <Link to={routeTo}>
                                     {icon}
-                                    <span> {capitalize(name)}</span>
+                                    <span> {displayName}</span>
                                 </Link>
                             </Breadcrumb.Item>
                         );

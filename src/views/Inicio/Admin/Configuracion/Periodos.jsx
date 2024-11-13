@@ -23,7 +23,7 @@ function Periodos() {
         getTraerPeriodos();
     }, []);
 
-    const datosPeriodo = (event) => {
+    const datosPeriodo = (event) => {   //  https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763
         const { name, value } = event.target;
         setCajaPeriodoNuevo((values) => ({ ...values, [name]: value }));
     };
@@ -60,7 +60,7 @@ function Periodos() {
     };
 
     const crearNuevoPeriodo = () => {
-        axios.post('http://localhost/TeleSecundaria763/crearPeriodo.php', cajaPeriodoNuevo)
+        axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/crearPeriodo.php', cajaPeriodoNuevo)   //   http://localhost/TeleSecundaria763/crearPeriodo.php
             .then(response => {
                 message.success('Periodo creado con éxito');
                 getTraerPeriodos();
@@ -73,7 +73,7 @@ function Periodos() {
     };
 
     const getTraerPeriodos = () => {
-        axios.get('http://localhost/TeleSecundaria763/listarPeriodos.php')
+        axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/listarPeriodos.php')   //   http://localhost/TeleSecundaria763/listarPeriodos.php
             .then(response => {
                 setPeriodos(response.data || []);
             })
@@ -117,7 +117,7 @@ function Periodos() {
     const deleteUser = (intClvPeriodo) => {
         const data = { intClvPeriodo };
 
-        fetch('http://localhost/TeleSecundaria763/eliminarPeriodo.php', {
+        fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/eliminarPeriodo.php', {  //   http://localhost/TeleSecundaria763/eliminarPeriodo.php
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
@@ -149,7 +149,7 @@ function Periodos() {
     };
 
     const getPeriodoActualizado = (idPeriodoActualizar) => {
-        axios.post('http://localhost/TeleSecundaria763/traerDatosDelPeriodo.php', { intClvPeriodo: idPeriodoActualizar })
+        axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/traerDatosDelPeriodo.php', { intClvPeriodo: idPeriodoActualizar })   //   http://localhost/TeleSecundaria763/traerDatosDelPeriodo.php
             .then(response => {
                 const datoPeriodo = response.data.periodo[0];
                 seteditadovchPeriodo(datoPeriodo.vchPeriodo);
@@ -169,7 +169,7 @@ function Periodos() {
             dtFechaFin: editadodtFechaFin
         };
 
-        return fetch('http://localhost/TeleSecundaria763/actualizarDatosPeriodo.php', {
+        return fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/actualizarDatosPeriodo.php', {   //   http://localhost/TeleSecundaria763/actualizarDatosPeriodo.php
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
@@ -261,7 +261,7 @@ function Periodos() {
                 style={{
                     display: 'flex',
                     flexDirection: 'column',
-                    minHeight: 'calc(100vh - 60px)', 
+                    minHeight: 'calc(100vh - 60px)',
                     padding: '20px',
                 }}
             >

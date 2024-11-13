@@ -17,7 +17,7 @@ function InfoEscuela() {
 
     const fetchEscuelas = async () => {
         try {
-            const response = await axios.get('http://localhost/TeleSecundaria763/InfoEscuela/TraerInfoEscuela.php');
+            const response = await axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/InfoEscuela/TraerInfoEscuela.php');   // http://localhost/TeleSecundaria763/InfoEscuela/TraerInfoEscuela.php
             setEscuelas(response.data);
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -38,7 +38,7 @@ function InfoEscuela() {
     const agregarEscuela = (values) => {
         if (!validarCampos(values)) return;
 
-        axios.post('http://localhost/TeleSecundaria763/InfoEscuela/InsertaInfo.php', values)
+        axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/InfoEscuela/InsertaInfo.php', values)   //   http://localhost/TeleSecundaria763/InfoEscuela/InsertaInfo.php
             .then(response => {
                 message.success('Datos agregados exitosamente');
                 form.resetFields();
@@ -65,7 +65,7 @@ function InfoEscuela() {
     const actualizarEscuela = (values) => {
         if (!validarCampos(values)) return;
     
-        axios.post('http://localhost/TeleSecundaria763/InfoEscuela/ActualizarDatosEscuela.php', {
+        axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/InfoEscuela/ActualizarDatosEscuela.php', {   //   http://localhost/TeleSecundaria763/InfoEscuela/ActualizarDatosEscuela.php
             id: selectedEscuela.id,
             ...values
         })
@@ -82,7 +82,7 @@ function InfoEscuela() {
     };
 
     const eliminarEscuela = (id) => {
-        axios.post('http://localhost/TeleSecundaria763/InfoEscuela/EliminarInfoEsc.php', { id })
+        axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/InfoEscuela/EliminarInfoEsc.php', { id })   //    http://localhost/TeleSecundaria763/InfoEscuela/EliminarInfoEsc.php
             .then(response => {
                 message.success('Datos eliminados exitosamente');
                 fetchEscuelas();

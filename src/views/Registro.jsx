@@ -96,8 +96,8 @@ function Registro() {
         }
     
         try {
-            console.log('Datos a enviar:', datos);
-            const response = await fetch('http://localhost/TeleSecundaria763/registro.php', {
+            console.log('Datos a enviar:', datos);  
+            const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/registro.php', {   //    http://localhost/TeleSecundaria763/registro.php
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -134,7 +134,7 @@ function Registro() {
             telefono: telefono
         };
         try {
-            const response = await fetch('http://localhost/TeleSecundaria763/telefonoExistente.php', {
+            const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/telefonoExistente.php', {   //  
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -164,7 +164,7 @@ function Registro() {
             email: email
         };
         try {
-            const response = await fetch('http://localhost/TeleSecundaria763/correoExistente.php', {
+            const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/correoExistente.php', {   //    http://localhost/TeleSecundaria763/correoExistente.php
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

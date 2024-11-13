@@ -22,9 +22,9 @@ function EnviarCorreoTelefono() {
             correo: correo,
             telefono: telefono
         };
-
+ 
         try {
-            const response = await fetch('http://localhost/TeleSecundaria763/verificarUsuario.php', {//     https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/verificarUsuario.php
+            const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/verificarUsuario.php', {  //  http://localhost/TeleSecundaria763/verificarUsuario.ph
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
