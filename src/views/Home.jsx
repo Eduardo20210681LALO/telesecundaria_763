@@ -30,7 +30,7 @@ function Home() {
         <section className="home bd-grid" id="inicio">{/* HOME */}
           <div className="home__data">
             <h1 className="home__title" style={{ fontFamily: 'Roboto', fontWeight: 'bold', fontSize: '3.5rem' }}>
-              Bienvenido<br />
+              Bienvenido *<br />
               Al portal<br />
               <span className="home__title-color">TeleSecundaria 763</span>
             </h1>
