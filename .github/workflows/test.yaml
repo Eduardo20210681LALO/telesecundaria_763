@@ -70,5 +70,3 @@ jobs:
               });
             } else {
               console.log("Despliegue exitoso :)");
-            }
-
