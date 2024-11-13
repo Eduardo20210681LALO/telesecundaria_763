@@ -33,7 +33,7 @@ function Home() {
             <h1 className="home__title" style={{ fontFamily: 'Roboto', fontWeight: 'bold', fontSize: '3.5rem' }}>
               Bienvenido<br />
               Al portal<br />
-              <span className="home__title-color">TeleSecundaria 763 HOLAAAA</span>
+              <span className="home__title-color">TeleSecundaria 763</span>
             </h1>
             <Link to="/login" className="button" style={{textDecoration: 'none'}}>Inicio de sesión</Link>
           </div>
