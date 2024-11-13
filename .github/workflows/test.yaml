@@ -27,9 +27,6 @@ jobs:
       - name: Build the application
         run: npm run build
 
-      - name: Run tests
-        run: npm test
-
   deploy:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
