@@ -97,6 +97,9 @@ function PerfilUADM() {
                         AMaterno: result.vch_AMaterno,
                         correo: result.vch_correo,
                         usuario: result.vch_usuario,
+                        telefono: result.vch_telefono,
+                        idRol: result.id_rol,
+                        idEstatus: result.id_estatus,
                     });
                 } else {
                     console.error('Error: ', result.error);
@@ -109,7 +112,7 @@ function PerfilUADM() {
         // Cargar la imagen de perfil
         const fetchProfileImage = async () => {
             try {
-                const response = await axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Bitacoras/ObtenerImagenUsuario.php', {
+                const response = await axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Bitacoras/getUserProfileImage.php', {
                     userId: idUsuario
                 });
     
@@ -128,7 +131,7 @@ function PerfilUADM() {
         };
     
         fetchUserData();
-        fetchProfileImage(); // Cambiado a fetchProfileImage
+        fetchProfileImage();
     }, [idUsuario]);
     
     
@@ -331,29 +334,30 @@ function PerfilUADM() {
                                     maxWidth: '600px', // Ajusta según el tamaño deseado
                                 }}
                             >
-                                {/* Columna 1: Teléfono */}
-                                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                    <p style={{ fontWeight: 'bold', marginBottom: '8px' }}>Teléfono</p>
-                                    <p style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                        <PhoneOutlined /> {datosUsuario?.telefono}
-                                    </p>
+                            {/* Columna 1: Teléfono */}
+                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <p style={{ fontWeight: 'bold', marginBottom: '8px' }}>Teléfono</p>
+                                <p style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                    <PhoneOutlined /> {datosUsuario?.telefono}
+                                </p>
+                            </div>
+
+                            {/* Columna 2: Rol */}
+                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <p style={{ fontWeight: 'bold', marginBottom: '8px' }}>Rol</p>
+                                <div>
+                                    {renderRolTag(datosUsuario?.idRol)}
                                 </div>
-    
-                                {/* Columna 2: Rol */}
-                                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                    <p style={{ fontWeight: 'bold', marginBottom: '8px' }}>Rol</p>
-                                    <div>
-                                        {renderRolTag(idRol)}
-                                    </div>
+                            </div>
+
+                            {/* Columna 3: Estado Cuenta */}
+                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <p style={{ fontWeight: 'bold', marginBottom: '8px' }}>Estado Cuenta</p>
+                                <div>
+                                    {renderEstatusTag(datosUsuario?.idEstatus)}
                                 </div>
-    
-                                {/* Columna 3: Estado Cuenta */}
-                                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                    <p style={{ fontWeight: 'bold', marginBottom: '8px' }}>Estado Cuenta</p>
-                                    <div>
-                                        {renderEstatusTag(idEstatus)}
-                                    </div>
-                                </div>
+                            </div>
+
                             </div>
                         </div>
     
