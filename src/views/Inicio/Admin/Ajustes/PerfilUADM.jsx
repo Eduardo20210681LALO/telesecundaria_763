@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Typography, Card, Input, Button, message, Descriptions, Avatar, Space, Tag } from 'antd'; // Añadimos Tag
-import { MailOutlined, PhoneOutlined } from '@ant-design/icons'; // Íconos de Ant Design
+import React, { useState, useEffect, useRef } from 'react';
+import { Typography, Card, Input, Button, message, Avatar, Space, Tag, Modal} from 'antd'; // Añadimos Tag
+import {PhoneOutlined, CameraOutlined  } from '@ant-design/icons'; // Íconos de Ant Design
 import BreadcrumAdmin from '../../Admin/BreadcrumbAdmin';
 import SIDEBARADMIN from '../../../../components/SIDEBARADMIN';
+import Webcam from 'react-webcam';
 
 const { Title } = Typography;
 
@@ -23,9 +24,61 @@ function PerfilUADM() {
 
     const idUsuario = localStorage.getItem('idUsuario');
 
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [capturedImage, setCapturedImage] = useState(null);
+    const [profileImage, setProfileImage] = useState(null); // Para mostrar la imagen guardada
+    const webcamRef = useRef(null);
+
+    const showModal = () => setIsModalVisible(true);
+
+    const handleCancel = () => {
+        setCapturedImage(null); // Resetear la imagen capturada
+        setIsModalVisible(false);
+    };
+
+    const capturePhoto = () => {
+        const imageSrc = webcamRef.current.getScreenshot();
+        setCapturedImage(imageSrc); // Guardar la imagen capturada en el estado
+    };
+
+    const savePhoto = async () => {
+        if (!capturedImage) return;
+
+        const imageName = `perfil_${userId}_${Date.now()}.jpg`; // Nombre de la imagen
+        const data = {
+            userId: userId,
+            imageName: imageName,
+            imageData: capturedImage, // La imagen en formato Base64
+            path: "assets/" // Ruta relativa desde el backend
+        };
+
+        console.log('Datos a enviar:', data);
+
+        try {
+            const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Bitacoras/InsertarFotoUsuarios.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+            const result = await response.json();
+            if (result.success) {
+                message.success('Imagen guardada correctamente.');
+                setProfileImage(result.imageUrl); // Mostrar la imagen guardada
+                setIsModalVisible(false);
+            } else {
+                message.error(result.error || 'Error al guardar la imagen.');
+            }
+        } catch (error) {
+            message.error('Hubo un problema al enviar la imagen.');
+            console.error('Error:', error);
+        }
+    };
+
     useEffect(() => {
-        const data = { idUsuario: idUsuario };
-        const url = 'https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/UsuarioGeneral/datosUsuario.php'; // http://localhost/TeleSecundaria763/UsuarioGeneral/datosUsuario.php
+        const data = { idUsuario };
+        const url = 'https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/UsuarioGeneral/datosUsuario.php';
         const options = {
             method: 'POST',
             headers: {
@@ -33,7 +86,6 @@ function PerfilUADM() {
             },
             body: JSON.stringify(data),
         };
-        console.log('Realizando fetch con los siguientes datos:', data);
         fetch(url, options)
             .then((response) => response.json())
             .then((data) => {
@@ -45,12 +97,12 @@ function PerfilUADM() {
                         correo: data.vch_correo,
                         usuario: data.vch_usuario,
                         telefono: data.vch_telefono,
-                        idRol: data.id_rol, // Agregamos idRol desde la respuesta
-                        idEstatus: data.id_estatus, // Agregamos idEstatus desde la respuesta
+                        idRol: data.id_rol,
+                        idEstatus: data.id_estatus,
                     };
-                    setDatosUsuario(usuario); // Solo para mostrar los datos
-                    setIdRol(usuario.idRol); // Actualizamos estado para idRol
-                    setIdEstatus(usuario.idEstatus); // Actualizamos estado para idEstatus
+                    setDatosUsuario(usuario);
+                    setIdRol(usuario.idRol);
+                    setIdEstatus(usuario.idEstatus);
                 } else {
                     console.log('Error: ', data.error);
                 }
@@ -241,6 +293,10 @@ function PerfilUADM() {
                                     </Space>
                                 </div>
                             </div>
+
+                            <Button icon={<CameraOutlined />} onClick={showModal} style={{ marginLeft: '20px' }}>
+                                Tomar Foto
+                            </Button>
     
                             {/* Datos adicionales con disposición horizontal */}
                             <div
@@ -417,6 +473,38 @@ function PerfilUADM() {
                     </Card>
                 </div>
             </div>
+
+
+            {/* Modal para capturar la foto */}
+            <Modal
+                title="Capturar Foto de Perfil"
+                visible={isModalVisible}
+                onCancel={handleCancel}
+                footer={[
+                    <Button key="cancel" onClick={handleCancel}>
+                        Cancelar
+                    </Button>,
+                    <Button key="capture" type="primary" onClick={capturePhoto}>
+                        Capturar
+                    </Button>,
+                    <Button key="save" type="primary" disabled={!capturedImage} onClick={savePhoto}>
+                        Guardar Foto
+                    </Button>,
+                ]}
+            >
+                {capturedImage ? (
+                    <img src={capturedImage} alt="Captura de perfil" style={{ width: '100%' }} />
+                ) : (
+                    <Webcam
+                        audio={false}
+                        ref={webcamRef}
+                        screenshotFormat="image/jpeg"
+                        width="100%"
+                        height="auto"
+                    />
+                )}
+            </Modal>
+
         </SIDEBARADMIN>
     );
 }

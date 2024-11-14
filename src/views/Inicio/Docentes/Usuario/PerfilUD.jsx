@@ -89,23 +89,19 @@ function PerfilUD() {
             }
         };
 
+        // Función para obtener la imagen de perfil desde la tabla tbl_imagenes_usuarios
         const fetchProfileImage = async () => {
             try {
-                const response = await fetch(`https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Bitacoras/obtenerImagenPerfil.php`, {
+                const response = await fetch(`https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Bitacoras/ObtenerImagenUsuario.php`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ userId: idUsuario }),
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: idUsuario })
                 });
-                const imageResult = await response.json();
-        
-                console.log("Imagen de perfil resultante:", imageResult); // Agrega este log para ver la respuesta
-        
-                if (imageResult.success) {
-                    setProfileImage(imageResult.imagePath); // URL de la imagen de perfil
+                const result = await response.json();
+                if (result.success) {
+                    setProfileImage(result.imagePath); // URL de la imagen de perfil
                 } else {
-                    console.log("No se encontró la imagen de perfil.");
+                    setProfileImage(null); // Si no hay imagen, se usará la predeterminada
                 }
             } catch (error) {
                 console.error("Error al obtener la imagen de perfil:", error);
@@ -127,6 +123,7 @@ function PerfilUD() {
         };
 
         fetchData();
+        fetchProfileImage(); // Cargar la imagen de perfil en paralelo
     }, [idUsuario]);
 
 
@@ -169,25 +166,23 @@ function PerfilUD() {
         canvas.height = videoRef.current.videoHeight;
         const context = canvas.getContext('2d');
         context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-        
-        const imageName = `foto_${idUsuario}_${Date.now()}.png`;
-        setCapturedImage(canvas.toDataURL('image/png')); // Guardar la imagen en base64
 
-        // Llamar a la función para enviar el nombre de la imagen al servidor
-        saveImageNameToDatabase(imageName);
+        const imageName = `foto_${idUsuario}_${Date.now()}.png`;
+        const imageData = canvas.toDataURL('image/png');
         
+        setCapturedImage(imageData); // Guardar la imagen en base64
+        saveImageNameToDatabase(imageName, imageData);
         closeCameraModal();
     };
 
-    const saveImageNameToDatabase = async (imageName) => {
+    const saveImageNameToDatabase = async (imageName, imageData) => {
         const data = {
             userId: idUsuario,
             imageName: imageName,
-            imageData: capturedImage, // Imagen en formato base64
-            accion: "Guardar imagen",
-            path: "assets/images/" // Ruta pública relativa en el servidor
+            imageData: imageData,
+            path: "src/assets/images/"
         };
-    
+
         try {
             const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Bitacoras/InsertarFotoUsuarios.php', {
                 method: 'POST',
@@ -196,15 +191,17 @@ function PerfilUD() {
                 },
                 body: JSON.stringify(data),
             });
-    
-            if (response.ok) {
-                message.success('Foto Guardada Exitosamente...');
-                setProfileImage(`https://telesecundaria763.host8b.me/${data.path}${imageName}`); // URL pública para mostrar la imagen
+
+            const result = await response.json();
+            if (result.success) {
+                message.success('Foto guardada exitosamente');
+                setProfileImage(result.imageUrl); // Actualiza la imagen de perfil con la URL pública recibida
             } else {
-                message.error('Hubo un error al guardar el nombre de la imagen en la base de datos.');
+                message.error('Error al guardar la imagen en la base de datos');
             }
         } catch (error) {
-            message.error('Hubo un error al guardar el nombre de la imagen en la base de datos.');
+            console.error('Error al guardar la imagen:', error);
+            message.error('Hubo un error al guardar la imagen en la base de datos');
         }
     };
     
@@ -318,12 +315,10 @@ function PerfilUD() {
                                         marginBottom: '10px',
                                     }}
                                 >
-                                <Avatar
-                                    size={80}
-                                    src={profileImage || "https://via.placeholder.com/100"} // Usa la imagen de perfil o una predeterminada
-                                />
-                                {console.log("URL de imagen de perfil:", profileImage)}
-
+                                    <Avatar
+                                        size={80}
+                                        src={profileImage || "https://via.placeholder.com/100"} // Usa la imagen de perfil o una predeterminada
+                                    />
                                     <Space direction="vertical">
                                         <Title level={4} style={{ margin: 0 }}>
                                             {datosUsuario?.nombre} {datosUsuario?.APaterno} {datosUsuario?.AMaterno}
