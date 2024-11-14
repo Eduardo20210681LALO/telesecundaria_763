@@ -21,6 +21,7 @@
         "@sentry/node": "^8.38.0",
         "@sentry/profiling-node": "^8.38.0",
         "@sentry/react": "^8.38.0",
+        "@sentry/tracing": "^7.114.0",
         "@sentry/vite-plugin": "^2.22.6",
         "antd": "^5.15.3",
         "apexcharts": "^3.54.0",
