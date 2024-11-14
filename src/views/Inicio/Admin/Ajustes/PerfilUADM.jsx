@@ -4,6 +4,7 @@ import {PhoneOutlined, CameraOutlined  } from '@ant-design/icons'; // Íconos de
 import BreadcrumAdmin from '../../Admin/BreadcrumbAdmin';
 import SIDEBARADMIN from '../../../../components/SIDEBARADMIN';
 import Webcam from 'react-webcam';
+import axios from 'axios';
 
 const { Title } = Typography;
 
@@ -43,17 +44,17 @@ function PerfilUADM() {
 
     const savePhoto = async () => {
         if (!capturedImage) return;
-
-        const imageName = `perfil_${userId}_${Date.now()}.jpg`; // Nombre de la imagen
+    
+        const imageName = `perfil_${idUsuario}_${Date.now()}.jpg`; // Nombre de la imagen
         const data = {
-            userId: userId,
+            userId: idUsuario, // Asegúrate de usar el mismo nombre
             imageName: imageName,
             imageData: capturedImage, // La imagen en formato Base64
             path: "assets/" // Ruta relativa desde el backend
         };
-
+    
         console.log('Datos a enviar:', data);
-
+    
         try {
             const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Bitacoras/InsertarFotoUsuarios.php', {
                 method: 'POST',
@@ -75,42 +76,63 @@ function PerfilUADM() {
             console.error('Error:', error);
         }
     };
-
+    
     useEffect(() => {
-        const data = { idUsuario };
-        const url = 'https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/UsuarioGeneral/datosUsuario.php';
-        const options = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-        };
-        fetch(url, options)
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.success) {
-                    const usuario = {
-                        nombre: data.vch_nombre,
-                        APaterno: data.vch_APaterno,
-                        AMaterno: data.vch_AMaterno,
-                        correo: data.vch_correo,
-                        usuario: data.vch_usuario,
-                        telefono: data.vch_telefono,
-                        idRol: data.id_rol,
-                        idEstatus: data.id_estatus,
-                    };
-                    setDatosUsuario(usuario);
-                    setIdRol(usuario.idRol);
-                    setIdEstatus(usuario.idEstatus);
+        // Cargar los datos del usuario
+        const fetchUserData = async () => {
+            const data = { idUsuario };
+            const url = 'https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/UsuarioGeneral/datosUsuario.php';
+            const options = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            };
+            try {
+                const response = await fetch(url, options);
+                const result = await response.json();
+                if (result.success) {
+                    setDatosUsuario({
+                        nombre: result.vch_nombre,
+                        APaterno: result.vch_APaterno,
+                        AMaterno: result.vch_AMaterno,
+                        correo: result.vch_correo,
+                        usuario: result.vch_usuario,
+                    });
                 } else {
-                    console.log('Error: ', data.error);
+                    console.error('Error: ', result.error);
                 }
-            })
-            .catch((error) => {
-                console.log('Error al hacer la petición de datos:', error);
-            });
-    }, [idUsuario, isUpdated]);
+            } catch (error) {
+                console.error('Error al hacer la petición de datos:', error);
+            }
+        };
+    
+        // Cargar la imagen de perfil
+        const fetchProfileImage = async () => {
+            try {
+                const response = await axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Bitacoras/ObtenerImagenUsuario.php', {
+                    userId: idUsuario
+                });
+    
+                const result = response.data;
+    
+                if (result.success) {
+                    setProfileImage(result.imageUrl);
+                } else {
+                    console.error('Error al obtener la imagen de perfil:', result.error);
+                    setProfileImage(null); // Si no hay imagen, se usará una predeterminada
+                }
+            } catch (error) {
+                console.error("Error al obtener la imagen de perfil:", error);
+                setProfileImage(null); // En caso de error, se usa una predeterminada o se oculta
+            }
+        };
+    
+        fetchUserData();
+        fetchProfileImage(); // Cambiado a fetchProfileImage
+    }, [idUsuario]);
+    
+    
+    
 
     // Función para validar nombre y apellidos
     const validarNombreApellido = (valor) => {
@@ -281,8 +303,8 @@ function PerfilUADM() {
                                     }}
                                 >
                                     <Avatar
-                                        size={80} // Reduce el tamaño del avatar
-                                        src="https://via.placeholder.com/100"
+                                        size={80}
+                                        src={profileImage || "https://via.placeholder.com/100"} // Usa la imagen de perfil o una predeterminada
                                     />
                                     <Space direction="vertical">
                                         <Title level={4} style={{ margin: 0 }}>
@@ -291,6 +313,7 @@ function PerfilUADM() {
                                         <p style={{ margin: 0 }}>Email: {datosUsuario?.correo}</p>
                                         <p style={{ margin: 0 }}>Usuario: {datosUsuario?.usuario}</p>
                                     </Space>
+                                    
                                 </div>
                             </div>
 
