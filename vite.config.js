@@ -1,3 +1,4 @@
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -57,10 +58,21 @@ const manifestForPlugin = {
 };
 
 export default defineConfig({
-  plugins: [react(), VitePWA(manifestForPlugin)],
+  plugins: [react(), VitePWA(manifestForPlugin), sentryVitePlugin({
+    org: "uthh-27",
+    project: "node"
+  }), sentryVitePlugin({
+    org: "uthh-27",
+    project: "javascript-react"
+  })],
+
   resolve: {
     alias: {
       '@': '/src',
     },
   },
+
+  build: {
+    sourcemap: true
+  }
 });

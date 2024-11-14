@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Typography, Card, Input, Button, message, Avatar, Space, Tag } from 'antd';
-import { PhoneOutlined } from '@ant-design/icons';
+import React, { useState, useEffect, useRef } from 'react';
+import { Typography, Card, Input, Button, message, Avatar, Space, Tag, Modal } from 'antd';
+import { PhoneOutlined, CameraOutlined } from '@ant-design/icons';
 import SIDEBARDOCENT from '../../../../components/SIDEBARDOCENT';
 import BreadcrumDocent from '../BreadcrumDocent';
 
@@ -8,6 +8,8 @@ const { Title } = Typography;
 
 function PerfilUD() {
     const [datosUsuario, setDatosUsuario] = useState(null);
+    const [profileImage, setProfileImage] = useState(null); // Estado para la imagen de perfil
+    
     const [nombre, setNombre] = useState('');
     const [APaterno, setAPaterno] = useState('');
     const [AMaterno, setAMaterno] = useState('');
@@ -19,6 +21,11 @@ function PerfilUD() {
     const [nuevaContraseña, setNuevaContraseña] = useState('');
     const [confirmarContraseña, setConfirmarContraseña] = useState('');
     const [passwordError, setPasswordError] = useState('');
+
+    const [isCameraModalVisible, setIsCameraModalVisible] = useState(false);
+    const [capturedImage, setCapturedImage] = useState(null);
+    const videoRef = useRef(null);
+
     const idUsuario = localStorage.getItem('idUsuario');
 
     useEffect(() => {
@@ -37,7 +44,6 @@ function PerfilUD() {
                 return;
             }
 
-            // Si hay conexión, hacer la petición a la API y actualizar caché
             const data = { idUsuario };
             const options = {
                 method: 'POST',
@@ -66,6 +72,9 @@ function PerfilUD() {
                     setIdRol(usuarioData.idRol);
                     setIdEstatus(usuarioData.idEstatus);
 
+                    // Obtener la imagen de perfil del usuario
+                    await fetchProfileImage();
+
                     // Guardar en caché y en localStorage
                     await cache.put(apiUrl, new Response(JSON.stringify(usuarioData)));
                     localStorage.setItem('userData', JSON.stringify(usuarioData));
@@ -79,6 +88,30 @@ function PerfilUD() {
                 loadCachedData();
             }
         };
+
+        const fetchProfileImage = async () => {
+            try {
+                const response = await fetch(`https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Bitacoras/obtenerImagenPerfil.php`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ userId: idUsuario }),
+                });
+                const imageResult = await response.json();
+        
+                console.log("Imagen de perfil resultante:", imageResult); // Agrega este log para ver la respuesta
+        
+                if (imageResult.success) {
+                    setProfileImage(imageResult.imagePath); // URL de la imagen de perfil
+                } else {
+                    console.log("No se encontró la imagen de perfil.");
+                }
+            } catch (error) {
+                console.error("Error al obtener la imagen de perfil:", error);
+            }
+        };
+        
 
         const loadCachedData = () => {
             const cachedData = localStorage.getItem('userData');
@@ -95,6 +128,91 @@ function PerfilUD() {
 
         fetchData();
     }, [idUsuario]);
+
+
+    //**************************************************************** */
+    //FUNCIONES PRINCIPALES PARA LA CAMARA Y LA TOMA DE FOTOS
+
+    const openCameraModal = () => {
+        setIsCameraModalVisible(true);
+        startCamera();
+    };
+
+    const closeCameraModal = () => {
+        setIsCameraModalVisible(false);
+        stopCamera();
+    };
+
+    const startCamera = () => {
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                if (videoRef.current) {
+                    videoRef.current.srcObject = stream;
+                }
+            })
+            .catch(error => {
+                console.error("Error al acceder a la cámara:", error);
+            });
+    };
+
+    const stopCamera = () => {
+        const stream = videoRef.current?.srcObject;
+        if (stream) {
+            const tracks = stream.getTracks();
+            tracks.forEach(track => track.stop());
+        }
+    };
+
+    const handleCapture = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = videoRef.current.videoWidth;
+        canvas.height = videoRef.current.videoHeight;
+        const context = canvas.getContext('2d');
+        context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+        
+        const imageName = `foto_${idUsuario}_${Date.now()}.png`;
+        setCapturedImage(canvas.toDataURL('image/png')); // Guardar la imagen en base64
+
+        // Llamar a la función para enviar el nombre de la imagen al servidor
+        saveImageNameToDatabase(imageName);
+        
+        closeCameraModal();
+    };
+
+    const saveImageNameToDatabase = async (imageName) => {
+        const data = {
+            userId: idUsuario,
+            imageName: imageName,
+            imageData: capturedImage, // Imagen en formato base64
+            accion: "Guardar imagen",
+            path: "assets/images/" // Ruta pública relativa en el servidor
+        };
+    
+        try {
+            const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Bitacoras/InsertarFotoUsuarios.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+    
+            if (response.ok) {
+                message.success('Foto Guardada Exitosamente...');
+                setProfileImage(`https://telesecundaria763.host8b.me/${data.path}${imageName}`); // URL pública para mostrar la imagen
+            } else {
+                message.error('Hubo un error al guardar el nombre de la imagen en la base de datos.');
+            }
+        } catch (error) {
+            message.error('Hubo un error al guardar el nombre de la imagen en la base de datos.');
+        }
+    };
+    
+    
+    //**************************************************************** */
+
+
+
 
     // Funciones de validación
     const validarNombreApellido = (valor) => /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/.test(valor) ? valor : '';
@@ -200,10 +318,12 @@ function PerfilUD() {
                                         marginBottom: '10px',
                                     }}
                                 >
-                                    <Avatar
-                                        size={80} // Reduce el tamaño del avatar
-                                        src="https://via.placeholder.com/100"
-                                    />
+                                <Avatar
+                                    size={80}
+                                    src={profileImage || "https://via.placeholder.com/100"} // Usa la imagen de perfil o una predeterminada
+                                />
+                                {console.log("URL de imagen de perfil:", profileImage)}
+
                                     <Space direction="vertical">
                                         <Title level={4} style={{ margin: 0 }}>
                                             {datosUsuario?.nombre} {datosUsuario?.APaterno} {datosUsuario?.AMaterno}
@@ -213,6 +333,10 @@ function PerfilUD() {
                                     </Space>
                                 </div>
                             </div>
+
+                            <Button icon={<CameraOutlined />} onClick={openCameraModal} type="primary">
+                                Tomar Foto de Perfil
+                            </Button>
     
                             {/* Datos adicionales con disposición horizontal */}
                             <div
@@ -387,8 +511,28 @@ function PerfilUD() {
                             </div>
                         </form>
                     </Card>
+                    
                 </div>
             </div>
+
+            {/* Modal de la cámara */}
+            <Modal
+                title="Captura de Imagen"
+                visible={isCameraModalVisible}
+                onCancel={closeCameraModal}
+                footer={null}
+                afterClose={stopCamera}
+            >
+                <video ref={videoRef} autoPlay style={{ width: '100%', height: 'auto', marginBottom: '20px' }} />
+                <Button onClick={handleCapture} type="primary" style={{ marginRight: '10px' }}>
+                    Tomar Foto
+                </Button>
+                <Button onClick={closeCameraModal} type="default">
+                    Cancelar
+                </Button>
+            </Modal>
+
+
         </SIDEBARDOCENT>
     );
     
