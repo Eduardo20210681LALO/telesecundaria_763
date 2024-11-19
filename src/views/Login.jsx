@@ -38,7 +38,7 @@ function Login() {
   const handleEmailChange = (e) => {
     const valor = e.target.value;
     setEmail(valor);
-    Sentry.captureMessage(`Usuario ingresó email: ${valor}`);
+    Sentry.captureMessage(`El Usuario: ${valor} Esta intentando Ingresar al Sistema`);
   };
 
   const handlePasswordChange = (e) => {
