@@ -38,12 +38,6 @@ function Home() {
             <Link to="/login" className="button" style={{textDecoration: 'none'}}>Inicio de sesión</Link>
           </div>
 
-          {/* Aquí puedes agregar el botón de prueba 
-            <button onClick={() => { throw new Error("This is your first error!"); }}>
-            Break the world
-          </button>
-          */}
-
           <div className="home__social">
             <a href="#" className="home__social-icon"><i className='bx bxl-google'></i></a>
             <a href="#" className="home__social-icon"><i className='bx bxl-facebook'></i></a>

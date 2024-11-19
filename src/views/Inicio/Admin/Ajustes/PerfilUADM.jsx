@@ -88,8 +88,10 @@ function PerfilUADM() {
                 body: JSON.stringify(data),
             };
             try {
+                
                 const response = await fetch(url, options);
                 const result = await response.json();
+                console.log("datos",result);
                 if (result.success) {
                     setDatosUsuario({
                         nombre: result.vch_nombre,
@@ -109,17 +111,21 @@ function PerfilUADM() {
             }
         };
     
-        // Cargar la imagen de perfil
         const fetchProfileImage = async () => {
             try {
                 const response = await axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Bitacoras/getUserProfileImage.php', {
                     userId: idUsuario
                 });
-    
                 const result = response.data;
-    
                 if (result.success) {
-                    setProfileImage(result.imageUrl);
+                    console.log('dato', result);
+                    if (result.imageUrl) {
+                        setProfileImage(`https://telesecundaria763.host8b.me/${result.imageUrl}`);
+                    } else {
+                        setProfileImage(null); // Asigna null si no hay URL
+                    }
+                
+                    console.log('para la fotp url', profileImage)
                 } else {
                     console.error('Error al obtener la imagen de perfil:', result.error);
                     setProfileImage(null); // Si no hay imagen, se usará una predeterminada
@@ -129,12 +135,27 @@ function PerfilUADM() {
                 setProfileImage(null); // En caso de error, se usa una predeterminada o se oculta
             }
         };
-    
+        
         fetchUserData();
         fetchProfileImage();
     }, [idUsuario]);
     
     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
 
     // Función para validar nombre y apellidos
@@ -502,33 +523,20 @@ function PerfilUADM() {
             </div>
 
 
-            {/* Modal para capturar la foto */}
             <Modal
                 title="Capturar Foto de Perfil"
                 visible={isModalVisible}
                 onCancel={handleCancel}
                 footer={[
-                    <Button key="cancel" onClick={handleCancel}>
-                        Cancelar
-                    </Button>,
-                    <Button key="capture" type="primary" onClick={capturePhoto}>
-                        Capturar
-                    </Button>,
-                    <Button key="save" type="primary" disabled={!capturedImage} onClick={savePhoto}>
-                        Guardar Foto
-                    </Button>,
+                    <Button key="cancel" onClick={handleCancel}>Cancelar</Button>,
+                    <Button key="capture" type="primary" onClick={capturePhoto}>Capturar</Button>,
+                    <Button key="save" type="primary" disabled={!capturedImage} onClick={savePhoto}>Guardar Foto</Button>
                 ]}
             >
                 {capturedImage ? (
                     <img src={capturedImage} alt="Captura de perfil" style={{ width: '100%' }} />
                 ) : (
-                    <Webcam
-                        audio={false}
-                        ref={webcamRef}
-                        screenshotFormat="image/jpeg"
-                        width="100%"
-                        height="auto"
-                    />
+                    <Webcam audio={false} ref={webcamRef} screenshotFormat="image/jpeg" width="100%" />
                 )}
             </Modal>
 

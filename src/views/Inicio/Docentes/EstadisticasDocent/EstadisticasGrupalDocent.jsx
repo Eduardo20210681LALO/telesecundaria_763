@@ -145,7 +145,7 @@ function EstadisticasGrupalDocent() {
                 left: 20,
                 right: 20,
                 bottom: 10,
-                top: 10
+                top: 10 
             }
         }
     };
