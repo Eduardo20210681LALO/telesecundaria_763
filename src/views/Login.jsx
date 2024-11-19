@@ -113,6 +113,10 @@ function Login() {
 
     if (rolInfo) {
       console.log(`Bienvenido ${rolInfo.nombre}`);
+
+      //MENSAJE QUE SE MANDARA A SENTRY
+      Sentry.captureMessage(`El Usuario: ${rolInfo.nombre} con Id: ${id_usuario} Ingreso al Sistema con Exito`);
+
       generarToken(id_usuario); // Generar token de sesión para el usuario
       localStorage.setItem('rol', rolInfo.rol);
 
