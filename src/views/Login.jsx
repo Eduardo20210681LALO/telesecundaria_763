@@ -8,6 +8,8 @@ import Cookies from 'js-cookie';
 import { message } from 'antd';
 import { getToken } from 'firebase/messaging';
 import { messaging } from '../firebase'; // Asegúrate de importar la configuración de Firebase
+import * as Sentry from "@sentry/react";
+
 
 function Login() {
   const navigate = useNavigate();
@@ -21,6 +23,29 @@ function Login() {
 
   const INTENTOS_MAXIMOS = 5;
   const TIEMPO_BLOQUEO = 30;
+
+  // Captura el evento de carga de la página de login
+  useEffect(() => {
+    Sentry.captureMessage("Página de login cargada");
+  }, []);
+
+  const handleSelectChange = (e) => {
+    const valor = e.target.value;
+    setUsuario(valor);
+    Sentry.captureMessage(`Usuario seleccionó tipo de usuario: ${valor}`);
+  };
+
+  const handleEmailChange = (e) => {
+    const valor = e.target.value;
+    setEmail(valor);
+    Sentry.captureMessage(`Usuario ingresó email: ${valor}`);
+  };
+
+  const handlePasswordChange = (e) => {
+    const valor = e.target.value;
+    setPassword(valor);
+    Sentry.captureMessage("Usuario ingresó contraseña"); // No enviar la contraseña por seguridad
+  };
 
   useEffect(() => {
     const intentosFallidos = parseInt(localStorage.getItem('intentosFallidos')) || 0;
@@ -176,31 +201,36 @@ function Login() {
       }
     } catch (error) {
       console.error('Error en el catch:', error);
+      Sentry.captureException(error);
       navigate('/NotServe');
     }
   };
   
-
-
-
-
-
-
   const Validacion = async (e) => {
     e.preventDefault();
+
     if (!usuario) {
+      Sentry.captureMessage("Validación fallida: Tipo de usuario vacío");
       message.warning('Por favor, seleccione un tipo de usuario.');
       return;
     }
     if (!email) {
+      Sentry.captureMessage("Validación fallida: Email vacío");
       message.warning('Por favor, ingrese un correo electrónico.');
       return;
     }
     if (!password) {
+      Sentry.captureMessage("Validación fallida: Contraseña vacía");
       message.warning('Por favor, ingrese una contraseña.');
       return;
     }
-    await FuncionLogin();
+
+    try {
+      await FuncionLogin();
+      Sentry.captureMessage("Login exitoso");
+    } catch (error) {
+      Sentry.captureException(error); // Captura errores en el login
+    }
   };
 
   const toggleMostrarContrasenia = () => {
@@ -236,7 +266,7 @@ function Login() {
                 <form className="w-full" onSubmit={Validacion}>
                   <div className="mb-3">
                     <label htmlFor="usuario" className="block text-sm font-medium text-gray-700"><b>Tipo de usuario:</b></label>
-                    <select id="usuario" onChange={(e) => setUsuario(e.target.value)} className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none sm:text-sm rounded">
+                    <select id="usuario" onChange={handleSelectChange} className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none sm:text-sm rounded">
                       <option value="">Selecciona un tipo de usuario</option>
                       <option value="1">Directivo</option>
                       <option value="2">Administrativo</option>
@@ -246,16 +276,35 @@ function Login() {
 
                   <div className="mb-3">
                     <label htmlFor="inputEmail" className="form-label"><b>Correo Electrónico:</b></label>
-                    <input type="email" id="inputEmail" className="form-control rounded w-full" placeholder="Ingresa tu correo electrónico" autoFocus onChange={(e) => setEmail(e.target.value)} />
+                    <input
+                      type="email"
+                      id="inputEmail"
+                      className="form-control rounded w-full"
+                      placeholder="Ingresa tu correo electrónico"
+                      onChange={handleEmailChange}
+                    />
                   </div>
 
                   <div className="mb-3 relative">
                     <label htmlFor="inputPassword" className="form-label"><b>Contraseña:</b></label>
                     <div className="relative">
-                      <input type={mostrarContrasenia ? 'text' : 'password'} id="inputPassword" className="form-control rounded w-full" placeholder="Ingresa tu contraseña" onChange={(e) => setPassword(e.target.value)} />
-                      <button type="button" onClick={toggleMostrarContrasenia} className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-transparent border-none cursor-pointer">
+
+                      <input
+                        type={mostrarContrasenia ? 'text' : 'password'}
+                        id="inputPassword"
+                        className="form-control rounded w-full"
+                        placeholder="Ingresa tu contraseña"
+                        onChange={handlePasswordChange}
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() => setMostrarContrasenia(!mostrarContrasenia)}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-transparent border-none cursor-pointer"
+                      >
                         {mostrarContrasenia ? <FontAwesomeIcon icon={faEyeSlash} /> : <FontAwesomeIcon icon={faEye} />}
                       </button>
+
                     </div>
                   </div>
 

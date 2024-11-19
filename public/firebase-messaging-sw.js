@@ -28,30 +28,30 @@ messaging.onBackgroundMessage(function(payload) {
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
-    icon: 'https://robe.host8b.me/assets/main-logo-Dgm6DqGM.png', // Reemplaza con la ruta a tu ícono si lo deseas
-    data: { // Aquí puedes almacenar datos adicionales
-      url: payload.data.url || '/' // El enlace al que se redirigirá al hacer clic, por defecto la raíz
+    icon: 'https://robe.host8b.me/assets/main-logo-Dgm6DqGM.png',
+    data: {
+      url: payload.data.url || '/'
     }
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
-// Manejar el evento de clic en la notificación
+
 self.addEventListener('notificationclick', function(event) {
   console.log('Notificación clickeada:', event);
-  event.notification.close(); // Cerrar la notificación
+  event.notification.close();
 
-  // Abre la URL almacenada en data.url
+
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
       if (clientList.length > 0) {
-        // Si la aplicación ya está abierta, enfócate en la pestaña
+      
         let client = clientList[0];
         client.focus();
         return client.navigate(event.notification.data.url);
       }
-      // Si la aplicación no está abierta, abre una nueva pestaña con la URL
+    
       return clients.openWindow(event.notification.data.url);
     })
   );

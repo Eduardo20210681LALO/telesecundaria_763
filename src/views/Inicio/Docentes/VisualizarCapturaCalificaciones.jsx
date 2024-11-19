@@ -1,168 +1,295 @@
-import React, { useEffect, useState } from 'react';
-
+import React, { useState, useEffect } from 'react';
+import { Typography, Card, message, Button, Select, Table, Modal } from 'antd';
 import axios from 'axios';
-import { Table, Select, Button, message } from 'antd';
-import SIDEBARDOCENT from '../../../components/SIDEBARDOCENT';
 
-const { Option } = Select;
+import SIDEBARDOCENT from '../../../components/SIDEBARDOCENT';
+import BreadcrumDocent from './BreadcrumDocent';
+
+const { Title } = Typography;
 
 function VisualizarCapturaCalificaciones() {
-  const [studentsData, setStudentsData] = useState([]);
-  const [selectedStudent, setSelectedStudent] = useState(null);
-  const [calificaciones, setCalificaciones] = useState([]);
-  const [periodos, setPeriodos] = useState([]);
-  const [grados, setGrados] = useState([]);
-  const [grupos, setGrupos] = useState([]);
-  const [selectedPeriodo, setSelectedPeriodo] = useState('');
-  const [selectedGrado, setSelectedGrado] = useState('');
-  const [selectedGrupo, setSelectedGrupo] = useState('');
-  const docenteId = localStorage.getItem('idUsuario'); // Asumimos que el ID del docente está almacenado en localStorage
+    const [studentsData, setStudentsData] = useState([]);
+    const [selectedStudent, setSelectedStudent] = useState(null);
+    const [calificaciones, setCalificaciones] = useState([]);
+    const [periodos, setPeriodos] = useState([]);
+    const [grados, setGrados] = useState([]);
+    const [grupos, setGrupos] = useState([]);
+    const [selectedPeriodo, setSelectedPeriodo] = useState('');
+    const [selectedGrado, setSelectedGrado] = useState('');
+    const [selectedGrupo, setSelectedGrupo] = useState('');
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const docenteId = localStorage.getItem('idUsuario'); // Obtener ID del docente del localStorage
 
-  useEffect(() => {
-    axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php')   //  http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php
-      .then(res => setPeriodos(Array.isArray(res.data) ? res.data : []))
-      .catch(err => console.error('Error al obtener periodos:', err));
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [periodosRes, gradosRes, gruposRes] = await Promise.all([
+                    axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php'),
+                    axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php'),
+                    axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php'),
+                ]);
+                setPeriodos(periodosRes.data || []);
+                setGrados(gradosRes.data || []);
+                setGrupos(gruposRes.data || []);
+            } catch (error) {
+                console.error('Error al obtener datos iniciales:', error);
+                message.error('Error al cargar información inicial');
+            }
+        };
+        fetchData();
+    }, []);
 
-    axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php')   //  http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php
-      .then(res => setGrados(Array.isArray(res.data) ? res.data : []))
-      .catch(err => console.error('Error al obtener grados:', err));
-
-    axios.get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php')   //   http://localhost/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php'
-      .then(res => setGrupos(Array.isArray(res.data) ? res.data : []))
-      .catch(err => console.error('Error al obtener grupos:', err));
-  }, []);
-
-  const fetchStudents = () => {
-    if (selectedPeriodo && selectedGrado && selectedGrupo && docenteId) {
-      axios.get(`https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Docentes/TraerAlumnosPorDocente.php?periodo=${selectedPeriodo}&grado=${selectedGrado}&grupo=${selectedGrupo}&docenteId=${docenteId}`)    //  http://localhost/TeleSecundaria763/Docentes/TraerAlumnosPorDocente.php?periodo=${selectedPeriodo}&grado=${selectedGrado}&grupo=${selectedGrupo}&docenteId=${docenteId}
-        .then(res => {
-          console.log('Datos de alumnos recibidos:', res.data);
-          setStudentsData(Array.isArray(res.data.alumnos) ? res.data.alumnos : []);
-          if (!Array.isArray(res.data.alumnos) || res.data.alumnos.length === 0) {
-            message.info('No se encontraron alumnos para los criterios seleccionados.');
-          }
-        })
-        .catch(err => {
-          console.error('Error al obtener alumnos:', err);
-          message.error('Error al obtener alumnos');
-        });
-    } else {
-      message.error('Por favor, selecciona todos los criterios (periodo, grado y grupo)');
-    }
-  };
-
-  const handleStudentSelect = (student) => {
-    setSelectedStudent(student);
-    fetchCalificaciones(student.vchCurpAlumno, selectedPeriodo, selectedGrado, selectedGrupo);
-  };
-
-  const fetchCalificaciones = (matricula, periodo, grado, grupo) => { 
-    axios.get(`https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Docentes/ObtenerCalificaciones.php?matricula=${matricula}&periodo=${periodo}&grado=${grado}&grupo=${grupo}`)  //    http://localhost/TeleSecundaria763/Docentes/ObtenerCalificaciones.php?matricula=${matricula}&periodo=${periodo}&grado=${grado}&grupo=${grupo}
-      .then(response => {
-        const data = response.data;
-        console.log('Datos de calificaciones recibidos:', data);
-        if (data.success) {
-          setCalificaciones(Array.isArray(data.calificaciones) ? data.calificaciones : []);
+    const fetchStudents = async () => {
+        if (selectedPeriodo && selectedGrado && selectedGrupo && docenteId) {
+            try {
+                const res = await axios.get(
+                    `https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Docentes/TraerAlumnosPorDocente.php?periodo=${selectedPeriodo}&grado=${selectedGrado}&grupo=${selectedGrupo}&docenteId=${docenteId}`
+                );
+                setStudentsData(res.data.alumnos || []);
+                if (!res.data.alumnos?.length) {
+                    message.info('No se encontraron alumnos para los criterios seleccionados.');
+                }
+            } catch (error) {
+                console.error('Error al obtener alumnos:', error);
+                message.error('Error al obtener alumnos');
+            }
         } else {
-          message.error('Error al obtener calificaciones');
+            message.error('Por favor, selecciona todos los criterios (periodo, grado y grupo)');
         }
-      })
-      .catch(error => {
-        console.error('Error al obtener calificaciones:', error);
-        message.error('Error del servidor al obtener calificaciones');
-      });
-  };
+    };
 
-  const columns = [
-    { title: 'CURP', dataIndex: 'vchCurpAlumno', key: 'vchCurpAlumno' },
-    { title: 'Apellido Paterno', dataIndex: 'vchAPaterno', key: 'vchAPaterno' },
-    { title: 'Apellido Materno', dataIndex: 'vchAMaterno', key: 'vchAMaterno' },
-    { title: 'Nombre', dataIndex: 'vchNombre', key: 'vchNombre' },
-    {
-      title: 'Seleccionar',
-      key: 'select',
-      render: (text, record) => (
-        <Button onClick={() => handleStudentSelect(record)}>Seleccionar</Button>
-      ),
-    },
-  ];
+    const handleStudentSelect = (student) => {
+        setSelectedStudent(student);
+        fetchCalificaciones(student.vchCurpAlumno, selectedPeriodo, selectedGrado, selectedGrupo);
+        setIsModalVisible(true); // Mostrar el modal
+    };
 
-  const gradesColumns = [
-    { title: 'Materia', dataIndex: 'materia', key: 'materia' },
-    { title: 'M1', dataIndex: 'M1', key: 'M1' },
-    { title: 'M2', dataIndex: 'M2', key: 'M2' },
-    { title: 'M3', dataIndex: 'M3', key: 'M3' },
-    { title: 'Final', dataIndex: 'Final', key: 'Final' },
-  ];
+    const fetchCalificaciones = async (matricula, periodo, grado, grupo) => {
+        try {
+            const res = await axios.get(
+                `https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Docentes/ObtenerCalificaciones.php?matricula=${matricula}&periodo=${periodo}&grado=${grado}&grupo=${grupo}`
+            );
+            if (res.data.success) {
+                setCalificaciones(res.data.calificaciones || []);
+            } else {
+                message.error('Error al obtener calificaciones');
+            }
+        } catch (error) {
+            console.error('Error al obtener calificaciones:', error);
+            message.error('Error del servidor al obtener calificaciones');
+        }
+    };
 
-  return (
-    <SIDEBARDOCENT>
-        <div className="flex justify-center w-full mx-auto mt-10">
-            <main className="flex-grow p-4">
-                <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-8 w-full max-w-7xl mx-auto">
-                    <h2 className="text-3xl font-semibold mb-8 text-center text-gray-700 dark:text-gray-300">Consultar Alumnos</h2>
-                    <div className="container mx-auto">
-                        <div className="mb-6 flex flex-wrap justify-center space-y-2 sm:space-y-0 sm:space-x-4">
-                            <Select value={selectedPeriodo} onChange={setSelectedPeriodo} placeholder="Periodo" style={{ width: '200px' }}>
-                                {periodos.map(periodo => (
-                                    <Option key={periodo.intClvPeriodo} value={periodo.intClvPeriodo}>{periodo.vchPeriodo}</Option>
+    const studentColumns = [
+        { title: 'CURP', dataIndex: 'vchCurpAlumno', key: 'vchCurpAlumno' },
+        { title: 'Apellido Paterno', dataIndex: 'vchAPaterno', key: 'vchAPaterno' },
+        { title: 'Apellido Materno', dataIndex: 'vchAMaterno', key: 'vchAMaterno' },
+        { title: 'Nombre', dataIndex: 'vchNombre', key: 'vchNombre' },
+        {
+            title: 'Seleccionar',
+            key: 'select',
+            render: (_, record) => (
+                <Button
+                    onClick={() => handleStudentSelect(record)}
+                    style={{
+                        marginRight: 8, 
+                        borderColor: '#007bff', // Borde azul
+                        color: '#007bff', // Texto azul
+                        backgroundColor: 'transparent', // Fondo transparente
+                        transition: 'background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease',
+                    }}
+                    
+                    onMouseOver={(event) => { 
+                        event.currentTarget.style.backgroundColor = '#007bff'; // Fondo azul al pasar el ratón
+                        event.currentTarget.style.color = '#fff'; // Texto blanco al pasar el ratón
+                    }}
+                    onMouseOut={(event) => { 
+                        event.currentTarget.style.backgroundColor = 'transparent'; // Vuelve a transparente
+                        event.currentTarget.style.color = '#007bff'; // Texto azul
+                    }}
+                >
+                    Seleccionar
+                </Button>
+            ),
+        }
+        
+    ];
+
+    const gradesColumns = [
+        { title: 'Materia', dataIndex: 'materia', key: 'materia' },
+        { title: 'M1', dataIndex: 'M1', key: 'M1' },
+        { title: 'M2', dataIndex: 'M2', key: 'M2' },
+        { title: 'M3', dataIndex: 'M3', key: 'M3' },
+        { title: 'Final', dataIndex: 'Final', key: 'Final' },
+    ];
+
+    const average =
+        calificaciones.length > 0
+            ? (calificaciones.reduce((sum, grade) => sum + parseFloat(grade.Final || 0), 0) / calificaciones.length).toFixed(2)
+            : 'N/A';
+
+    const closeModal = () => {
+        setIsModalVisible(false);
+        setSelectedStudent(null);
+        setCalificaciones([]);
+    };
+
+    return (
+        <SIDEBARDOCENT>
+        <div style={{ padding: '20px' }}>
+            <BreadcrumDocent />
+            <Title level={2}>Visualización de Calificaciones</Title>
+            <Card className="data-card" style={{ maxHeight: '80vh', overflowY: 'hidden' }}>
+
+                <Title level={4} style={{ color: 'black', marginBottom: '10px' }}>
+                    Por favor seleccione los siguientes datos para visualización
+                </Title>
+
+                <div className="filters" style={{ marginBottom: '20px' }}>
+                    {/* Contenedor de los Selects alineados horizontalmente */}
+                    <div
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            gap: '20px',
+                            marginBottom: '20px',
+                        }}
+                    >
+                        {/* Select para Periodo */}
+                        <div style={{ flex: 1 }}>
+                            <label htmlFor="periodo" className="block mb-2">
+                                Seleccionar Periodo:
+                            </label>
+                            <Select
+                                value={selectedPeriodo || undefined}
+                                onChange={(value) => setSelectedPeriodo(value)}
+                                style={{
+                                    width: '100%', // Asegura que ocupe el espacio asignado por el contenedor
+                                    borderRadius: '8px',
+                                    border: '1px solid #d9d9d9',
+                                    height: '40px',
+                                }}
+                                placeholder="Seleccione un periodo"
+                                allowClear
+                            >
+                                {periodos.map((periodo) => (
+                                    <Select.Option key={periodo.intClvPeriodo} value={periodo.intClvPeriodo}>
+                                        {periodo.vchPeriodo}
+                                    </Select.Option>
                                 ))}
                             </Select>
-                            <Select value={selectedGrado} onChange={setSelectedGrado} placeholder="Grado" style={{ width: '200px' }}>
-                                {grados.map(grado => (
-                                    <Option key={grado.intClvGrado} value={grado.intClvGrado}>{grado.vchGrado}</Option>
-                                ))}
-                            </Select>
-                            <Select value={selectedGrupo} onChange={setSelectedGrupo} placeholder="Grupo" style={{ width: '200px' }}>
-                                {grupos.map(grupo => (
-                                    <Option key={grupo.intClvGrupo} value={grupo.intClvGrupo}>{grupo.vchGrupo}</Option>
-                                ))}
-                            </Select>
-                            <Button type="primary" onClick={fetchStudents} style={{ minWidth: '150px' }}>Consultar</Button>
                         </div>
 
-                        <div className="flex flex-col lg:flex-row lg:space-x-8">
-                            <div className="lg:w-2/3 w-full">
-                                <Table
-                                    columns={columns}
-                                    dataSource={studentsData}
-                                    rowKey="vchCurpAlumno"
-                                    pagination={false}
-                                    scroll={{ x: false }}
-                                    className="shadow-md rounded-lg"
-                                    size="middle"
-                                />
-                            </div>
-                            <div className="lg:w-1/3 w-full mt-8 lg:mt-0">
-                                {selectedStudent && (
-                                    <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg shadow-md">
-                                        <h3 className="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-200">
-                                            Calificaciones obtenidas por: {selectedStudent.vchNombre} {selectedStudent.vchAPaterno} {selectedStudent.vchAMaterno}
-                                        </h3>
-                                        <Table
-                                            columns={gradesColumns}
-                                            dataSource={calificaciones}
-                                            pagination={false}
-                                            footer={() => (
-                                                <div className="flex justify-between">
-                                                    <span className="font-semibold text-gray-700 dark:text-gray-300">
-                                                        Promedio: {(calificaciones.reduce((sum, grade) => sum + parseFloat(grade.Final), 0) / (calificaciones.length || 1)).toFixed(2)}
-                                                    </span>
-                                                </div>
-                                            )}
-                                            className="shadow-md rounded-lg"
-                                            size="middle"
-                                        />
-                                    </div>
-                                )}
-                            </div>
+                        {/* Select para Grado */}
+                        <div style={{ flex: 1 }}>
+                            <label htmlFor="grado" className="block mb-2">
+                                Seleccionar Grado
+                            </label>
+                            <Select
+                                value={selectedGrado || undefined}
+                                onChange={(value) => setSelectedGrado(value)}
+                                style={{
+                                    width: '100%', // Asegura que ocupe el espacio asignado por el contenedor
+                                    borderRadius: '8px',
+                                    border: '1px solid #d9d9d9',
+                                    height: '40px',
+                                }}
+                                placeholder="Seleccione un grado"
+                                allowClear
+                            >
+                                {grados.map((grado) => (
+                                    <Select.Option key={grado.intClvGrado} value={grado.intClvGrado}>
+                                        {grado.vchGrado}
+                                    </Select.Option>
+                                ))}
+                            </Select>
+                        </div>
+
+                        {/* Select para Grupo */}
+                        <div style={{ flex: 1 }}>
+                            <label htmlFor="grupo" className="block mb-2">
+                                Seleccionar Grupo
+                            </label>
+                            <Select
+                                value={selectedGrupo || undefined}
+                                onChange={(value) => setSelectedGrupo(value)}
+                                style={{
+                                    width: '100%', // Asegura que ocupe el espacio asignado por el contenedor
+                                    borderRadius: '8px',
+                                    border: '1px solid #d9d9d9',
+                                    height: '40px',
+                                }}
+                                placeholder="Seleccione un grupo"
+                                allowClear
+                            >
+                                {grupos.map((grupo) => (
+                                    <Select.Option key={grupo.intClvGrupo} value={grupo.intClvGrupo}>
+                                        {grupo.vchGrupo}
+                                    </Select.Option>
+                                ))}
+                            </Select>
                         </div>
                     </div>
+
+                    <div style={{ textAlign: 'center', marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
+                        <Button
+                            type="primary"
+                            htmlType="submit"
+                            onClick={fetchStudents}
+                            style={{
+                                backgroundColor: 'var(--first-color)',
+                                borderColor: 'transparent',
+                                color: '#fff',
+                                padding: '10px 20px',
+                                borderRadius: '8px',
+                                fontSize: '16px',
+                                fontWeight: 'bold',
+                                height: '40px',
+                                width: '400px',
+                                cursor: 'pointer',
+                                transition: 'background-color 0.3s ease',
+                            }}
+                            onMouseOver={(event) => {
+                                event.currentTarget.style.backgroundColor = 'black';
+                            }}
+                            onMouseOut={(event) => {
+                                event.currentTarget.style.backgroundColor = 'var(--first-color)';
+                            }}
+                        >
+                            Visualizar Calificaciones
+                        </Button>
+                    </div>
                 </div>
-            </main>
+
+                <Title level={4}>Visualización de Alumnos</Title>
+                <div style={{ maxHeight: '400px', overflowY: 'auto', border: '1px solid #f0f0f0', padding: '10px' }}>
+                    <Table
+                        columns={studentColumns}
+                        dataSource={studentsData}
+                        rowKey="vchCurpAlumno"
+                        pagination={false}
+                    />
+                </div>
+            </Card>
+
+            {/* Modal para mostrar las calificaciones */}
+            <Modal
+                title={`CALIFICACIONES DE: ${selectedStudent?.vchNombre} ${selectedStudent?.vchAPaterno} ${selectedStudent?.vchAMaterno}`}
+                visible={isModalVisible}
+                onCancel={closeModal}
+                footer={<Button onClick={closeModal}>Cerrar</Button>}
+            >
+                <Table
+                    columns={gradesColumns}
+                    dataSource={calificaciones}
+                    pagination={false}
+                    footer={() => <div>Promedio Final: {average}</div>}
+                    size="small"
+                />
+            </Modal>
         </div>
-    </SIDEBARDOCENT>
-  );
+        </SIDEBARDOCENT>
+    );
 }
 
 export default VisualizarCapturaCalificaciones;
