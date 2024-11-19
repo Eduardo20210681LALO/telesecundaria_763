@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
 import axios from 'axios';
+import * as Sentry from "@sentry/react";
 
 import { Descriptions, Typography, Card, message, Upload, Button, Table } from 'antd'; // Importamos los componentes de Ant Design
 import { UploadOutlined } from '@ant-design/icons'; // Icono de Ant Design
@@ -10,219 +11,229 @@ import BreadcrumDocent from './BreadcrumDocent';
 const { Title } = Typography;
 
 function CapturaCalificacionesAlum () {
-  const [studentsData, setStudentsData] = useState([]);
-  const [materias, setMaterias] = useState([]);
-  const [periodo, setPeriodo] = useState('');
-  const [grado, setGrado] = useState('');
-  const [grupo, setGrupo] = useState('');
-  const [trimestre, setTrimestre] = useState('');
-  const [selectedFile, setSelectedFile] = useState(null);
-  const idUsuario = localStorage.getItem('idUsuario');
+    const [studentsData, setStudentsData] = useState([]);
+    const [materias, setMaterias] = useState([]);
+    const [periodo, setPeriodo] = useState('');
+    const [grado, setGrado] = useState('');
+    const [grupo, setGrupo] = useState('');
+    const [trimestre, setTrimestre] = useState('');
+    const [selectedFile, setSelectedFile] = useState(null);
+    const idUsuario = localStorage.getItem('idUsuario');
 
-  const closeModal = () => {
-      setStudentsData([]);
-      setMaterias([]);
-      setPeriodo('');
-      setGrado('');
-      setGrupo('');
-      setTrimestre('');
-      setSelectedFile(null);
-  };
+    const closeModal = () => {
+        setStudentsData([]);
+        setMaterias([]);
+        setPeriodo('');
+        setGrado('');
+        setGrupo('');
+        setTrimestre('');
+        setSelectedFile(null);
+    };
 
-  const handleFileUpload = (file) => {
-      const reader = new FileReader();
-      reader.onload = (evt) => {
-          const data = evt.target.result;
-          const workbook = XLSX.read(data, { type: 'binary' });
-          const sheet = workbook.Sheets[workbook.SheetNames[0]];
-          const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+    const handleFileUpload = (file) => {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+            const data = evt.target.result;
+            const workbook = XLSX.read(data, { type: 'binary' });
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-          const findValue = (data, searchValue) => {
-              for (let i = 0; i < data.length; i++) {
-                  if (data[i][0] && data[i][0].toString().toLowerCase().includes(searchValue.toLowerCase())) {
-                      return data[i][1];
-                  }
-              }
-              return '';
-          };
+            const findValue = (data, searchValue) => {
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i][0] && data[i][0].toString().toLowerCase().includes(searchValue.toLowerCase())) {
+                        return data[i][1];
+                    }
+                }
+                return '';
+            };
 
-          const additionalData = {
-              PERIODO: findValue(jsonData, 'PERIODO'),
-              GRADO: findValue(jsonData, 'GRADO'),
-              GRUPO: findValue(jsonData, 'GRUPO'),
-              TRIMESTRE: findValue(jsonData, 'TRIMESTRE')
-          };
-          setPeriodo(additionalData.PERIODO);
-          setGrado(additionalData.GRADO);
-          setGrupo(additionalData.GRUPO);
-          setTrimestre(additionalData.TRIMESTRE);
+            const additionalData = {
+                PERIODO: findValue(jsonData, 'PERIODO'),
+                GRADO: findValue(jsonData, 'GRADO'),
+                GRUPO: findValue(jsonData, 'GRUPO'),
+                TRIMESTRE: findValue(jsonData, 'TRIMESTRE')
+            };
+            setPeriodo(additionalData.PERIODO);
+            setGrado(additionalData.GRADO);
+            setGrupo(additionalData.GRUPO);
+            setTrimestre(additionalData.TRIMESTRE);
 
-          console.log("Datos adicionales:", additionalData);
+            console.log("Datos adicionales:", additionalData);
 
-          const startIndex = jsonData.findIndex(row => row.includes('CURP'));
+            const startIndex = jsonData.findIndex(row => row.includes('CURP'));
 
-          const materiaRow = jsonData[startIndex];
-          const endIndex = materiaRow.findIndex(header => header.toLowerCase() === 'calificacion trimestre');
-          const headers = materiaRow.slice(2, endIndex); // Excluye CURP y Nombre del Alumno
-          setMaterias(headers);
+            const materiaRow = jsonData[startIndex];
+            const endIndex = materiaRow.findIndex(header => header.toLowerCase() === 'calificacion trimestre');
+            const headers = materiaRow.slice(2, endIndex); // Excluye CURP y Nombre del Alumno
+            setMaterias(headers);
 
-          console.log("Materias:", headers);
+            console.log("Materias:", headers);
 
-          const filteredData = jsonData.slice(startIndex + 1).map(row => ({
-              claveAlumno: row[0] || null,
-              nombreCompleto: row[1] || null,
-              calificaciones: row.slice(2, endIndex), // Ajustar el rango para las calificaciones
-              calificacionTrimestre: row[endIndex] || null // Obtener "CALIFICACION TRIMESTRE"
-          })).filter(student => student.claveAlumno && student.nombreCompleto && student.calificaciones.length === headers.length);
+            const filteredData = jsonData.slice(startIndex + 1).map(row => ({
+                claveAlumno: row[0] || null,
+                nombreCompleto: row[1] || null,
+                calificaciones: row.slice(2, endIndex), // Ajustar el rango para las calificaciones
+                calificacionTrimestre: row[endIndex] || null // Obtener "CALIFICACION TRIMESTRE"
+            })).filter(student => student.claveAlumno && student.nombreCompleto && student.calificaciones.length === headers.length);
 
-          console.log("Datos de estudiantes filtrados:", filteredData);
+            console.log("Datos de estudiantes filtrados:", filteredData);
 
-          setStudentsData(filteredData);
-          setSelectedFile(file);
-      };
-      reader.readAsBinaryString(file);
-  };
+            setStudentsData(filteredData);
+            setSelectedFile(file);
+        };
+        reader.readAsBinaryString(file);
+    };
 
-  const saveGradesToDatabase = () => {
-      if (studentsData.length === 0) {
-          message.error('No hay datos válidos para guardar.');
-          return;
-      }
+    //FUNCIONES QUE TIENEN MONITOREO EN SENTRY
+    const saveGradesToDatabase = () => {
+        if (studentsData.length === 0) {
+            message.error('No hay datos válidos para guardar.');
+            Sentry.captureMessage('Intento de guardar calificaciones sin datos válidos');
+            return;
+        }
 
-      const dataToSend = {
-          Periodo: periodo,
-          Grado: grado,
-          Grupo: grupo,
-          Trimestre: trimestre,
-          students: studentsData.map(student => ({
-              ClaveAlumno: student.claveAlumno,
-              Calificaciones: Object.fromEntries(materias.map((materia, index) => [materia, student.calificaciones[index]]))
-          }))
-      };
+        const dataToSend = {
+            Periodo: periodo,
+            Grado: grado,
+            Grupo: grupo,
+            Trimestre: trimestre,
+            students: studentsData.map(student => ({
+                ClaveAlumno: student.claveAlumno,
+                Calificaciones: Object.fromEntries(materias.map((materia, index) => [materia, student.calificaciones[index]]))
+            }))
+        };
+        console.log('Datos que se enviarán:', dataToSend);
 
-      console.log('Datos que se enviarán:', dataToSend);
+        Sentry.captureMessage(`Docente con ID ${docenteId} capturó calificaciones: ${JSON.stringify(dataToSend)}`);
 
-      axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Docentes/InsertarCalificacionesSegundo.php', dataToSend)
-          .then(response => {
-              console.log(response.data);
-              if (response.data.success) {
-                  message.success('Datos guardados en la base de datos correctamente.');
-                  saveFinalGradesToDatabase();
-              } else {
-                  message.error(response.data.message);
-              }
-          })
-          .catch(error => {
-              console.error('Error al guardar los datos:', error);
-              message.warning('Hubo un error al intentar guardar los datos en la base de datos.');
-          });
-  };
+        axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Docentes/InsertarCalificacionesSegundo.php', dataToSend)
+            .then(response => {
+                console.log(response.data);
+                if (response.data.success) {
+                    message.success('Datos guardados en la base de datos correctamente.');
+                    Sentry.captureMessage(`Calificaciones guardadas correctamente por el docente con ID ${docenteId}`);
+                    saveFinalGradesToDatabase();
+                } else {
+                    message.error(response.data.message);
 
-  const saveFinalGradesToDatabase = () => {
-      const finalGradesToSend = {
-          Periodo: periodo,
-          Trimestre: trimestre,
-          students: studentsData.map(student => ({
-              ClaveAlumno: student.claveAlumno,
-              Calificacion: student.calificacionTrimestre
-          }))
-      };
+                    Sentry.captureMessage(`Error al guardar calificaciones por el docente con ID ${docenteId}: ${response.data.message}`);
+                }
+            })
+        .catch(error => {
+            console.error('Error al guardar los datos:', error);
+            message.warning('Hubo un error al intentar guardar los datos en la base de datos.');
 
-      console.log('Datos que se enviarán para calificaciones finales:', finalGradesToSend);
+            Sentry.captureException(error); // Captura el error en Sentry
+        });
+    }; // *********************************************
 
-      axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Docentes/InsertarCalificacionesFinales.php', finalGradesToSend)
-          .then(response => {
-              if (response.data.success) {
-              message.success('Promedio general guardado correctamente.');
-              notifyAdmins();
-              } else {
-              message.error(response.data.message);
-              }
-              closeModal();
-          })
-          .catch(error => {
-              console.error('Error al guardar el promedio general:', error);
-              message.warning('Hubo un error al intentar guardar el promedio general en la base de datos.');
-          });
-  };
+    //FUNCIONES QUE TIENEN MONITOREO EN SENTRY
+    const saveFinalGradesToDatabase = () => {
+        const finalGradesToSend = {
+            Periodo: periodo,
+            Trimestre: trimestre,
+            students: studentsData.map(student => ({
+                ClaveAlumno: student.claveAlumno,
+                Calificacion: student.calificacionTrimestre
+            }))
+        };
+        console.log('Datos que se enviarán para calificaciones finales:', finalGradesToSend);
 
-  const notifyAdmins = async () => {
-      try {
-          await axios.post('https://firebase-notify.vercel.app/sendNotification', {
-              idDocente: idUsuario, // ID del docente
-              mensaje: `El docente con ID ${idDocente} ha insertado nuevas calificaciones.`,
-          });
-      console.log('Notificaciones enviadas a los administradores.');
-      } catch (error) {
-          console.error('Error al enviar notificación a los administradores:', error);
-      }
-  };
+        Sentry.captureMessage(`Docente con ID ${docenteId} está enviando calificaciones finales: ${JSON.stringify(finalGradesToSend)}`);
 
-  // Props para el componente Upload
-  const uploadProps = {
-      name: 'file',
-      accept: '.xlsx, .xls', // Solo aceptar archivos Excel
-      beforeUpload: (file) => {
-          handleFileUpload(file); // Llamar la función de manejo de archivo
-          return false; // Evita la subida automática por defecto
-      },
-      onChange(info) {
-          if (info.file.status !== 'uploading') {
-              console.log(info.file, info.fileList);
-          }
-          if (info.file.status === 'done') {
-              message.success(`${info.file.name} fue cargado exitosamente`);
-          } else if (info.file.status === 'error') {
-              message.error(`${info.file.name} falló en la carga.`);
-          }
-      }
-  };
+        axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Docentes/InsertarCalificacionesFinales.php', finalGradesToSend)
+            .then(response => {
+                if (response.data.success) {
+                    message.success('Promedio general guardado correctamente.');
+                    notifyAdmins();
 
-  // Configurar las columnas de la tabla
-  const columns = [
-      {
-          title: 'Clave Alumno',
-          dataIndex: 'claveAlumno',
-          key: 'claveAlumno',
-      },
-      {
-          title: 'Nombre Completo',
-          dataIndex: 'nombreCompleto',
-          key: 'nombreCompleto',
-      },
-      // Generar dinámicamente columnas para las materias
-      ...materias.map((materia, index) => ({
-          title: materia,
-          dataIndex: ['calificaciones', index], // Acceder a las calificaciones por índice
-          key: `materia-${index}`,
-      })),
-      {
-          title: 'Calificación Trimestre',
-          dataIndex: 'calificacionTrimestre',
-          key: 'calificacionTrimestre',
-      },
-  ];
+                    Sentry.captureMessage(`Promedio general guardado correctamente por el docente con ID ${docenteId}`);
 
-  // Crear los datos de la tabla
-  const dataSource = studentsData.map((student, index) => ({
-      key: index,
-      claveAlumno: student.claveAlumno,
-      nombreCompleto: student.nombreCompleto,
-      calificaciones: student.calificaciones, // Lista de calificaciones para cada materia
-      calificacionTrimestre: student.calificacionTrimestre,
-  }));
+                } else {
+                    message.error(response.data.message);
 
-  // Estilos personalizados para compactar la tabla
-  const compactTableStyle = {
-      fontSize: '12px', // Tamaño de texto más pequeño
-      padding: '4px 8px', // Reducir el padding de las celdas
-  };
+                    Sentry.captureMessage(`Error al guardar promedio general por el docente con ID ${docenteId}: ${response.data.message}`);
+                }
+                closeModal();
+            })
+        .catch(error => {
+            console.error('Error al guardar el promedio general:', error);
+            message.warning('Hubo un error al intentar guardar el promedio general en la base de datos.');
 
-  
+            Sentry.captureException(error); // Captura el error en Sentry
+        });
+    }; // *********************************************
 
 
-  return (
-    <SIDEBARDOCENT>
+    const notifyAdmins = async () => {
+        try {
+            await axios.post('https://firebase-notify.vercel.app/sendNotification', {
+                idDocente: idUsuario, // ID del docente
+                mensaje: `El docente con ID ${idDocente} ha insertado nuevas calificaciones.`,
+            });
+        console.log('Notificaciones enviadas a los administradores.');
+        } catch (error) {
+            console.error('Error al enviar notificación a los administradores:', error);
+        }
+    };
+
+    const uploadProps = { // Props para el componente Upload
+        name: 'file',
+        accept: '.xlsx, .xls', // Solo aceptar archivos Excel
+        beforeUpload: (file) => {
+            handleFileUpload(file); // Llamar la función de manejo de archivo
+            return false; // Evita la subida automática por defecto
+        },
+        onChange(info) {
+            if (info.file.status !== 'uploading') {
+                console.log(info.file, info.fileList);
+            }
+            if (info.file.status === 'done') {
+                message.success(`${info.file.name} fue cargado exitosamente`);
+            } else if (info.file.status === 'error') {
+                message.error(`${info.file.name} falló en la carga.`);
+            }
+        }
+    };
+
+    const columns = [ // Configurar las columnas de la tabla
+        {
+            title: 'Clave Alumno',
+            dataIndex: 'claveAlumno',
+            key: 'claveAlumno',
+        },
+        {
+            title: 'Nombre Completo',
+            dataIndex: 'nombreCompleto',
+            key: 'nombreCompleto',
+        },
+        ...materias.map((materia, index) => ({ // Generar dinámicamente columnas para las materias
+            title: materia,
+            dataIndex: ['calificaciones', index], // Acceder a las calificaciones por índice
+            key: `materia-${index}`,
+        })),
+        {
+            title: 'Calificación Trimestre',
+            dataIndex: 'calificacionTrimestre',
+            key: 'calificacionTrimestre',
+        },
+    ];
+
+    const dataSource = studentsData.map((student, index) => ({ // Crear los datos de la tabla
+        key: index,
+        claveAlumno: student.claveAlumno,
+        nombreCompleto: student.nombreCompleto,
+        calificaciones: student.calificaciones, // Lista de calificaciones para cada materia
+        calificacionTrimestre: student.calificacionTrimestre,
+    }));
+
+    const compactTableStyle = { // Estilos personalizados para compactar la tabla
+        fontSize: '12px', // Tamaño de texto más pequeño
+        padding: '4px 8px', // Reducir el padding de las celdas
+    };
+
+    return (
+        <SIDEBARDOCENT>
             {/* Contenedor principal con padding */}
             <div
                 style={{
@@ -300,7 +311,7 @@ function CapturaCalificacionesAlum () {
 
                             {/* Botones de acción */}
                             <div className="flex justify-end space-x-4 mt-4">
-                              
+                            
 
                                 <div style={{ textAlign: 'center', marginTop: '10px' }}>
                                     <Button
@@ -369,8 +380,8 @@ function CapturaCalificacionesAlum () {
                     </Card>
                 </div>
             </div>
-    </SIDEBARDOCENT>
-  );
+        </SIDEBARDOCENT>
+    );
 }
 
 export default CapturaCalificacionesAlum;
