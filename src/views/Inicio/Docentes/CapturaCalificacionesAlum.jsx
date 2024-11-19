@@ -104,19 +104,19 @@ function CapturaCalificacionesAlum () {
         };
         console.log('Datos que se enviarán:', dataToSend);
 
-        Sentry.captureMessage(`Docente con ID ${docenteId} capturó calificaciones: ${JSON.stringify(dataToSend)}`);
+        Sentry.captureMessage(`Docente con ID ${idUsuario} capturó calificaciones: ${JSON.stringify(dataToSend)}`);
 
         axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Docentes/InsertarCalificacionesSegundo.php', dataToSend)
             .then(response => {
                 console.log(response.data);
                 if (response.data.success) {
                     message.success('Datos guardados en la base de datos correctamente.');
-                    Sentry.captureMessage(`Calificaciones guardadas correctamente por el docente con ID ${docenteId}`);
+                    Sentry.captureMessage(`Calificaciones guardadas correctamente por el docente con ID ${idUsuario}`);
                     saveFinalGradesToDatabase();
                 } else {
                     message.error(response.data.message);
 
-                    Sentry.captureMessage(`Error al guardar calificaciones por el docente con ID ${docenteId}: ${response.data.message}`);
+                    Sentry.captureMessage(`Error al guardar calificaciones por el docente con ID ${idUsuario}: ${response.data.message}`);
                 }
             })
         .catch(error => {
@@ -139,7 +139,7 @@ function CapturaCalificacionesAlum () {
         };
         console.log('Datos que se enviarán para calificaciones finales:', finalGradesToSend);
 
-        Sentry.captureMessage(`Docente con ID ${docenteId} está enviando calificaciones finales: ${JSON.stringify(finalGradesToSend)}`);
+        Sentry.captureMessage(`Docente con ID ${idUsuario} está enviando calificaciones finales: ${JSON.stringify(finalGradesToSend)}`);
 
         axios.post('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Docentes/InsertarCalificacionesFinales.php', finalGradesToSend)
             .then(response => {
@@ -147,12 +147,12 @@ function CapturaCalificacionesAlum () {
                     message.success('Promedio general guardado correctamente.');
                     notifyAdmins();
 
-                    Sentry.captureMessage(`Promedio general guardado correctamente por el docente con ID ${docenteId}`);
+                    Sentry.captureMessage(`Promedio general guardado correctamente por el docente con ID ${idUsuario}`);
 
                 } else {
                     message.error(response.data.message);
 
-                    Sentry.captureMessage(`Error al guardar promedio general por el docente con ID ${docenteId}: ${response.data.message}`);
+                    Sentry.captureMessage(`Error al guardar promedio general por el docente con ID ${idUsuario}: ${response.data.message}`);
                 }
                 closeModal();
             })
