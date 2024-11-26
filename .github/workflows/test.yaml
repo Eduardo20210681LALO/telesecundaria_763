@@ -56,7 +56,7 @@ jobs:
           local-dir: ./dist/
 
       - name: Notificar despliegue exitoso
-        if: success()  # Solo se ejecuta si el despliegue fue exitoso
+        if: success()
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
