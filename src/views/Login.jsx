@@ -174,6 +174,7 @@ function Login() {
     }
   
     try {
+      console.log('entraaaa antes del funcion login')
       const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/InicioXUsuario/login.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
