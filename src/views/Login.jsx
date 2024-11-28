@@ -44,7 +44,7 @@ function Login() {
   const handlePasswordChange = (e) => {
     const valor = e.target.value;
     setPassword(valor);
-    Sentry.captureMessage("Usuario ingresó contraseña"); // No enviar la contraseña por seguridad
+    Sentry.captureMessage("Usuario ingresó contraseña");
   };
 
   useEffect(() => {
