@@ -55,6 +55,9 @@ function PerfilUADM() {
     
         console.log('Datos a enviar:', data);
     
+
+        // esta funcion se tiene que borrar ya que no quiero la foto
+
         try {
             const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Bitacoras/InsertarFotoUsuarios.php', {
                 method: 'POST',
@@ -110,6 +113,8 @@ function PerfilUADM() {
                 console.error('Error al hacer la petición de datos:', error);
             }
         };
+
+        // esta funcion tampoco la quiero, se VA A QUITAR DEL CODIGO PRINCIPAL
     
         const fetchProfileImage = async () => {
             try {
@@ -140,24 +145,6 @@ function PerfilUADM() {
         fetchProfileImage();
     }, [idUsuario]);
     
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
     // Función para validar nombre y apellidos
     const validarNombreApellido = (valor) => {
         // Permitir letras, espacios, acentos y comas
