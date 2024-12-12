@@ -89,6 +89,8 @@ function PerfilUD() {
             }
         };
 
+
+        // QUITAR LA FUNCION DE TOMAR FOTO
         // Función para obtener la imagen de perfil desde la tabla tbl_imagenes_usuarios
         const fetchProfileImage = async () => {
             try {
