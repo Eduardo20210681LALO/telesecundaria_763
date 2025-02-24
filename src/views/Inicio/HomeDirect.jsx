@@ -58,7 +58,7 @@ function HomeDirect() {
             >
                 <BreadcrumDirect />
 
-                <Title level={2}>Inicio</Title>
+                <Title level={2}>Bienvenido al Portal Telesecundaria 763</Title>
 
                 <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                     <Card

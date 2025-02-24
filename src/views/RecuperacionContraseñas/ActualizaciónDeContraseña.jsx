@@ -4,7 +4,11 @@ import logotelesecundaria763 from '../../images/logotelesecundaria763.png';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import { message } from 'antd';
+
+import { LoginOutlined, UserAddOutlined, TeamOutlined, HomeOutlined, InfoCircleOutlined } from "@ant-design/icons";
+import Footer from "../../components/Footer.jsx";
+import { FiAlignRight } from "react-icons/fi";
+import { Drawer, Menu, Modal, Select, message, Input } from "antd";
 
 function ActualizaciónDeContraseña() {
     const navigate = useNavigate();
@@ -14,8 +18,13 @@ function ActualizaciónDeContraseña() {
 
     const [errorText, setErrorText] = useState('');
     const [errorTextConfirmacion, setErrorTextConfirmacion] = useState('');
+
     const [mostrarContrasenia, setMostrarContrasenia] = useState(false);
     const [mostrarContrasenia2, setMostrarContrasenia2] = useState(false);
+
+    const [drawerVisible, setDrawerVisible] = useState(false);
+    const toggleDrawer = () => setDrawerVisible(!drawerVisible);
+    const handleClose = () => setDrawerVisible(false);
 
     useEffect(() => {
         if (errorText !== '') {
@@ -67,6 +76,14 @@ function ActualizaciónDeContraseña() {
         }
     };
 
+    const toggleMostrarContrasenia = () => {
+        setMostrarContrasenia(!mostrarContrasenia);
+    };
+
+    const toggleMostrarContrasenia2 = () => {
+        setMostrarContrasenia2(!mostrarContrasenia2);
+    };
+
     const actualizarContrasenia = async () => {
         const datos = {
             correo: correo,
@@ -94,73 +111,126 @@ function ActualizaciónDeContraseña() {
         }
     };
 
-    const toggleMostrarContrasenia = () => {
-        setMostrarContrasenia(!mostrarContrasenia);
-    };
-
-    const toggleMostrarContrasenia2 = () => {
-        setMostrarContrasenia2(!mostrarContrasenia2);
-    };
-
     return (
-        <div>
-        <Nav2/>
-        <div className="container-olvContra" style={{ backgroundColor: '#f7f7f7', minHeight: '110vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <div className="container-Olvi">
-            <img src={logotelesecundaria763} alt="Logo de la Empresa" className="company-logo-olvi" style={{ margin: '0 auto', display: 'block' }} />
-            <h1>TeleSecundaria 763</h1>
-            <h2>Actualice su contraseña</h2>
-            <p>Introduce una nueva contraseña segura.</p>
+        <div className="min-h-screen flex flex-col bg-gray-100">
 
-            {errorText && <p style={{ color: 'red' }}>{errorText}</p>}
-            {errorTextConfirmacion && <p style={{ color: 'red' }}>{errorTextConfirmacion}</p>}
-
-            <form onSubmit={handleFormSubmit}>
-                <div className="input-group" style={{ position: 'relative' }}>
-                    <label htmlFor="correo">Correo electronico:</label>
-                    <input type="text" id="correo" name="correo" value={correo}
-                        onChange={(e) => { setCorreo(e.target.value) }} required
-                        style={{ borderRadius: '5px' }} placeholder='Ingrese su correo como verificación'/>
-                </div>
-
-                <div className="input-group" style={{ position: 'relative' }}>
-                    <label htmlFor="contrasenia">Nueva contraseña:</label>
-                    <input type={mostrarContrasenia ? 'text' : 'password'} id="contrasenia" name="contrasenia" value={contrasenia}
-                        onChange={(e) => { setContrasenia(e.target.value); const erro = Validaciones_Contras(e.target.value); setErrorText(erro); }} required
-                        style={{ borderRadius: '5px' }} placeholder='Ingrese una nueva contraseña'/>
-                    <button type="button" onClick={toggleMostrarContrasenia}
-                        style={{ position: 'absolute', right: '5px', top: '70%', transform: 'translateY(-50%)', backgroundColor: 'transparent', border: 'none', cursor: 'pointer' }}>
-                        {mostrarContrasenia ? (<FontAwesomeIcon icon={faEyeSlash} />) : (<FontAwesomeIcon icon={faEye} />)}
-                    </button>
-                </div>
-
-                <div className="input-group">
-                    <label htmlFor="confirmarContrasenia">Confirmar contraseña:</label>
-                    <input type={mostrarContrasenia2 ? 'text' : 'password'} id="confirmarContrasenia" name="confirmarContrasenia" value={confirmarContrasenia}
-                        onChange={(e) => { setConfirmarContrasenia(e.target.value); setErrorTextConfirmacion(''); }} required
-                        style={{ borderRadius: '5px' }} placeholder='Confirma la contraseña'/>
-                    <button type="button" onClick={toggleMostrarContrasenia2}
-                        style={{ position: 'absolute', right: '5px', top: '70%', transform: 'translateY(-50%)', backgroundColor: 'transparent', border: 'none', cursor: 'pointer' }}>
-                        {mostrarContrasenia2 ? (<FontAwesomeIcon icon={faEyeSlash} />) : (<FontAwesomeIcon icon={faEye} />)}
-                    </button>
-                </div>
-
-                <div className="button-group" style={{ display: 'flex', justifyContent: 'center' }}>
-                    <Link to='/Login' type="button" className="secondary" style={{ marginRight: '10px' }}>Atras</Link>
-                    <button type="submit" className="btn btn-lg btn-primary btn-block" 
-                    style={{ backgroundColor: 'var(--first-color)', borderColor: 'transparent', color: '#fff', padding: '10px 20px', borderRadius: '4px', fontSize: '16px', fontWeight: 'bold' }}
-                    onMouseOver={(event) => { event.target.style.backgroundColor = 'black';}}
-                    onMouseOut={(event) => { event.target.style.backgroundColor = 'var(--first-color)';}}
-                    >
-                    Actualizar Contraseña
-                    </button>
-                </div>
-            </form>
+            <div className="w-full h-[60px] bg-white border-b border-gray-200 flex items-center px-4 fixed top-0 left-0 z-50">
+                <button onClick={toggleDrawer} className="border-none bg-none cursor-pointer" aria-label="Abrir menú">
+                    <FiAlignRight className="text-2xl" />
+                </button>
+                <img src={logotelesecundaria763} alt="Logo" className="h-8 md:h-10 ml-4"
+            />
 
             </div>
+                <Drawer
+                    title={<h2 className="text-2xl font-bold">Menú</h2>}
+                    placement="left"
+                    onClose={handleClose}
+                    open={drawerVisible}
+                    bodyStyle={{ padding: 0 }}
+                >
+                    <Menu mode="inline" defaultSelectedKeys={["1"]} className="h-full">
+                        <Menu.Item key="1" icon={<HomeOutlined />} className="text-lg">
+                            <Link to="/">Inicio</Link>
+                        </Menu.Item>
+                        <Menu.Item key="2" icon={<LoginOutlined />} className="text-lg">
+                            <Link to="/login">Inicio de sesión</Link>
+                        </Menu.Item>
+                        <Menu.Item key="3" icon={<UserAddOutlined />} className="text-lg">
+                            <Link to="/registro">Registro</Link>
+                        </Menu.Item>
+                        <Menu.Item key="4" icon={<TeamOutlined />} className="text-lg">
+                            <Link to="/QuienesSomos">Quiénes Somos</Link>
+                        </Menu.Item>
+                        <Menu.Item key="5" icon={<InfoCircleOutlined />} className="text-lg">
+                            <Link to="/contacto">Contacto</Link>
+                        </Menu.Item>
+                    </Menu>
+                </Drawer>
+
+                <div className="flex-grow flex items-center justify-center px-4 py-12 mt-[60px]">
+                <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-6">
+                    <h1 className="text-3xl font-extrabold text-center mb-4 text-gray-800">Recuperación de Cuenta</h1>
+                    <p className="text-center text-gray-600 mb-4">Actualización de Contraseña</p>
+                    <p className="text-center text-gray-600 mb-6">Introduce una nueva contraseña segura.</p>
+
+                    {errorText && <p className="text-red-500 mb-2">{errorText}</p>}
+                    {errorTextConfirmacion && <p className="text-red-500 mb-2">{errorTextConfirmacion}</p>}
+
+                    <form onSubmit={handleFormSubmit} className="space-y-6">
+                        <div>
+                            <label htmlFor="correo" className="block mb-2 text-gray-700 font-medium">
+                                Correo Electrónico:
+                            </label>
+                            <input
+                                type="text"
+                                id="correo"
+                                name="correo"
+                                value={correo}
+                                onChange={(e) => setCorreo(e.target.value)}
+                                required
+                                placeholder="Ingrese su correo como verificación"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                            />
+                        </div>
+
+                        <div>
+                            <label htmlFor="contrasenia" className="block mb-2 text-gray-700 font-medium">
+                                Ingrese su nueva contraseña:
+                            </label>
+                            <Input.Password
+                                value={contrasenia}
+                                type={mostrarContrasenia ? 'text' : 'password'}
+                                placeholder="Ingrese nueva contraseña"
+                                required
+                                id="contrasenia"
+                                name="contrasenia"
+                            onChange={(e) => {
+                                setContrasenia(e.target.value);
+                                const erro = Validaciones_Contras(e.target.value);
+                                setErrorText(erro);
+                            }}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                            />
+                        </div>
+
+                        <div>
+                            <label htmlFor="confirmarContrasenia" className="block mb-2 text-gray-700 font-medium">
+                                Confirmar contraseña:
+                            </label>
+                            <Input.Password
+                                value={confirmarContrasenia}
+                                type={mostrarContrasenia2 ? 'text' : 'password'}
+                                placeholder="Confirme su nueva contraseña"
+                                required
+                                id="confirmarContrasenia"
+                                name="confirmarContrasenia"
+                                onChange={(e) => setConfirmarContrasenia(e.target.value)}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                            />
+                        </div>
+
+                        <button
+                            type="submit"
+                            className="w-full bg-[#800000] hover:bg-black text-white font-bold py-2 rounded-md transition duration-300"
+                        >
+                            Actualizar Contraseña
+                        </button>
+
+                        <Link
+                            to="/Login"
+                            className="w-full block text-center bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 rounded-md transition duration-300"
+                        >
+                            Atrás
+                        </Link>
+
+                    </form>
+                </div>
+            </div>
+            
+            <Footer />
         </div>
-        </div>
-    )
+    );
 }
 
 export default ActualizaciónDeContraseña

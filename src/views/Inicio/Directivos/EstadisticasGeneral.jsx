@@ -203,8 +203,7 @@ function EstadisticasGeneral() {
             }
         }]
     };
-
-
+    
     return (
         <SIDEBARDIRECT>
             <div style={{ display: 'flex', flexDirection: 'column', minHeight: 'calc(100vh - 60px)', padding: '20px', overflow: 'hidden' }}>
