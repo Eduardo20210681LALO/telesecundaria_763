@@ -158,11 +158,11 @@ function Periodos() {
             })
             .catch(error => {
                 console.error('Error al obtener los datos del periodo:', error);
-            });
+            }); 
     };
 
     const actualizarDatosPeriodo = () => {
-        const data = {
+        const data = { 
             intClvPeriodo: idPeriodoActualizar,
             vchPeriodo: editadovchPeriodo,
             dtFechaInicio: editadodtFechaInicio,

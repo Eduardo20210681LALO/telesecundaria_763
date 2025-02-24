@@ -42,7 +42,7 @@ function VisualizarCapturaCalificaciones() {
         };
         fetchData();
     }, []);
-
+    
     const fetchStudents = async () => {
         if (selectedPeriodo && selectedGrado && selectedGrupo && docenteId) {
             try {

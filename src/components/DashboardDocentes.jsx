@@ -5,7 +5,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import 'react-icons';
 
-
 function DashboardDocentes() {
     const navigate = useNavigate();
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);

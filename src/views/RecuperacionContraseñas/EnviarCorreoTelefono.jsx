@@ -2,15 +2,24 @@ import React, { useState} from 'react';
 import '../../styles/OlvidasteContra.css';
 import logotelesecundaria763 from '../../images/logotelesecundaria763.png';
 import { Link, useNavigate } from 'react-router-dom';
-import Nav2 from '../../components/Nav2';
-import { message } from 'antd';
+
+import { LoginOutlined, UserAddOutlined, TeamOutlined, HomeOutlined, InfoCircleOutlined } from "@ant-design/icons";
+
+import Footer from "../../components/Footer.jsx";
+import { FiAlignRight } from "react-icons/fi";
+import { Drawer, Menu, message } from "antd";
 
 function EnviarCorreoTelefono() {
-  const navigate = useNavigate();
-  const [correo, setCorreo] = useState('');
-  const [telefono, setTelefono] = useState('');
+    const navigate = useNavigate();
+    const [correo, setCorreo] = useState('');
+    const [telefono, setTelefono] = useState('');
 
-  const VerificarUsuarioActivo = async (e) => {
+    const [drawerVisible, setDrawerVisible] = useState(false);
+
+    const toggleDrawer = () => setDrawerVisible(!drawerVisible);
+    const handleClose = () => setDrawerVisible(false);
+
+    const VerificarUsuarioActivo = async (e) => {
         e.preventDefault();
 
         if (!correo || !telefono) {
@@ -52,40 +61,107 @@ function EnviarCorreoTelefono() {
     };
   
     return (
-        <div>
-            <Nav2 />
-            <div className="container-olvContra" style={{ backgroundColor: '#f7f7f7', minHeight: '110vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <div className="container-Olvi">
-                    <img src={logotelesecundaria763} alt="Logo de la Empresa" className="company-logo-olvi" style={{ margin: '0 auto', display: 'block' }} />
-                    <h1>Actualización de contraseña</h1>
-                    <h2>¿Olvidaste tu contraseña?</h2>
-                    <p>¡No te preocupes!, introduce tu correo electrónico y tu número telefónico para el proceso de restablecimiento de contraseña.</p>
+        <div className="min-h-screen flex flex-col bg-gray-100">
 
-                    <form onSubmit={VerificarUsuarioActivo}>
-                        <div className="input-group">
-                            <label htmlFor="correo">Correo Electrónico:</label>
-                            <input className="form-control rounded-md" type="email" id="correo" name="correo" placeholder='Introduce tu correo electronico' value={correo} onChange={(e) => setCorreo(e.target.value)} required style={{ borderRadius: '5px', width: '300px' }} />
-                        </div>
+            {/* Nav Superior */}
+            <div className="w-full h-[60px] bg-white border-b border-gray-200 flex items-center px-4 fixed top-0 left-0 z-50">
+                <button onClick={toggleDrawer} className="border-none bg-none cursor-pointer" aria-label="Abrir menú">
+                    <FiAlignRight className="text-2xl" />
+                </button>
+                <img src={logotelesecundaria763} alt="Logo" className="h-8 md:h-10 ml-4" />
+            </div>
 
-                        <div className="input-group">
-                            <label htmlFor="telefono">Número Telefónico:</label>
-                            <input className="form-control rounded-md" type="text" id="telefono" name="telefono" placeholder='Introduce tu numero de telefono' value={telefono} onChange={(e) => setTelefono(e.target.value)} required style={{ borderRadius: '5px', width: '300px' }} />
-                        </div>
-                        
-                        <div className="button-group">
-                            <Link to='/Login' type="button" className="secondary">Atras</Link>
-                            <button type="submit" className="btn btn-lg btn-primary btn-block"
-                                style={{ backgroundColor: 'var(--first-color)', borderColor: 'transparent', color: '#fff', padding: '10px 20px', borderRadius: '4px', fontSize: '16px', fontWeight: 'bold' }}
-                                onMouseOver={(event) => { event.target.style.backgroundColor = 'black'; }}
-                                onMouseOut={(event) => { event.target.style.backgroundColor = 'var(--first-color)'; }}
-                            >
-                                Verificar Datos
-                            </button>
-                        </div>
+            {/* Drawer */}
+            <Drawer
+                title={<h2 className="text-2xl font-bold">Menú</h2>}
+                placement="left"
+                onClose={handleClose}
+                open={drawerVisible}
+            bodyStyle={{ padding: 0 }}
+            >
+                <Menu mode="inline" defaultSelectedKeys={["1"]} className="h-full">
+                    <Menu.Item key="1" icon={<HomeOutlined />} className="text-lg">
+                        <Link to="/">Inicio</Link>
+                    </Menu.Item>
+                    <Menu.Item key="2" icon={<LoginOutlined />} className="text-lg">
+                        <Link to="/login">Inicio de sesión</Link>
+                    </Menu.Item>
+                    <Menu.Item key="3" icon={<UserAddOutlined />} className="text-lg">
+                        <Link to="/registro">Registro</Link>
+                    </Menu.Item>
+                        <Menu.Item key="4" icon={<TeamOutlined />} className="text-lg">
+                    <Link to="/QuienesSomos">Quiénes Somos</Link>
+                        </Menu.Item>
+                    <Menu.Item key="5" icon={<InfoCircleOutlined />} className="text-lg">
+                        <Link to="/contacto">Contacto</Link>
+                    </Menu.Item>
+                </Menu>
+            </Drawer>
+
+            {/* Contenedor Principal */}
+            <div className="flex-grow flex items-center justify-center px-4 py-12 mt-[60px]">
+                <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-6">
+                    <h1 className="text-3xl font-extrabold text-center mb-4 text-gray-800">Recuperación de Cuenta</h1>
+
+                    <p className="text-center text-gray-600 mb-4">
+                        ¿Olvidaste tu contraseña?
+                    </p>
+                    <p className="text-center text-gray-600 mb-6">
+                        ¡No te preocupes!, introduce tu correo electrónico y tu número telefónico para el proceso de restablecimiento de contraseña.
+                    </p>
+
+                    <form onSubmit={VerificarUsuarioActivo} className="space-y-4">
+
+                    {/* Correo Electrónico */}
+                    <div className="input-group">
+                        <label htmlFor="correo" className="block mb-2 text-gray-700 font-medium">Correo Electrónico:</label>
+                        <input
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+                            type="email"
+                            id="correo"
+                            name="correo"
+                            placeholder="Introduce tu correo electrónico"
+                            value={correo}
+                            onChange={(e) => setCorreo(e.target.value)}
+                            required
+                        />
+                    </div>
+
+                    {/* Número Telefónico */}
+                    <div className="input-group">
+                        <label htmlFor="telefono" className="block mb-2 text-gray-700 font-medium">Número Telefónico:</label>
+                        <input
+                            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+                            type="text"
+                            id="telefono"
+                            name="telefono"
+                            placeholder="Introduce tu número de teléfono"
+                            value={telefono}
+                            onChange={(e) => setTelefono(e.target.value)}
+                            required
+                        />
+                    </div>
+
+                    {/* Botón de envío */}
+                    <button
+                        type="submit"
+                        className="w-full bg-[#800000] hover:bg-black text-white font-bold py-2 rounded transition duration-300"
+                    >
+                        Verificar Información
+                    </button>
+
+                    {/* Botón Atrás */}
+                    <Link
+                        to="/Login"
+                        className="w-full block text-center bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 rounded transition duration-300"
+                    >
+                        Atrás
+                    </Link>
+
                     </form>
-
                 </div>
             </div>
+            <Footer />
         </div>
     );
 }
